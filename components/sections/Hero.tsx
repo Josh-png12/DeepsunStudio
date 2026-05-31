@@ -395,9 +395,9 @@ export default function Hero() {
 
             {/* Description */}
             <motion.p {...fade(1.35)} className="text-slate-400 leading-relaxed mb-10 max-w-xl" style={{ fontSize: 'clamp(15px, 2vw, 18px)' }}>
-              Diseño y desarrollo sitios web, plataformas y automatizaciones que generan resultados concretos —{' '}
-              <span className="text-slate-300 font-medium">no solo se ven bien.</span>{' '}
-              Trabajo con negocios en La Guajira y toda Colombia.
+              Diseño y desarrollo sitios web profesionales, plataformas y automatizaciones para negocios en Colombia y Latinoamérica.{' '}
+              <span className="text-slate-300 font-medium">No solo se ven bien — generan resultados.</span>{' '}
+              Trabajo con empresas en Riohacha, La Guajira y todo el país.
             </motion.p>
 
             {/* CTAs */}

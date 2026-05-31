@@ -82,6 +82,10 @@ export default function About() {
               <p className="text-slate-300 text-[17px] leading-relaxed pl-4 border-l-2 border-blue-500/40">
                 {t("about.p2")}
               </p>
+              <p className="text-slate-500 text-[15px] leading-relaxed">
+                Con sede en <strong className="text-slate-400 font-medium">Riohacha, La Guajira</strong>, ofrezco servicios de desarrollo web a negocios locales y nacionales que buscan
+                presencia digital profesional y resultados medibles — desde hoteles y clínicas hasta restaurantes y fundaciones en toda Colombia.
+              </p>
             </div>
 
             {/* Services mini-list */}
