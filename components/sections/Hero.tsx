@@ -55,7 +55,7 @@ function TypewriterLine({ text }: { text: string }) {
   }, [inView, text, prefersReduced])
 
   return (
-    <p ref={ref} className="text-slate-500 text-[11px] font-mono mt-4 tracking-wide">
+    <p ref={ref} className="text-[13px] sm:text-[11px] text-white/50 sm:text-slate-500 text-center sm:text-left py-2 sm:py-0 px-4 sm:px-0 font-mono mt-4 tracking-wide">
       {shown}
       {shown.length < text.length && inView && (
         <motion.span
@@ -142,7 +142,7 @@ function ServiceCard({ s, i, prefersReduced }: {
       onHoverStart={() => setHovered(true)}
       onHoverEnd={() => setHovered(false)}
       onClick={scrollToContact}
-      className="glass-card rounded-xl p-3 sm:p-3.5 cursor-pointer group relative flex items-center gap-2.5 sm:block max-h-16 sm:max-h-none overflow-hidden sm:overflow-visible"
+      className="glass-card rounded-xl py-3 px-4 sm:p-3.5 cursor-pointer group relative flex items-center gap-3 sm:block max-h-[52px] sm:max-h-none overflow-hidden sm:overflow-visible"
       style={{
         boxShadow: hovered
           ? `0 0 0 1px rgba(${s.glow},0.35), 0 0 24px -4px rgba(${s.glow},0.28), inset 0 0 20px -8px rgba(${s.glow},0.12)`
@@ -153,7 +153,7 @@ function ServiceCard({ s, i, prefersReduced }: {
       <motion.span
         animate={hovered && !prefersReduced ? { rotate: 10, scale: 1.12 } : { rotate: 0, scale: 1 }}
         transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-        className="flex-shrink-0 w-8 h-8 sm:w-fit sm:h-auto mb-0 sm:mb-2 origin-center flex items-center justify-center"
+        className="flex-shrink-0 w-5 h-5 sm:w-fit sm:h-auto mb-0 sm:mb-2 origin-center flex items-center justify-center"
         style={{ color: `rgba(${s.glow},0.85)` }}
       >
         {s.icon}
@@ -161,7 +161,7 @@ function ServiceCard({ s, i, prefersReduced }: {
 
       <div className="min-w-0">
         <p
-          className="text-white text-xs font-semibold leading-snug mb-0.5"
+          className="text-white text-sm sm:text-xs font-semibold leading-snug mb-0.5"
           style={{ color: hovered ? `rgba(${s.glow},0.9)` : undefined, transition: 'color 0.2s' }}
         >
           {s.title}
@@ -284,7 +284,7 @@ export default function Hero() {
       ref={heroRef}
       id="hero"
       aria-label="Presentación"
-      className="relative min-h-screen flex flex-col justify-center pt-[80px] pb-10 sm:pt-16 sm:pb-0 overflow-hidden"
+      className="relative min-h-screen flex flex-col justify-center pt-[72px] pb-10 sm:pt-16 sm:pb-0 overflow-hidden"
     >
       <ParticleCanvas />
 

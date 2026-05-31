@@ -433,7 +433,7 @@ function TestimonialFormContent({ onClose }: TestimonialFormContentProps) {
   }
 
   return (
-    <div className="flex flex-col h-full">
+    <div>
       {/* Header */}
       <div className="flex items-start justify-between gap-4 p-6 pb-4 border-b border-white/[0.06] flex-shrink-0">
         <div>
@@ -488,7 +488,7 @@ function TestimonialFormContent({ onClose }: TestimonialFormContentProps) {
             noValidate
             initial={prefersReduced ? false : { opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="flex-1 overflow-y-auto px-6 py-5 space-y-5 overscroll-contain"
+            className="px-6 py-5 space-y-5"
           >
             {/* Name + Company row */}
             <div className="grid sm:grid-cols-2 gap-4">
@@ -642,7 +642,7 @@ function DesktopModal({ onClose, children }: { onClose: () => void; children: Re
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.22 }}
-      className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
+      className="fixed inset-0 z-[100] overflow-y-auto p-4 sm:p-6 bg-black/70 backdrop-blur-sm"
       onClick={onClose}
     >
       <motion.div
@@ -652,8 +652,8 @@ function DesktopModal({ onClose, children }: { onClose: () => void; children: Re
         transition={{ duration: 0.3, ease: [0.33, 1, 0.68, 1] }}
         onClick={(e) => e.stopPropagation()}
         className="
-          glass-card rounded-2xl w-full max-w-[600px] max-h-[90vh]
-          flex flex-col overflow-hidden
+          glass-card rounded-2xl w-full max-w-[600px]
+          mx-auto my-4 sm:my-8
           border border-white/[0.1] shadow-[0_24px_80px_rgba(0,0,0,0.6)]
         "
       >
@@ -673,7 +673,7 @@ function BottomSheet({ onClose, children }: { onClose: () => void; children: Rea
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.22 }}
-      className="fixed inset-0 z-[100] flex flex-col justify-end bg-black/70 backdrop-blur-sm"
+      className="fixed inset-0 z-[100] overflow-y-auto flex flex-col justify-end bg-black/70 backdrop-blur-sm"
       onClick={onClose}
     >
       <motion.div
@@ -683,10 +683,9 @@ function BottomSheet({ onClose, children }: { onClose: () => void; children: Rea
         transition={{ duration: 0.38, ease: [0.33, 1, 0.68, 1] }}
         onClick={(e) => e.stopPropagation()}
         className="
-          bg-[#0d0f1e] rounded-t-3xl flex flex-col
+          bg-[#0d0f1e] rounded-t-3xl
           border-t border-white/[0.09]
           shadow-[0_-16px_60px_rgba(0,0,0,0.5)]
-          max-h-[92dvh] overflow-hidden
         "
       >
         {/* Drag handle */}
