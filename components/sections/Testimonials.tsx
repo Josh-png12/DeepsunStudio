@@ -163,7 +163,7 @@ export default function Testimonials() {
 
   return (
     <>
-      <section id="testimonials" ref={ref} className="relative py-32">
+      <section id="testimonials" ref={ref} className="relative py-32 overflow-hidden">
         <div className="section-divider mb-32 -mt-16" />
 
         {/* Background glow */}

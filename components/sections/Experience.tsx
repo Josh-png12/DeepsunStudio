@@ -169,7 +169,7 @@ export default function Experience() {
   const lineInView = useInView(timelineRef, { once: true, margin: "-100px" });
 
   return (
-    <section id="experience" ref={sectionRef} className="relative py-32">
+    <section id="experience" ref={sectionRef} className="relative py-32 overflow-hidden">
       <div className="section-divider mb-32 -mt-16" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

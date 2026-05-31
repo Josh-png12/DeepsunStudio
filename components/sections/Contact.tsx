@@ -268,7 +268,7 @@ export default function Contact() {
   ];
 
   return (
-    <section id="contact" ref={ref} className="relative py-32">
+    <section id="contact" ref={ref} className="relative py-32 overflow-hidden">
       <div className="section-divider mb-32 -mt-16" />
 
       <div

@@ -136,7 +136,7 @@ export default function Skills() {
   };
 
   return (
-    <section id="skills" ref={ref} className="relative py-32">
+    <section id="skills" ref={ref} className="relative py-32 overflow-hidden">
       <div className="section-divider mb-32 -mt-16" />
 
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-blue-600/[0.04] rounded-full blur-[120px] pointer-events-none" aria-hidden="true" />

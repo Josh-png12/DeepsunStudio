@@ -287,7 +287,7 @@ export default function Projects() {
   const others   = projects.filter((p) => !p.featured);
 
   return (
-    <section id="projects" ref={ref} className="relative py-32">
+    <section id="projects" ref={ref} className="relative py-32 overflow-hidden">
       <div className="section-divider mb-32 -mt-16" />
       <div className="absolute top-1/4 right-0 w-[600px] h-[600px] bg-violet-600/[0.04] rounded-full blur-[120px] pointer-events-none" aria-hidden="true" />
 
