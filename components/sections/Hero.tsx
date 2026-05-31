@@ -142,7 +142,7 @@ function ServiceCard({ s, i, prefersReduced }: {
       onHoverStart={() => setHovered(true)}
       onHoverEnd={() => setHovered(false)}
       onClick={scrollToContact}
-      className="glass-card rounded-xl p-3.5 cursor-pointer group relative"
+      className="glass-card rounded-xl p-3 sm:p-3.5 cursor-pointer group relative flex items-center gap-2.5 sm:block max-h-16 sm:max-h-none overflow-hidden sm:overflow-visible"
       style={{
         boxShadow: hovered
           ? `0 0 0 1px rgba(${s.glow},0.35), 0 0 24px -4px rgba(${s.glow},0.28), inset 0 0 20px -8px rgba(${s.glow},0.12)`
@@ -153,48 +153,50 @@ function ServiceCard({ s, i, prefersReduced }: {
       <motion.span
         animate={hovered && !prefersReduced ? { rotate: 10, scale: 1.12 } : { rotate: 0, scale: 1 }}
         transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-        className="block mb-2 origin-center"
-        style={{ color: `rgba(${s.glow},0.85)`, width: 'fit-content' }}
+        className="flex-shrink-0 w-8 h-8 sm:w-fit sm:h-auto mb-0 sm:mb-2 origin-center flex items-center justify-center"
+        style={{ color: `rgba(${s.glow},0.85)` }}
       >
         {s.icon}
       </motion.span>
 
-      <p
-        className="text-white text-xs font-semibold leading-snug mb-0.5"
-        style={{ color: hovered ? `rgba(${s.glow},0.9)` : undefined, transition: 'color 0.2s' }}
-      >
-        {s.title}
-      </p>
-      <p className="text-slate-600 text-[11px] leading-tight">{s.desc}</p>
+      <div className="min-w-0">
+        <p
+          className="text-white text-xs font-semibold leading-snug mb-0.5"
+          style={{ color: hovered ? `rgba(${s.glow},0.9)` : undefined, transition: 'color 0.2s' }}
+        >
+          {s.title}
+        </p>
+        <p className="hidden sm:block text-slate-600 text-[11px] leading-tight">{s.desc}</p>
 
-      <AnimatePresence>
-        {hovered && (
-          <motion.p
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="text-slate-500 text-[10px] mt-1.5 overflow-hidden leading-snug"
-          >
-            {s.fullDesc}
-          </motion.p>
-        )}
-      </AnimatePresence>
+        <AnimatePresence>
+          {hovered && (
+            <motion.p
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="text-slate-500 text-[10px] mt-1.5 overflow-hidden leading-snug"
+            >
+              {s.fullDesc}
+            </motion.p>
+          )}
+        </AnimatePresence>
 
-      <AnimatePresence>
-        {hovered && (
-          <motion.span
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.15 }}
-            className="block text-[9px] font-semibold mt-2 tracking-wide"
-            style={{ color: `rgba(${s.glow},0.7)` }}
-          >
-            Contactar →
-          </motion.span>
-        )}
-      </AnimatePresence>
+        <AnimatePresence>
+          {hovered && (
+            <motion.span
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.15 }}
+              className="block text-[9px] font-semibold mt-2 tracking-wide"
+              style={{ color: `rgba(${s.glow},0.7)` }}
+            >
+              Contactar →
+            </motion.span>
+          )}
+        </AnimatePresence>
+      </div>
     </motion.div>
   )
 }
@@ -282,7 +284,7 @@ export default function Hero() {
       ref={heroRef}
       id="hero"
       aria-label="Presentación"
-      className="relative min-h-screen flex flex-col justify-center pt-16 overflow-hidden"
+      className="relative min-h-screen flex flex-col justify-center pt-[80px] pb-10 sm:pt-16 sm:pb-0 overflow-hidden"
     >
       <ParticleCanvas />
 
@@ -311,14 +313,14 @@ export default function Hero() {
 
       <div className="absolute inset-0 grid-bg pointer-events-none" aria-hidden="true" />
 
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full py-24 sm:py-28 lg:py-32">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full py-0 sm:py-28 lg:py-32">
         <div className="grid lg:grid-cols-[1fr_260px] xl:grid-cols-[1fr_300px] gap-12 xl:gap-16 items-center">
 
           {/* ── Left: content ── */}
           <div className="max-w-2xl">
 
             {/* Availability badge */}
-            <motion.div {...fade(0)} className="mb-8">
+            <motion.div {...fade(0)} className="mb-3 sm:mb-8">
               <span className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-emerald-500/[0.08] border border-emerald-500/[0.2] text-emerald-400 text-sm font-medium">
                 <span className="relative flex h-2.5 w-2.5" aria-hidden="true">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-50" />
@@ -379,14 +381,14 @@ export default function Hero() {
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: prefersReduced ? 0 : 1.1, duration: 0.4 }}
-              className="block md:hidden mb-6"
+              className="block md:hidden mb-4"
               aria-hidden="true"
             >
-              <div className="glass-card rounded-xl p-3 border border-amber-400/[0.15] inline-flex items-center gap-2.5">
+              <div className="glass-card rounded-xl py-2.5 px-3.5 border border-amber-400/[0.15] inline-flex items-center gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-amber-400 flex-shrink-0" />
                 <div>
-                  <p className="text-white text-[11px] font-semibold">LUFE Art Tattoo ✓</p>
-                  <p className="text-slate-500 text-[10px]">Cliente real · Next.js · SEO · Booking</p>
+                  <p className="text-white text-[10px] font-semibold">LUFE Art Tattoo ✓</p>
+                  <p className="text-slate-500 text-[9px]">Cliente real · Next.js · SEO · Booking</p>
                 </div>
               </div>
             </motion.div>
