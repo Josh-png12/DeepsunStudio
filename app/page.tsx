@@ -10,7 +10,6 @@ import Projects from '@/components/sections/Projects'
 // Experience, Skills, Contact keep SSR so Google indexes their static content.
 const Testimonials = dynamic(() => import('@/components/sections/Testimonials'), {
   ssr: false,
-  loading: () => <div className="py-32" aria-hidden="true" />,
 })
 const Experience = dynamic(() => import('@/components/sections/Experience'))
 const Skills     = dynamic(() => import('@/components/sections/Skills'))
