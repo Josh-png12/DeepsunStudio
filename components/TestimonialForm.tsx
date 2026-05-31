@@ -632,9 +632,9 @@ function TestimonialFormContent({ onClose }: TestimonialFormContentProps) {
   )
 }
 
-// ─── Modal wrapper (desktop) ──────────────────────────────────────────────────
+// ─── Modal overlay (mobile + desktop, scroll en el overlay) ──────────────────
 
-function DesktopModal({ onClose, children }: { onClose: () => void; children: React.ReactNode }) {
+function ModalOverlay({ onClose, children }: { onClose: () => void; children: React.ReactNode }) {
   return (
     <motion.div
       key="modal-overlay"
@@ -642,56 +642,17 @@ function DesktopModal({ onClose, children }: { onClose: () => void; children: Re
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.22 }}
-      className="fixed inset-0 z-[100] overflow-y-auto p-4 sm:p-6 bg-black/70 backdrop-blur-sm"
+      className="fixed inset-0 overflow-y-auto overflow-x-hidden z-[100] p-4 sm:p-6 flex items-start justify-center bg-black/80 backdrop-blur-[4px]"
       onClick={onClose}
     >
       <motion.div
-        initial={{ scale: 0.93, opacity: 0, y: 12 }}
+        initial={{ scale: 0.95, opacity: 0, y: 12 }}
         animate={{ scale: 1, opacity: 1, y: 0 }}
-        exit={{ scale: 0.93, opacity: 0, y: 12 }}
-        transition={{ duration: 0.3, ease: [0.33, 1, 0.68, 1] }}
+        exit={{ scale: 0.95, opacity: 0, y: 12 }}
+        transition={{ duration: 0.28, ease: [0.33, 1, 0.68, 1] }}
         onClick={(e) => e.stopPropagation()}
-        className="
-          glass-card rounded-2xl w-full max-w-[600px]
-          mx-auto my-4 sm:my-8
-          border border-white/[0.1] shadow-[0_24px_80px_rgba(0,0,0,0.6)]
-        "
+        className="relative w-full max-w-[600px] mx-auto my-4 glass-card rounded-2xl border border-white/[0.1] shadow-[0_24px_80px_rgba(0,0,0,0.6)]"
       >
-        {children}
-      </motion.div>
-    </motion.div>
-  )
-}
-
-// ─── Bottom sheet wrapper (mobile) ───────────────────────────────────────────
-
-function BottomSheet({ onClose, children }: { onClose: () => void; children: React.ReactNode }) {
-  return (
-    <motion.div
-      key="sheet-overlay"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.22 }}
-      className="fixed inset-0 z-[100] overflow-y-auto flex flex-col justify-end bg-black/70 backdrop-blur-sm"
-      onClick={onClose}
-    >
-      <motion.div
-        initial={{ y: '100%' }}
-        animate={{ y: 0 }}
-        exit={{ y: '100%' }}
-        transition={{ duration: 0.38, ease: [0.33, 1, 0.68, 1] }}
-        onClick={(e) => e.stopPropagation()}
-        className="
-          bg-[#0d0f1e] rounded-t-3xl
-          border-t border-white/[0.09]
-          shadow-[0_-16px_60px_rgba(0,0,0,0.5)]
-        "
-      >
-        {/* Drag handle */}
-        <div className="flex justify-center pt-3 pb-1 flex-shrink-0">
-          <div className="w-10 h-1 rounded-full bg-white/[0.15]" aria-hidden="true" />
-        </div>
         {children}
       </motion.div>
     </motion.div>
@@ -706,21 +667,12 @@ interface TestimonialFormProps {
 }
 
 export function TestimonialForm({ isOpen, onClose }: TestimonialFormProps) {
-  const isMobile = useMediaQuery('(max-width: 767px)')
-
-  // Lock body scroll
-  if (typeof window !== 'undefined') {
-    document.body.style.overflow = isOpen ? 'hidden' : ''
-  }
-
-  const Wrapper = isMobile ? BottomSheet : DesktopModal
-
   return (
     <AnimatePresence>
       {isOpen && (
-        <Wrapper key={isMobile ? 'sheet' : 'modal'} onClose={onClose}>
+        <ModalOverlay key="modal" onClose={onClose}>
           <TestimonialFormContent onClose={onClose} />
-        </Wrapper>
+        </ModalOverlay>
       )}
     </AnimatePresence>
   )
