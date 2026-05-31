@@ -1,282 +1,557 @@
-"use client";
+'use client'
 
-import { motion } from "framer-motion";
-import { useLanguage } from "@/lib/i18n";
+import { useEffect, useRef, useState, useCallback } from 'react'
+import {
+  motion, useReducedMotion, useInView, AnimatePresence,
+  useScroll, useTransform, useSpring,
+} from 'framer-motion'
+import { useTextScramble } from '@/hooks/useTextScramble'
+import { MagneticButton } from '@/lib/MagneticButton'
+import { useMediaQuery } from '@/hooks/useMediaQuery'
+import ParticleCanvas from '@/components/ParticleCanvas'
 
-const badges = [
-  "hero.badge.systems",
-  "hero.badge.apis",
-  "hero.badge.automation",
-  "hero.badge.clients",
-] as const;
+// ─── Animated counter ────────────────────────────────────────────────────────
+
+function Counter({ target, suffix = '' }: { target: number; suffix?: string }) {
+  const ref = useRef<HTMLSpanElement>(null)
+  const inView = useInView(ref, { once: true, margin: '-40px' })
+  const [val, setVal] = useState(0)
+  const prefersReduced = useReducedMotion()
+
+  useEffect(() => {
+    if (!inView) return
+    if (prefersReduced) { setVal(target); return }
+    const start = performance.now()
+    const dur = 1500
+    const tick = (now: number) => {
+      const p = Math.min((now - start) / dur, 1)
+      setVal(Math.round((1 - Math.pow(1 - p, 3)) * target))
+      if (p < 1) requestAnimationFrame(tick)
+    }
+    requestAnimationFrame(tick)
+  }, [inView, target, prefersReduced])
+
+  return <span ref={ref}>{val}{suffix}</span>
+}
+
+// ─── Typewriter ───────────────────────────────────────────────────────────────
+
+function TypewriterLine({ text }: { text: string }) {
+  const ref = useRef<HTMLParagraphElement>(null)
+  const inView = useInView(ref, { once: true })
+  const [shown, setShown] = useState('')
+  const prefersReduced = useReducedMotion()
+
+  useEffect(() => {
+    if (!inView) return
+    if (prefersReduced) { setShown(text); return }
+    let i = 0
+    const id = setInterval(() => {
+      i++
+      setShown(text.slice(0, i))
+      if (i >= text.length) clearInterval(id)
+    }, 38)
+    return () => clearInterval(id)
+  }, [inView, text, prefersReduced])
+
+  return (
+    <p ref={ref} className="text-slate-500 text-[11px] font-mono mt-4 tracking-wide">
+      {shown}
+      {shown.length < text.length && inView && (
+        <motion.span
+          animate={{ opacity: [1, 0, 1] }}
+          transition={{ duration: 0.7, repeat: Infinity }}
+          className="inline-block w-px h-3 bg-blue-400 ml-0.5 align-middle"
+        />
+      )}
+    </p>
+  )
+}
+
+// ─── Service icons ────────────────────────────────────────────────────────────
+
+function IconGlobe() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <circle cx="12" cy="12" r="10" /><line x1="2" y1="12" x2="22" y2="12" />
+      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+    </svg>
+  )
+}
+function IconChat() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+    </svg>
+  )
+}
+function IconGear() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <circle cx="12" cy="12" r="3" />
+      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+    </svg>
+  )
+}
+function IconTrendingUp() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
+      <polyline points="17 6 23 6 23 12" />
+    </svg>
+  )
+}
+
+// ─── Data ────────────────────────────────────────────────────────────────────
+
+const HEADLINE = ['Tu', 'negocio', 'merece', 'presencia', 'digital', 'real.'] as const
+
+const SERVICES = [
+  { icon: <IconGlobe />, title: 'Sitios web para negocios', desc: 'Diseño, desarrollo y despliegue', fullDesc: 'Landing pages, e-commerce, corporativos. Mobile-first y optimizados para SEO.', glow: '59,130,246' },
+  { icon: <IconChat />, title: 'Automatización & WhatsApp', desc: 'Chatbots y flujos automáticos', fullDesc: 'Respuestas automáticas, notificaciones y flujos 24/7 sin intervención.', glow: '167,139,250' },
+  { icon: <IconGear />, title: 'Sistemas a medida', desc: 'Plataformas, dashboards y herramientas', fullDesc: 'Sistemas administrativos, dashboards en tiempo real y herramientas internas.', glow: '6,182,212' },
+  { icon: <IconTrendingUp />, title: 'SEO & Posicionamiento', desc: 'Tu negocio visible en Google', fullDesc: 'Posicionamiento local, estructura semántica y optimización técnica.', glow: '52,211,153' },
+] as const
+
+const STATS = [
+  { value: 10,  suffix: '+', label: 'Proyectos'  },
+  { value: 6,   suffix: '+', label: 'Clientes'   },
+  { value: 3,   suffix: '+', label: 'Años'       },
+  { value: 100, suffix: '%', label: 'Dedicación' },
+] as const
+
+// ─── Service Card ─────────────────────────────────────────────────────────────
+
+function ServiceCard({ s, i, prefersReduced }: {
+  s: typeof SERVICES[number]
+  i: number
+  prefersReduced: boolean | null
+}) {
+  const [hovered, setHovered] = useState(false)
+
+  const scrollToContact = useCallback(() => {
+    document.querySelector('#contact')?.scrollIntoView({ behavior: 'smooth' })
+  }, [])
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 14 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: prefersReduced ? 0 : 1.85 + i * 0.07, duration: prefersReduced ? 0 : 0.4 }}
+      whileHover={prefersReduced ? undefined : { y: -6, transition: { type: 'spring', stiffness: 300, damping: 22 } }}
+      onHoverStart={() => setHovered(true)}
+      onHoverEnd={() => setHovered(false)}
+      onClick={scrollToContact}
+      className="glass-card rounded-xl p-3.5 cursor-pointer group relative"
+      style={{
+        boxShadow: hovered
+          ? `0 0 0 1px rgba(${s.glow},0.35), 0 0 24px -4px rgba(${s.glow},0.28), inset 0 0 20px -8px rgba(${s.glow},0.12)`
+          : undefined,
+        transition: 'box-shadow 0.25s ease',
+      }}
+    >
+      <motion.span
+        animate={hovered && !prefersReduced ? { rotate: 10, scale: 1.12 } : { rotate: 0, scale: 1 }}
+        transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+        className="block mb-2 origin-center"
+        style={{ color: `rgba(${s.glow},0.85)`, width: 'fit-content' }}
+      >
+        {s.icon}
+      </motion.span>
+
+      <p
+        className="text-white text-xs font-semibold leading-snug mb-0.5"
+        style={{ color: hovered ? `rgba(${s.glow},0.9)` : undefined, transition: 'color 0.2s' }}
+      >
+        {s.title}
+      </p>
+      <p className="text-slate-600 text-[11px] leading-tight">{s.desc}</p>
+
+      <AnimatePresence>
+        {hovered && (
+          <motion.p
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="text-slate-500 text-[10px] mt-1.5 overflow-hidden leading-snug"
+          >
+            {s.fullDesc}
+          </motion.p>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {hovered && (
+          <motion.span
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.15 }}
+            className="block text-[9px] font-semibold mt-2 tracking-wide"
+            style={{ color: `rgba(${s.glow},0.7)` }}
+          >
+            Contactar →
+          </motion.span>
+        )}
+      </AnimatePresence>
+    </motion.div>
+  )
+}
+
+// ─── Hero ────────────────────────────────────────────────────────────────────
 
 export default function Hero() {
-  const { t } = useLanguage();
+  const prefersReduced = useReducedMotion()
+  const displayName = useTextScramble('Joshua', 1800)
+  const isMobile = useMediaQuery('(max-width: 767px)')
+  const isDesktop = useMediaQuery('(min-width: 1024px)')
+
+  // Refs
+  const heroRef = useRef<HTMLElement>(null)
+  const blobMouseRef = useRef({ x: 0, y: 0 })
+  const blobPosRef = useRef({ x: 0, y: 0 })
+  const blobElRef = useRef<HTMLDivElement>(null)
+
+  // Scroll parallax values (always created, conditionally applied)
+  const { scrollY } = useScroll()
+  const nameY = useTransform(scrollY, [0, 300], [0, -30])
+  const nameOpacity = useTransform(scrollY, [0, 300], [1, 0])
+  const hlScale = useTransform(scrollY, [0, 300], [1, 0.95])
+  const hlOpacity = useTransform(scrollY, [0, 300], [1, 0.3])
+  const nameYSpr = useSpring(nameY, { stiffness: 100, damping: 30 })
+  const nameOpSpr = useSpring(nameOpacity, { stiffness: 100, damping: 30 })
+  const hlScSpr = useSpring(hlScale, { stiffness: 100, damping: 30 })
+  const hlOpSpr = useSpring(hlOpacity, { stiffness: 100, damping: 30 })
+
+  // Blob cursor follower — desktop only
+  useEffect(() => {
+    if (typeof window === 'undefined' || window.innerWidth < 1024 || prefersReduced) return
+
+    let rafId: number
+
+    const onMove = (e: MouseEvent) => {
+      blobMouseRef.current = { x: e.clientX, y: e.clientY }
+    }
+
+    const animate = () => {
+      const pos = blobPosRef.current
+      const tgt = blobMouseRef.current
+      pos.x += (tgt.x - pos.x) * 0.025
+      pos.y += (tgt.y - pos.y) * 0.025
+
+      if (blobElRef.current && heroRef.current) {
+        const r = heroRef.current.getBoundingClientRect()
+        blobElRef.current.style.transform =
+          `translate(${pos.x - r.left - 125}px, ${pos.y - r.top - 125}px)`
+      }
+      rafId = requestAnimationFrame(animate)
+    }
+
+    window.addEventListener('mousemove', onMove, { passive: true })
+    rafId = requestAnimationFrame(animate)
+
+    return () => {
+      window.removeEventListener('mousemove', onMove)
+      cancelAnimationFrame(rafId)
+    }
+  }, [prefersReduced])
+
+  // Animation helpers
+  const wordVariants = {
+    hidden: { y: 58, clipPath: 'inset(110% 0 0 0)' },
+    visible: (i: number) => ({
+      y: 0,
+      clipPath: 'inset(0% 0 0 0)',
+      transition: {
+        delay: prefersReduced ? 0 : 0.65 + i * 0.12,
+        duration: prefersReduced ? 0 : 0.65,
+        ease: [0.33, 1, 0.68, 1] as [number, number, number, number],
+      },
+    }),
+  }
+
+  const fade = (delay: number) => ({
+    initial: { opacity: 0, y: 14 },
+    animate: { opacity: 1, y: 0 },
+    transition: { delay: prefersReduced ? 0 : delay, duration: prefersReduced ? 0 : 0.5 },
+  })
 
   return (
     <section
+      ref={heroRef}
       id="hero"
-      className="relative min-h-screen flex items-center overflow-hidden"
+      aria-label="Presentación"
+      className="relative min-h-screen flex flex-col justify-center pt-16 overflow-hidden"
     >
-      {/* Grid background */}
-      <div className="absolute inset-0 grid-bg" />
+      <ParticleCanvas />
 
-      {/* Ambient glow */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[500px] bg-blue-600/[0.06] rounded-full blur-[120px] pointer-events-none" />
-      <div className="absolute top-1/3 -left-48 w-[500px] h-[500px] bg-violet-600/[0.05] rounded-full blur-[100px] pointer-events-none" />
-      <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-cyan-500/[0.04] rounded-full blur-[100px] pointer-events-none" />
+      {/* Blob cursor — desktop only */}
+      <div
+        ref={blobElRef}
+        className="absolute w-[250px] h-[250px] rounded-full pointer-events-none hidden lg:block"
+        style={{
+          background: 'radial-gradient(circle, rgba(59,130,246,0.1) 0%, rgba(139,92,246,0.05) 50%, transparent 70%)',
+          filter: 'blur(60px)',
+          top: 0,
+          left: 0,
+          zIndex: 1,
+          willChange: 'transform',
+          opacity: prefersReduced ? 0 : 1,
+        }}
+        aria-hidden="true"
+      />
 
-      <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-8 py-32 w-full">
-        <div className="grid lg:grid-cols-2 gap-16 xl:gap-24 items-center">
-          {/* ── Left: Content ── */}
-          <div>
-            {/* Available badge */}
-            <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-emerald-500/25 bg-emerald-500/[0.07] mb-8"
-            >
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              <span className="text-xs font-medium text-emerald-400">
-                {t("hero.available")}
+      {/* Background glows */}
+      <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
+        <div className="absolute -top-32 right-0 w-[720px] h-[560px] bg-blue-600/[0.07] rounded-full blur-[130px] translate-x-1/3" />
+        <div className="absolute bottom-0 -left-24 w-[540px] h-[440px] bg-violet-600/[0.05] rounded-full blur-[110px]" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[280px] bg-cyan-500/[0.03] rounded-full blur-[90px]" />
+      </div>
+
+      <div className="absolute inset-0 grid-bg pointer-events-none" aria-hidden="true" />
+
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full py-24 sm:py-28 lg:py-32">
+        <div className="grid lg:grid-cols-[1fr_260px] xl:grid-cols-[1fr_300px] gap-12 xl:gap-16 items-center">
+
+          {/* ── Left: content ── */}
+          <div className="max-w-2xl">
+
+            {/* Availability badge */}
+            <motion.div {...fade(0)} className="mb-8">
+              <span className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-emerald-500/[0.08] border border-emerald-500/[0.2] text-emerald-400 text-sm font-medium">
+                <span className="relative flex h-2.5 w-2.5" aria-hidden="true">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-50" />
+                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-400" />
+                </span>
+                Disponible para nuevos proyectos
               </span>
             </motion.div>
 
-            {/* Headline */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.08 }}
-            >
-              <h1 className="font-heading text-5xl lg:text-6xl xl:text-7xl font-bold text-white leading-[1.04] tracking-tight mb-3">
-                {t("hero.title")}
+            {/* Greeting */}
+            <motion.p {...fade(0.1)} className="text-slate-500 text-lg font-mono mb-2 tracking-wide">
+              Hola, soy
+            </motion.p>
+
+            {/* Name — scroll parallax on desktop */}
+            <motion.div style={isDesktop ? { y: nameYSpr, opacity: nameOpSpr } : {}}>
+              <h1
+                className="font-heading font-black leading-none mb-5 overflow-hidden"
+                style={{ fontSize: 'clamp(54px, 10vw, 100px)' }}
+              >
+                <motion.span
+                  initial={{ y: 90, clipPath: 'inset(100% 0 0 0)' }}
+                  animate={{ y: 0, clipPath: 'inset(0% 0 0 0)' }}
+                  transition={{ delay: prefersReduced ? 0 : 0.15, duration: prefersReduced ? 0 : 0.75, ease: [0.33, 1, 0.68, 1] }}
+                  className="block text-white tracking-tight"
+                  aria-label="Joshua"
+                >
+                  {displayName}
+                </motion.span>
               </h1>
-              <h2 className="font-heading text-2xl lg:text-3xl xl:text-4xl font-semibold gradient-text leading-tight mb-6">
-                {t("hero.subtitle")}
+            </motion.div>
+
+            {/* Headline — scroll parallax on desktop */}
+            <motion.div style={isDesktop ? { scale: hlScSpr, opacity: hlOpSpr } : {}}>
+              <h2
+                className="font-heading font-bold flex flex-wrap gap-x-[0.28em] mb-7 leading-[1.12]"
+                style={{ fontSize: 'clamp(32px, 6vw, 72px)' }}
+                aria-label="Tu negocio merece presencia digital real"
+              >
+                {HEADLINE.map((word, i) => (
+                  <div key={`${word}-${i}`} className="overflow-hidden" style={{ paddingBottom: '0.06em' }}>
+                    <motion.span
+                      className={`block ${i >= 3 ? 'gradient-flow' : 'text-white'}`}
+                      custom={i}
+                      initial="hidden"
+                      animate="visible"
+                      variants={wordVariants}
+                    >
+                      {word}
+                    </motion.span>
+                  </div>
+                ))}
               </h2>
             </motion.div>
 
-            {/* Description */}
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.16 }}
-            >
-              <p className="text-slate-400 text-lg leading-relaxed max-w-xl mb-3">
-                {t("hero.description")}
-              </p>
-              <p className="text-slate-300 text-base pl-4 border-l-2 border-blue-500/50 leading-relaxed max-w-xl mb-10">
-                {t("hero.tagline")}
-              </p>
-            </motion.div>
-
-            {/* CTAs */}
+            {/* Mobile card — after headline, no floatY */}
             <motion.div
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.24 }}
-              className="flex flex-wrap gap-3 mb-10"
+              transition={{ delay: prefersReduced ? 0 : 1.1, duration: 0.4 }}
+              className="block md:hidden mb-6"
+              aria-hidden="true"
             >
-              <a
-                href="#projects"
-                onClick={(e) => {
-                  e.preventDefault();
-                  document.querySelector("#projects")?.scrollIntoView({ behavior: "smooth" });
-                }}
-                className="inline-flex items-center gap-2 px-6 py-3 bg-blue-500 hover:bg-blue-400 text-white font-semibold rounded-xl transition-all duration-200 shadow-[0_0_24px_rgba(59,130,246,0.35)] hover:shadow-[0_0_32px_rgba(59,130,246,0.55)] text-sm"
-              >
-                {t("hero.cta.projects")}
-                <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
-                  <path d="M2.5 7.5h10M9 3.5l4 4-4 4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              </a>
-              <a
-                href="https://github.com/Josh-png12"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-6 py-3 glass border border-white/[0.08] hover:border-white/[0.14] text-slate-300 hover:text-white font-semibold rounded-xl transition-all duration-200 text-sm"
-              >
-                <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" />
-                </svg>
-                {t("hero.cta.github")}
-              </a>
+              <div className="glass-card rounded-xl p-3 border border-amber-400/[0.15] inline-flex items-center gap-2.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-amber-400 flex-shrink-0" />
+                <div>
+                  <p className="text-white text-[11px] font-semibold">LUFE Art Tattoo ✓</p>
+                  <p className="text-slate-500 text-[10px]">Cliente real · Next.js · SEO · Booking</p>
+                </div>
+              </div>
             </motion.div>
 
-            {/* Credential badges */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.5, delay: 0.34 }}
-              className="flex flex-wrap gap-2"
-            >
-              {badges.map((key) => (
-                <span
-                  key={key}
-                  className="px-3 py-1 text-xs font-medium text-slate-500 border border-white/[0.07] rounded-full bg-white/[0.025] tracking-wide"
-                >
-                  {t(key)}
-                </span>
-              ))}
+            {/* Description */}
+            <motion.p {...fade(1.35)} className="text-slate-400 leading-relaxed mb-10 max-w-xl" style={{ fontSize: 'clamp(15px, 2vw, 18px)' }}>
+              Diseño y desarrollo sitios web, plataformas y automatizaciones que generan resultados concretos —{' '}
+              <span className="text-slate-300 font-medium">no solo se ven bien.</span>{' '}
+              Trabajo con negocios en La Guajira y toda Colombia.
+            </motion.p>
+
+            {/* CTAs */}
+            <motion.div {...fade(1.55)} className="flex flex-col sm:flex-row gap-3 mb-14">
+              <MagneticButton
+                href="#contact"
+                className="inline-flex items-center justify-center gap-2 px-7 py-3.5 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-2xl transition-all duration-200 shadow-[0_0_28px_rgba(59,130,246,0.32)] hover:shadow-[0_0_42px_rgba(59,130,246,0.52)] text-sm min-h-[44px] will-change-transform"
+              >
+                Quiero un sitio web
+                <svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden="true">
+                  <path d="M2.5 7.5h10M9 3.5l4 4-4 4" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </MagneticButton>
+
+              <MagneticButton
+                href="#projects"
+                className="inline-flex items-center justify-center gap-2 px-7 py-3.5 bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.1] hover:border-white/[0.18] text-slate-300 hover:text-white font-semibold rounded-2xl transition-all duration-200 text-sm min-h-[44px] will-change-transform"
+              >
+                Ver proyectos
+              </MagneticButton>
+            </motion.div>
+
+            {/* Services grid */}
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: prefersReduced ? 0 : 1.75, duration: 0.4 }}>
+              <p className="text-[11px] text-slate-600 uppercase tracking-[0.14em] mb-3 font-semibold">
+                Servicios
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
+                {SERVICES.map((s, i) => (
+                  <ServiceCard key={s.title} s={s} i={i} prefersReduced={prefersReduced} />
+                ))}
+              </div>
+              <TypewriterLine text="¿No sabes cuál necesitas? → Escríbeme y te asesoro gratis." />
             </motion.div>
           </div>
 
-          {/* ── Right: Terminal ── */}
+          {/* ── Right column: 3 floating cards — desktop only ── */}
           <motion.div
-            initial={{ opacity: 0, x: 40 }}
+            initial={{ opacity: 0, x: 24 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.7, delay: 0.2, ease: [0.25, 0.4, 0.25, 1] }}
-            className="hidden lg:block"
+            transition={{ delay: prefersReduced ? 0 : 1.0, duration: prefersReduced ? 0 : 0.7, ease: [0.25, 0.4, 0.25, 1] }}
+            className="hidden lg:flex flex-col gap-4 self-center"
+            aria-hidden="true"
           >
-            <div className="relative">
-              {/* Glow behind terminal */}
-              <div className="absolute -inset-6 bg-blue-500/[0.07] rounded-3xl blur-2xl" />
-
-              {/* Terminal window */}
-              <div className="relative rounded-2xl overflow-hidden shadow-[0_0_0_1px_rgba(255,255,255,0.07),0_32px_64px_rgba(0,0,0,0.6)]">
-                {/* Title bar */}
-                <div className="flex items-center gap-2 px-5 py-3 bg-[#0c0f1e] border-b border-white/[0.06]">
-                  <div className="flex gap-1.5">
-                    <div className="w-3 h-3 rounded-full bg-[#ff5f57]" />
-                    <div className="w-3 h-3 rounded-full bg-[#febc2e]" />
-                    <div className="w-3 h-3 rounded-full bg-[#28c840]" />
-                  </div>
-                  <span className="ml-3 text-xs text-slate-500 font-mono">
-                    engineer.ts
-                  </span>
-                </div>
-
-                {/* Code body */}
-                <div className="bg-[#090c1b] px-6 py-6 font-mono text-[13px] leading-relaxed">
-                  <div className="text-slate-300 space-y-0.5">
-                    <div>
-                      <span className="text-blue-400">const</span>
-                      <span className="text-white"> engineer </span>
-                      <span className="text-blue-400">=</span>
-                      <span className="text-slate-400"> &#123;</span>
-                    </div>
-                    <div className="pl-6">
-                      <span className="text-cyan-400">name</span>
-                      <span className="text-slate-400">: </span>
-                      <span className="text-emerald-400">"Joshua Navarro"</span>
-                      <span className="text-slate-400">,</span>
-                    </div>
-                    <div className="pl-6">
-                      <span className="text-cyan-400">role</span>
-                      <span className="text-slate-400">: </span>
-                      <span className="text-emerald-400">"Full Stack Engineer"</span>
-                      <span className="text-slate-400">,</span>
-                    </div>
-                    <div className="pl-6">
-                      <span className="text-cyan-400">focus</span>
-                      <span className="text-slate-400">: [</span>
-                    </div>
-                    <div className="pl-12">
-                      <span className="text-emerald-400">"Systems Architecture"</span>
-                      <span className="text-slate-400">,</span>
-                    </div>
-                    <div className="pl-12">
-                      <span className="text-emerald-400">"Backend APIs"</span>
-                      <span className="text-slate-400">,</span>
-                    </div>
-                    <div className="pl-12">
-                      <span className="text-emerald-400">"Automation Tools"</span>
-                      <span className="text-slate-400">,</span>
-                    </div>
-                    <div className="pl-6">
-                      <span className="text-slate-400">],</span>
-                    </div>
-                    <div className="pl-6">
-                      <span className="text-cyan-400">stack</span>
-                      <span className="text-slate-400">: &#123;</span>
-                    </div>
-                    <div className="pl-12">
-                      <span className="text-cyan-400">frontend</span>
-                      <span className="text-slate-400">: [</span>
-                      <span className="text-emerald-400">"React"</span>
-                      <span className="text-slate-400">, </span>
-                      <span className="text-emerald-400">"Next.js"</span>
-                      <span className="text-slate-400">],</span>
-                    </div>
-                    <div className="pl-12">
-                      <span className="text-cyan-400">backend</span>
-                      <span className="text-slate-400">: [</span>
-                      <span className="text-emerald-400">"Node.js"</span>
-                      <span className="text-slate-400">, </span>
-                      <span className="text-emerald-400">"Python"</span>
-                      <span className="text-slate-400">],</span>
-                    </div>
-                    <div className="pl-12">
-                      <span className="text-cyan-400">db</span>
-                      <span className="text-slate-400">: [</span>
-                      <span className="text-emerald-400">"PostgreSQL"</span>
-                      <span className="text-slate-400">, </span>
-                      <span className="text-emerald-400">"MySQL"</span>
-                      <span className="text-slate-400">],</span>
-                    </div>
-                    <div className="pl-6">
-                      <span className="text-slate-400">&#125;,</span>
-                    </div>
-                    <div className="pl-6">
-                      <span className="text-cyan-400">status</span>
-                      <span className="text-slate-400">: </span>
-                      <span className="text-emerald-400">"available"</span>
-                      <span className="text-slate-400">,</span>
-                    </div>
-                    <div>
-                      <span className="text-slate-400">&#125;</span>
-                    </div>
-                  </div>
-
-                  {/* Terminal prompt */}
-                  <div className="mt-4 flex items-center gap-2 border-t border-white/[0.05] pt-3">
-                    <span className="text-blue-400 font-mono text-sm">$</span>
-                    <span className="text-slate-500 text-xs">node engineer.ts</span>
-                    <div className="w-1.5 h-4 bg-blue-400/80 rounded-sm animate-pulse ml-1" />
-                  </div>
-                </div>
+            {/* Card 1 — LUFE */}
+            <motion.div
+              animate={prefersReduced ? undefined : { y: [0, -12, 0] }}
+              transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+              className="glass-card rounded-2xl p-5 border border-amber-400/[0.18]"
+              style={{ willChange: 'transform' }}
+            >
+              <div className="flex items-center gap-1.5 mb-2.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+                <span className="text-amber-400 text-[10px] font-bold uppercase tracking-widest">Cliente real</span>
               </div>
+              <p className="text-white text-sm font-semibold mb-0.5">LUFE Art Tattoo</p>
+              <p className="text-slate-500 text-xs">Proyecto reciente · 2024 ✓</p>
+              <div className="mt-3 flex gap-1.5 flex-wrap">
+                {['Next.js', 'SEO', 'Booking'].map(tag => (
+                  <span key={tag} className="px-2 py-0.5 rounded-full bg-white/[0.04] text-slate-400 text-[10px] border border-white/[0.07]">
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </motion.div>
 
-              {/* Floating stat cards */}
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.7, duration: 0.5 }}
-                className="absolute -bottom-4 -left-6 px-4 py-2.5 glass-card rounded-xl shadow-[0_8px_24px_rgba(0,0,0,0.4)]"
-              >
-                <p className="text-white font-bold font-heading text-lg leading-none">10+</p>
-                <p className="text-slate-500 text-xs mt-0.5">Systems Built</p>
-              </motion.div>
+            {/* Card 2 — Fundación */}
+            <motion.div
+              animate={prefersReduced ? undefined : { y: [0, 11, 0] }}
+              transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut', delay: 0.5 }}
+              className="glass-card rounded-2xl p-4 ml-8"
+              style={{ willChange: 'transform' }}
+            >
+              <div className="flex items-center gap-1.5 mb-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                <span className="text-emerald-400 text-[10px] font-medium">En producción</span>
+              </div>
+              <p className="text-white text-sm font-semibold">Fundación Vida Amor y Salud</p>
+              <p className="text-slate-500 text-xs mt-0.5">Plataforma digital · 2023</p>
+            </motion.div>
 
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.85, duration: 0.5 }}
-                className="absolute -top-4 -right-6 px-4 py-2.5 glass-card rounded-xl shadow-[0_8px_24px_rgba(0,0,0,0.4)]"
-              >
-                <div className="flex items-center gap-1.5">
-                  <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                  <p className="text-emerald-400 font-semibold text-sm">Open to work</p>
-                </div>
-              </motion.div>
-            </div>
+            {/* Card 3 — stat */}
+            <motion.div
+              animate={prefersReduced ? undefined : { y: [0, -8, 0] }}
+              transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
+              className="glass-card rounded-2xl p-4 -ml-2"
+              style={{ willChange: 'transform' }}
+            >
+              <p className="font-heading font-black text-2xl text-white leading-none mb-0.5">✓ 100%</p>
+              <p className="text-slate-500 text-xs">Proyectos entregados</p>
+            </motion.div>
           </motion.div>
         </div>
+
+        {/* Tablet card — shown md but not lg, Card 1 with floatY at 0.85 scale */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: prefersReduced ? 0 : 1.8, duration: 0.4 }}
+          className="hidden md:flex lg:hidden mt-8"
+          aria-hidden="true"
+        >
+          <motion.div
+            animate={!isMobile && !prefersReduced ? { y: [0, -12, 0] } : {}}
+            transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+            className="glass-card rounded-2xl p-4 border border-amber-400/[0.15] flex items-center gap-3"
+            style={{ transform: 'scale(0.85)', transformOrigin: 'left center', willChange: 'transform' }}
+          >
+            <span className="w-2 h-2 rounded-full bg-amber-400 flex-shrink-0" />
+            <div>
+              <p className="text-white text-sm font-semibold">LUFE Art Tattoo ✓</p>
+              <p className="text-slate-500 text-xs mt-0.5">Cliente real · Next.js · SEO · Booking</p>
+            </div>
+            <div className="flex gap-1.5 ml-4">
+              {['Next.js', 'SEO', 'Booking'].map(tag => (
+                <span key={tag} className="px-2 py-0.5 rounded-full bg-white/[0.04] text-slate-400 text-[10px] border border-white/[0.07]">
+                  {tag}
+                </span>
+              ))}
+            </div>
+          </motion.div>
+        </motion.div>
+
+        {/* Stats row */}
+        <motion.div
+          initial={{ opacity: 0, y: 18 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: prefersReduced ? 0 : 2.2, duration: prefersReduced ? 0 : 0.5 }}
+          className="mt-16 sm:mt-20 pt-8 border-t border-white/[0.06] grid grid-cols-2 sm:grid-cols-4 gap-6"
+        >
+          {STATS.map(s => (
+            <div key={s.label} className="flex flex-col gap-1">
+              <span className="font-heading font-black text-2xl sm:text-3xl text-white leading-none">
+                <Counter target={s.value} suffix={s.suffix} />
+              </span>
+              <span className="text-slate-500 text-xs sm:text-sm">{s.label}</span>
+            </div>
+          ))}
+        </motion.div>
       </div>
 
       {/* Scroll indicator */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 1.4, duration: 0.8 }}
-        className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1.5"
+        transition={{ delay: prefersReduced ? 0 : 2.7, duration: 0.6 }}
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-slate-700"
+        aria-hidden="true"
       >
-        <span className="text-[11px] text-slate-600 tracking-widest uppercase">
-          {t("hero.scroll")}
-        </span>
-        <div className="w-px h-8 bg-gradient-to-b from-slate-600 to-transparent" />
+        <span className="text-[10px] tracking-[0.16em] uppercase font-mono">scroll</span>
+        <motion.div
+          animate={prefersReduced ? undefined : { y: [0, 7, 0] }}
+          transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+          className="w-px h-10 bg-gradient-to-b from-slate-700 to-transparent"
+        />
       </motion.div>
     </section>
-  );
+  )
 }

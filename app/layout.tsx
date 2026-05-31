@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Poppins } from "next/font/google";
 import "./globals.css";
 import { LanguageProvider } from "@/lib/i18n";
+import AuroraBackground from "@/components/AuroraBackground";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -66,6 +67,7 @@ export default function RootLayout({
       className={`dark ${inter.variable} ${poppins.variable} scroll-smooth`}
     >
       <body className="bg-[#08091a] text-slate-100 font-sans antialiased">
+        <AuroraBackground />
         <LanguageProvider>{children}</LanguageProvider>
       </body>
     </html>

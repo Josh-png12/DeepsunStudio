@@ -1,50 +1,58 @@
 'use client'
-import { useEffect, useRef } from 'react'
+
+import { useEffect, useState } from 'react'
+import { motion, useMotionValue, useSpring } from 'framer-motion'
 
 export default function CursorFollower() {
-  const blobRef = useRef<HTMLDivElement>(null)
+  const mouseX = useMotionValue(-400)
+  const mouseY = useMotionValue(-400)
+  const [isExpanded, setIsExpanded] = useState(false)
+
+  // Spring stiffness 150, damping 15 — lag suave
+  const springX = useSpring(mouseX, { stiffness: 150, damping: 15 })
+  const springY = useSpring(mouseY, { stiffness: 150, damping: 15 })
 
   useEffect(() => {
-    const blob = blobRef.current
-    if (!blob) return
-
-    let cx = window.innerWidth / 2
-    let cy = window.innerHeight / 2
-    let tx = cx
-    let ty = cy
+    if (typeof window === 'undefined') return
+    // Oculto en dispositivos touch (pointer: coarse)
+    if (window.matchMedia('(pointer: coarse)').matches) return
 
     const onMove = (e: MouseEvent) => {
-      tx = e.clientX
-      ty = e.clientY
+      mouseX.set(e.clientX)
+      mouseY.set(e.clientY)
     }
-    window.addEventListener('mousemove', onMove)
 
-    let raf: number
-    const animate = () => {
-      cx += (tx - cx) * 0.08
-      cy += (ty - cy) * 0.08
-      blob.style.transform = `translate(${cx - 200}px, ${cy - 200}px)`
-      raf = requestAnimationFrame(animate)
+    const onPointerOver = (e: PointerEvent) => {
+      const target = e.target as HTMLElement
+      setIsExpanded(!!target.closest('a, button, [role="button"], [tabindex]'))
     }
-    raf = requestAnimationFrame(animate)
+
+    window.addEventListener('mousemove', onMove, { passive: true })
+    document.addEventListener('pointerover', onPointerOver, { passive: true })
 
     return () => {
       window.removeEventListener('mousemove', onMove)
-      cancelAnimationFrame(raf)
+      document.removeEventListener('pointerover', onPointerOver)
     }
-  }, [])
+  }, [mouseX, mouseY])
 
   return (
-    <div
-      ref={blobRef}
+    <motion.div
       className="pointer-events-none fixed top-0 left-0 z-0 hidden md:block"
       aria-hidden="true"
+      animate={{ scale: isExpanded ? 1.55 : 1 }}
+      transition={{ type: 'spring', stiffness: 200, damping: 25 }}
       style={{
+        x: springX,
+        y: springY,
+        translateX: '-50%',
+        translateY: '-50%',
         width: 400,
         height: 400,
         borderRadius: '50%',
         background: 'radial-gradient(circle, rgba(59,130,246,0.12) 0%, transparent 70%)',
         filter: 'blur(40px)',
+        willChange: 'transform',
       }}
     />
   )

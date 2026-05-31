@@ -14,6 +14,8 @@ export interface Project {
   stack: string[];
   category: "automation" | "backend" | "systems" | "client" | "fullstack";
   featured: boolean;
+  realClient?: boolean;
+  highlighted?: boolean;
   github?: string;
   demo?: string;
   year: number;
@@ -42,98 +44,151 @@ export interface Stats {
 }
 
 export const projects: Project[] = [
+  // 1. LUFE Art Tattoo — Cliente real
   {
-    title: "Scraper App GUI",
-    slug: "scraper-app-gui",
+    title: "LUFE Art Tattoo",
+    slug: "lufe-art-tattoo",
     tagline: {
-      en: "Automation tool that turns manual data collection into a single click",
-      es: "Herramienta de automatización que convierte la recolección manual en un clic",
+      en: "Commercial studio website — animated gallery, artist profiles, booking integration",
+      es: "Sitio web comercial para estudio — galería animada, perfiles de artistas, integración de reservas",
     },
     description: {
-      en: "A cross-platform desktop application for automated web scraping with a graphical interface — no code required. Built to empower non-technical users to extract structured data from any website.",
-      es: "Aplicación de escritorio multiplataforma para web scraping automatizado con interfaz gráfica — sin código requerido. Construida para que usuarios no técnicos extraigan datos estructurados de cualquier sitio web.",
+      en: "A high-converting commercial website for a professional tattoo studio. Focused on brand storytelling, portfolio showcase, and turning visitors into booked appointments.",
+      es: "Un sitio web comercial de alta conversión para un estudio de tatuajes profesional. Enfocado en narrativa de marca, showcase de portafolio y convertir visitantes en citas reservadas.",
     },
     problem: {
-      en: "Manual data extraction from websites is time-consuming, error-prone, and requires technical knowledge. Teams waste hours on repetitive copy-paste tasks with no reliable way to automate them.",
-      es: "La extracción manual de datos de sitios web es lenta, propensa a errores y requiere conocimiento técnico. Los equipos pierden horas en tareas repetitivas sin forma confiable de automatizarlas.",
+      en: "The studio had no online presence — losing clients to competitors with digital visibility. The quality of their work wasn't reaching its target audience.",
+      es: "El estudio no tenía presencia online — perdiendo clientes ante competidores con visibilidad digital. La calidad de su trabajo no llegaba a su audiencia objetivo.",
     },
     solution: {
-      en: "Built a GUI layer over Python's scraping stack (BeautifulSoup + Selenium) that abstracts all complexity. Users configure targets visually, schedule runs, and export to CSV/JSON/Excel with zero code.",
-      es: "Construí una capa GUI sobre el stack de scraping de Python (BeautifulSoup + Selenium) que abstrae toda la complejidad. Los usuarios configuran objetivos visualmente, programan ejecuciones y exportan sin código.",
+      en: "Designed a mobile-first, visually striking website with animated gallery, artist profiles, service catalog, and booking CTAs. Optimized for local SEO to capture organic discovery.",
+      es: "Diseñé un sitio web mobile-first, visualmente impactante con galería animada, perfiles de artistas, catálogo de servicios y CTAs de reserva. Optimizado para SEO local para capturar descubrimiento orgánico.",
     },
     impact: {
-      en: "Reduces data collection time by 90%+ compared to manual extraction. Enables teams without engineering knowledge to build automated data pipelines in minutes.",
-      es: "Reduce el tiempo de recolección de datos más del 90% frente a la extracción manual. Permite a equipos sin conocimiento técnico construir pipelines de datos automatizados en minutos.",
+      en: "Established professional digital brand presence, enabled online client acquisition, and provided a scalable platform for portfolio growth.",
+      es: "Estableció presencia de marca digital profesional, habilitó la adquisición de clientes online y proporcionó una plataforma escalable para el crecimiento del portafolio.",
     },
     features: {
       en: [
-        "Visual point-and-click configuration — zero code needed",
-        "Multi-format export: CSV, JSON, Excel",
-        "Scheduled & recurring automated runs",
-        "Anti-detection and rate-limiting mechanisms",
-        "Real-time progress tracking and structured error handling",
+        "Animated portfolio gallery with lightbox viewer",
+        "Individual artist profiles with specialty tags",
+        "Service catalog with pricing tiers",
+        "Mobile-first responsive layout",
+        "Local SEO optimization with structured data",
       ],
       es: [
-        "Configuración visual point-and-click — sin código requerido",
-        "Exportación en múltiples formatos: CSV, JSON, Excel",
-        "Ejecuciones programadas y recurrentes automatizadas",
-        "Mecanismos anti-detección y limitación de velocidad",
-        "Seguimiento en tiempo real y manejo estructurado de errores",
+        "Galería de portafolio animada con visor lightbox",
+        "Perfiles individuales de artistas con etiquetas de especialidad",
+        "Catálogo de servicios con niveles de precio",
+        "Layout responsive mobile-first",
+        "Optimización SEO local con datos estructurados",
       ],
     },
-    stack: ["Python", "Tkinter", "BeautifulSoup4", "Selenium", "Pandas", "Requests"],
-    category: "automation",
+    stack: ["Next.js", "TypeScript", "Tailwind CSS", "Framer Motion"],
+    category: "client",
     featured: true,
-    github: "https://github.com/joshuanavarro/scraper-app-gui",
+    realClient: true,
+    github: "https://github.com/joshuanavarro/lufe-art-tattoo",
     year: 2024,
   },
+
+  // 2. Fundación Vida Amor y Salud — Cliente real
   {
-    title: "ms-usuarios",
-    slug: "ms-usuarios",
+    title: "Fundación Vida Amor y Salud",
+    slug: "fundacion-vida-amor-salud",
     tagline: {
-      en: "Production-grade user management microservice — JWT auth, RBAC, full lifecycle API",
-      es: "Microservicio de gestión de usuarios de nivel producción — auth JWT, RBAC, API de ciclo de vida completo",
+      en: "Digital platform for a Colombian health and social welfare foundation",
+      es: "Plataforma digital para fundación colombiana de salud y bienestar social",
     },
     description: {
-      en: "A standalone user management microservice built for scalable backend architectures. Handles authentication, authorization, user lifecycle, and role management through a clean, well-documented REST API.",
-      es: "Un microservicio independiente de gestión de usuarios construido para arquitecturas backend escalables. Maneja autenticación, autorización, ciclo de vida de usuarios y gestión de roles mediante una API REST limpia y documentada.",
+      en: "Complete digital presence for a nonprofit organization focused on health, community support, and social welfare programs — including donation flows, volunteer management, and program showcases.",
+      es: "Presencia digital completa para una organización sin fines de lucro enfocada en salud, apoyo comunitario y programas de bienestar social — incluyendo flujos de donación, gestión de voluntarios y showcase de programas.",
     },
     problem: {
-      en: "Every application needs user management. Building it from scratch for each project is slow, repetitive, and security-critical — a bad implementation can expose the whole system.",
-      es: "Toda aplicación necesita gestión de usuarios. Construirlo desde cero para cada proyecto es lento, repetitivo y crítico en seguridad — una mala implementación puede exponer todo el sistema.",
+      en: "The foundation had zero digital presence, limiting outreach and making it impossible to receive online donations or recruit volunteers at scale.",
+      es: "La fundación tenía cero presencia digital, limitando su alcance e imposibilitando recibir donaciones online o reclutar voluntarios a escala.",
     },
     solution: {
-      en: "Designed a domain-isolated microservice following REST principles with clear separation of concerns. Implements JWT stateless authentication, bcrypt password hashing, and fine-grained role-based access control.",
-      es: "Diseñé un microservicio con dominio aislado siguiendo principios REST con clara separación de responsabilidades. Implementa autenticación JWT sin estado, hash bcrypt y control de acceso granular por roles.",
+      en: "Built a trust-focused website highlighting mission, programs, team, and impact metrics. Integrated donation and volunteer signup flows with accessible, standards-compliant design.",
+      es: "Construí un sitio web centrado en la confianza que destaca la misión, programas, equipo y métricas de impacto. Integré flujos de donación y registro de voluntarios con diseño accesible y compatible con estándares.",
     },
     impact: {
-      en: "A plug-and-play user system integrable into any backend architecture in under an hour, with enterprise-grade security baked in from day one.",
-      es: "Un sistema de usuarios plug-and-play integrable en cualquier arquitectura backend en menos de una hora, con seguridad de nivel empresarial incorporada desde el inicio.",
+      en: "Established institutional credibility online and opened digital channels for donations and volunteer recruitment, directly expanding the foundation's operational capacity.",
+      es: "Estableció credibilidad institucional online y abrió canales digitales para donaciones y reclutamiento de voluntarios, expandiendo directamente la capacidad operativa de la fundación.",
     },
     features: {
       en: [
-        "JWT stateless authentication with access + refresh tokens",
-        "Role-Based Access Control (RBAC) with middleware guards",
-        "bcrypt password hashing with configurable salt rounds",
-        "Full user CRUD with pagination and filtering",
-        "Input validation, sanitization, and structured error responses",
-        "RESTful API with consistent response envelope",
+        "Mission and program presentation",
+        "Impact metrics and statistics",
+        "Donation and volunteer signup flows",
+        "WCAG-accessible design",
+        "SEO-optimized for nonprofit discovery",
       ],
       es: [
-        "Autenticación JWT sin estado con tokens de acceso y refresco",
-        "Control de Acceso Basado en Roles (RBAC) con guards de middleware",
-        "Hash bcrypt con rondas de sal configurables",
-        "CRUD completo de usuarios con paginación y filtrado",
-        "Validación de entradas, sanitización y respuestas de error estructuradas",
-        "API RESTful con envolvente de respuesta consistente",
+        "Presentación de misión y programas",
+        "Métricas e indicadores de impacto",
+        "Flujos de donación y registro de voluntarios",
+        "Diseño accesible WCAG",
+        "SEO optimizado para descubrimiento de ONGs",
       ],
     },
-    stack: ["Node.js", "Express", "PostgreSQL", "JWT", "bcrypt", "TypeScript"],
-    category: "backend",
+    stack: ["Next.js", "TypeScript", "Tailwind CSS"],
+    category: "client",
     featured: true,
-    github: "https://github.com/joshuanavarro/ms-usuarios",
+    realClient: true,
+    github: "https://github.com/joshuanavarro/fundacion-vida-amor-salud",
+    year: 2023,
+  },
+
+  // 3. Premios La Cima — Cliente real
+  {
+    title: "Premios La Cima",
+    slug: "premios-la-cima",
+    tagline: {
+      en: "Premium event platform for a prestigious institutional awards ceremony",
+      es: "Plataforma de evento premium para una ceremonia de premios institucional de prestigio",
+    },
+    description: {
+      en: "Official web platform for a prestigious awards event — featuring dynamic nominee profiles, category showcases, countdown timers, sponsor sections, and event logistics management.",
+      es: "Plataforma web oficial para un evento de premios de prestigio — con perfiles dinámicos de nominados, showcase de categorías, contadores regresivos, secciones de patrocinadores y gestión logística del evento.",
+    },
+    problem: {
+      en: "The event lacked a digital home that matched its prestige. Organizers needed a system to manage nominees, categories, and event information without developer dependency.",
+      es: "El evento carecía de un hogar digital a la altura de su prestigio. Los organizadores necesitaban un sistema para gestionar nominados, categorías e información del evento sin depender de un desarrollador.",
+    },
+    solution: {
+      en: "Designed a premium event website with a content-managed nominee system, category pages, and live countdown. Built with a clear information architecture for both attendees and organizers.",
+      es: "Diseñé un sitio web de evento premium con sistema de nominados gestionado por contenido, páginas de categorías y cuenta regresiva en vivo. Construido con arquitectura de información clara para asistentes y organizadores.",
+    },
+    impact: {
+      en: "Delivered a professional digital experience that elevated the event's brand and provided organizers with a scalable, reusable platform for future editions.",
+      es: "Entregué una experiencia digital profesional que elevó la marca del evento y proporcionó a los organizadores una plataforma escalable y reutilizable para ediciones futuras.",
+    },
+    features: {
+      en: [
+        "Dynamic nominee profiles per category",
+        "Live countdown to event date",
+        "Sponsor and partner showcase",
+        "Mobile-optimized attendee experience",
+        "Content management for organizers",
+      ],
+      es: [
+        "Perfiles dinámicos de nominados por categoría",
+        "Cuenta regresiva en vivo a la fecha del evento",
+        "Showcase de patrocinadores y aliados",
+        "Experiencia para asistentes optimizada para móvil",
+        "Gestión de contenido para organizadores",
+      ],
+    },
+    stack: ["React", "Node.js", "CSS Modules", "MongoDB"],
+    category: "client",
+    featured: true,
+    realClient: true,
+    github: "https://github.com/joshuanavarro/premios-la-cima",
     year: 2024,
   },
+
+  // 4. SIEPA — Cliente real + Destacado
   {
     title: "SIEPA",
     slug: "siepa",
@@ -178,142 +233,105 @@ export const projects: Project[] = [
     stack: ["React", "Node.js", "Express", "MySQL", "Chart.js", "JWT"],
     category: "systems",
     featured: true,
+    realClient: true,
+    highlighted: true,
     github: "https://github.com/joshuanavarro/siepa",
     year: 2023,
   },
+
+  // 5. Scraper App GUI
   {
-    title: "LUFE Art Tattoo",
-    slug: "lufe-art-tattoo",
+    title: "Scraper App GUI",
+    slug: "scraper-app-gui",
     tagline: {
-      en: "Commercial studio website — animated gallery, artist profiles, booking integration",
-      es: "Sitio web comercial para estudio — galería animada, perfiles de artistas, integración de reservas",
+      en: "Automation tool that turns manual data collection into a single click",
+      es: "Herramienta de automatización que convierte la recolección manual en un clic",
     },
     description: {
-      en: "A high-converting commercial website for a professional tattoo studio. Focused on brand storytelling, portfolio showcase, and turning visitors into booked appointments.",
-      es: "Un sitio web comercial de alta conversión para un estudio de tatuajes profesional. Enfocado en narrativa de marca, showcase de portafolio y convertir visitantes en citas reservadas.",
+      en: "A cross-platform desktop application for automated web scraping with a graphical interface — no code required. Built to empower non-technical users to extract structured data from any website.",
+      es: "Aplicación de escritorio multiplataforma para web scraping automatizado con interfaz gráfica — sin código requerido. Construida para que usuarios no técnicos extraigan datos estructurados de cualquier sitio web.",
     },
     problem: {
-      en: "The studio had no online presence — losing clients to competitors with digital visibility. The quality of their work wasn't reaching its target audience.",
-      es: "El estudio no tenía presencia online — perdiendo clientes ante competidores con visibilidad digital. La calidad de su trabajo no llegaba a su audiencia objetivo.",
+      en: "Manual data extraction from websites is time-consuming, error-prone, and requires technical knowledge. Teams waste hours on repetitive copy-paste tasks with no reliable way to automate them.",
+      es: "La extracción manual de datos de sitios web es lenta, propensa a errores y requiere conocimiento técnico. Los equipos pierden horas en tareas repetitivas sin forma confiable de automatizarlas.",
     },
     solution: {
-      en: "Designed a mobile-first, visually striking website with animated gallery, artist profiles, service catalog, and booking CTAs. Optimized for local SEO to capture organic discovery.",
-      es: "Diseñé un sitio web mobile-first, visualmente impactante con galería animada, perfiles de artistas, catálogo de servicios y CTAs de reserva. Optimizado para SEO local para capturar descubrimiento orgánico.",
+      en: "Built a GUI layer over Python's scraping stack (BeautifulSoup + Selenium) that abstracts all complexity. Users configure targets visually, schedule runs, and export to CSV/JSON/Excel with zero code.",
+      es: "Construí una capa GUI sobre el stack de scraping de Python (BeautifulSoup + Selenium) que abstrae toda la complejidad. Los usuarios configuran objetivos visualmente, programan ejecuciones y exportan sin código.",
     },
     impact: {
-      en: "Established professional digital brand presence, enabled online client acquisition, and provided a scalable platform for portfolio growth.",
-      es: "Estableció presencia de marca digital profesional, habilitó la adquisición de clientes online y proporcionó una plataforma escalable para el crecimiento del portafolio.",
+      en: "Reduces data collection time by 90%+ compared to manual extraction. Enables teams without engineering knowledge to build automated data pipelines in minutes.",
+      es: "Reduce el tiempo de recolección de datos más del 90% frente a la extracción manual. Permite a equipos sin conocimiento técnico construir pipelines de datos automatizados en minutos.",
     },
     features: {
       en: [
-        "Animated portfolio gallery with lightbox viewer",
-        "Individual artist profiles with specialty tags",
-        "Service catalog with pricing tiers",
-        "Mobile-first responsive layout",
-        "Local SEO optimization with structured data",
+        "Visual point-and-click configuration — zero code needed",
+        "Multi-format export: CSV, JSON, Excel",
+        "Scheduled & recurring automated runs",
+        "Anti-detection and rate-limiting mechanisms",
+        "Real-time progress tracking and structured error handling",
       ],
       es: [
-        "Galería de portafolio animada con visor lightbox",
-        "Perfiles individuales de artistas con etiquetas de especialidad",
-        "Catálogo de servicios con niveles de precio",
-        "Layout responsive mobile-first",
-        "Optimización SEO local con datos estructurados",
+        "Configuración visual point-and-click — sin código requerido",
+        "Exportación en múltiples formatos: CSV, JSON, Excel",
+        "Ejecuciones programadas y recurrentes automatizadas",
+        "Mecanismos anti-detección y limitación de velocidad",
+        "Seguimiento en tiempo real y manejo estructurado de errores",
       ],
     },
-    stack: ["Next.js", "TypeScript", "Tailwind CSS", "Framer Motion"],
-    category: "client",
+    stack: ["Python", "Tkinter", "BeautifulSoup4", "Selenium", "Pandas", "Requests"],
+    category: "automation",
     featured: false,
-    github: "https://github.com/joshuanavarro/lufe-art-tattoo",
+    github: "https://github.com/joshuanavarro/scraper-app-gui",
     year: 2024,
   },
+
+  // 6. ms-usuarios
   {
-    title: "Fundación Vida Amor y Salud",
-    slug: "fundacion-vida-amor-salud",
+    title: "ms-usuarios",
+    slug: "ms-usuarios",
     tagline: {
-      en: "Digital platform for a Colombian health and social welfare foundation",
-      es: "Plataforma digital para fundación colombiana de salud y bienestar social",
+      en: "Production-grade user management microservice — JWT auth, RBAC, full lifecycle API",
+      es: "Microservicio de gestión de usuarios de nivel producción — auth JWT, RBAC, API de ciclo de vida completo",
     },
     description: {
-      en: "Complete digital presence for a nonprofit organization focused on health, community support, and social welfare programs — including donation flows, volunteer management, and program showcases.",
-      es: "Presencia digital completa para una organización sin fines de lucro enfocada en salud, apoyo comunitario y programas de bienestar social — incluyendo flujos de donación, gestión de voluntarios y showcase de programas.",
+      en: "A standalone user management microservice built for scalable backend architectures. Handles authentication, authorization, user lifecycle, and role management through a clean, well-documented REST API.",
+      es: "Un microservicio independiente de gestión de usuarios construido para arquitecturas backend escalables. Maneja autenticación, autorización, ciclo de vida de usuarios y gestión de roles mediante una API REST limpia y documentada.",
     },
     problem: {
-      en: "The foundation had zero digital presence, limiting outreach and making it impossible to receive online donations or recruit volunteers at scale.",
-      es: "La fundación tenía cero presencia digital, limitando su alcance e imposibilitando recibir donaciones online o reclutar voluntarios a escala.",
+      en: "Every application needs user management. Building it from scratch for each project is slow, repetitive, and security-critical — a bad implementation can expose the whole system.",
+      es: "Toda aplicación necesita gestión de usuarios. Construirlo desde cero para cada proyecto es lento, repetitivo y crítico en seguridad — una mala implementación puede exponer todo el sistema.",
     },
     solution: {
-      en: "Built a trust-focused website highlighting mission, programs, team, and impact metrics. Integrated donation and volunteer signup flows with accessible, standards-compliant design.",
-      es: "Construí un sitio web centrado en la confianza que destaca la misión, programas, equipo y métricas de impacto. Integré flujos de donación y registro de voluntarios con diseño accesible y compatible con estándares.",
+      en: "Designed a domain-isolated microservice following REST principles with clear separation of concerns. Implements JWT stateless authentication, bcrypt password hashing, and fine-grained role-based access control.",
+      es: "Diseñé un microservicio con dominio aislado siguiendo principios REST con clara separación de responsabilidades. Implementa autenticación JWT sin estado, hash bcrypt y control de acceso granular por roles.",
     },
     impact: {
-      en: "Established institutional credibility online and opened digital channels for donations and volunteer recruitment, directly expanding the foundation's operational capacity.",
-      es: "Estableció credibilidad institucional online y abrió canales digitales para donaciones y reclutamiento de voluntarios, expandiendo directamente la capacidad operativa de la fundación.",
+      en: "A plug-and-play user system integrable into any backend architecture in under an hour, with enterprise-grade security baked in from day one.",
+      es: "Un sistema de usuarios plug-and-play integrable en cualquier arquitectura backend en menos de una hora, con seguridad de nivel empresarial incorporada desde el inicio.",
     },
     features: {
       en: [
-        "Mission and program presentation",
-        "Impact metrics and statistics",
-        "Donation and volunteer signup flows",
-        "WCAG-accessible design",
-        "SEO-optimized for nonprofit discovery",
+        "JWT stateless authentication with access + refresh tokens",
+        "Role-Based Access Control (RBAC) with middleware guards",
+        "bcrypt password hashing with configurable salt rounds",
+        "Full user CRUD with pagination and filtering",
+        "Input validation, sanitization, and structured error responses",
+        "RESTful API with consistent response envelope",
       ],
       es: [
-        "Presentación de misión y programas",
-        "Métricas e indicadores de impacto",
-        "Flujos de donación y registro de voluntarios",
-        "Diseño accesible WCAG",
-        "SEO optimizado para descubrimiento de ONGs",
+        "Autenticación JWT sin estado con tokens de acceso y refresco",
+        "Control de Acceso Basado en Roles (RBAC) con guards de middleware",
+        "Hash bcrypt con rondas de sal configurables",
+        "CRUD completo de usuarios con paginación y filtrado",
+        "Validación de entradas, sanitización y respuestas de error estructuradas",
+        "API RESTful con envolvente de respuesta consistente",
       ],
     },
-    stack: ["Next.js", "TypeScript", "Tailwind CSS"],
-    category: "client",
+    stack: ["Node.js", "Express", "PostgreSQL", "JWT", "bcrypt", "TypeScript"],
+    category: "backend",
     featured: false,
-    github: "https://github.com/joshuanavarro/fundacion-vida-amor-salud",
-    year: 2023,
-  },
-  {
-    title: "Premios La Cima",
-    slug: "premios-la-cima",
-    tagline: {
-      en: "Premium event platform for a prestigious institutional awards ceremony",
-      es: "Plataforma de evento premium para una ceremonia de premios institucional de prestigio",
-    },
-    description: {
-      en: "Official web platform for a prestigious awards event — featuring dynamic nominee profiles, category showcases, countdown timers, sponsor sections, and event logistics management.",
-      es: "Plataforma web oficial para un evento de premios de prestigio — con perfiles dinámicos de nominados, showcase de categorías, contadores regresivos, secciones de patrocinadores y gestión logística del evento.",
-    },
-    problem: {
-      en: "The event lacked a digital home that matched its prestige. Organizers needed a system to manage nominees, categories, and event information without developer dependency.",
-      es: "El evento carecía de un hogar digital a la altura de su prestigio. Los organizadores necesitaban un sistema para gestionar nominados, categorías e información del evento sin depender de un desarrollador.",
-    },
-    solution: {
-      en: "Designed a premium event website with a content-managed nominee system, category pages, and live countdown. Built with a clear information architecture for both attendees and organizers.",
-      es: "Diseñé un sitio web de evento premium con sistema de nominados gestionado por contenido, páginas de categorías y cuenta regresiva en vivo. Construido con arquitectura de información clara para asistentes y organizadores.",
-    },
-    impact: {
-      en: "Delivered a professional digital experience that elevated the event's brand and provided organizers with a scalable, reusable platform for future editions.",
-      es: "Entregué una experiencia digital profesional que elevó la marca del evento y proporcionó a los organizadores una plataforma escalable y reutilizable para ediciones futuras.",
-    },
-    features: {
-      en: [
-        "Dynamic nominee profiles per category",
-        "Live countdown to event date",
-        "Sponsor and partner showcase",
-        "Mobile-optimized attendee experience",
-        "Content management for organizers",
-      ],
-      es: [
-        "Perfiles dinámicos de nominados por categoría",
-        "Cuenta regresiva en vivo a la fecha del evento",
-        "Showcase de patrocinadores y aliados",
-        "Experiencia para asistentes optimizada para móvil",
-        "Gestión de contenido para organizadores",
-      ],
-    },
-    stack: ["React", "Node.js", "CSS Modules", "MongoDB"],
-    category: "client",
-    featured: false,
-    github: "https://github.com/joshuanavarro/premios-la-cima",
+    github: "https://github.com/joshuanavarro/ms-usuarios",
     year: 2024,
   },
 ];
@@ -331,10 +349,7 @@ export const experience: ExperienceItem[] = [
     type: "freelance",
   },
   {
-    company: {
-      en: "Premios La Cima",
-      es: "Premios La Cima",
-    },
+    company: { en: "Premios La Cima", es: "Premios La Cima" },
     role: { en: "Frontend Engineer", es: "Ingeniero Frontend" },
     period: "2024",
     description: {
@@ -345,14 +360,8 @@ export const experience: ExperienceItem[] = [
     type: "contract",
   },
   {
-    company: {
-      en: "Fundación Vida Amor y Salud",
-      es: "Fundación Vida Amor y Salud",
-    },
-    role: {
-      en: "Freelance Full Stack Developer",
-      es: "Desarrollador Full Stack Freelance",
-    },
+    company: { en: "Fundación Vida Amor y Salud", es: "Fundación Vida Amor y Salud" },
+    role: { en: "Freelance Full Stack Developer", es: "Desarrollador Full Stack Freelance" },
     period: "2023",
     description: {
       en: "Built the foundation's complete digital infrastructure — website, program pages, donation flows, and volunteer management — from zero to production.",
@@ -362,11 +371,8 @@ export const experience: ExperienceItem[] = [
     type: "freelance",
   },
   {
-    company: {
-      en: "Personal Engineering Projects",
-      es: "Proyectos de Ingeniería Personales",
-    },
-    role: { en: "Full Stack Engineer", es: "Ingeniero Full Stack" },
+    company: { en: "Personal Engineering Projects", es: "Proyectos de Ingeniería Personales" },
+    role: { en: "Full Stack Developer", es: "Desarrollador Full Stack" },
     period: "2023 – Present",
     description: {
       en: "Independently architected and built production-grade systems: automation desktop tools, backend microservices, and full administrative platforms — always focusing on real-world utility.",
@@ -418,28 +424,30 @@ export const stats: Stats = {
 };
 
 export const personalInfo = {
-  title: "Full Stack Software Engineer",
-  subtitle: "Systems & Automation Developer",
-  availability: "Available for opportunities",
-  location: "Colombia",
+  name: "Joshua Navarro",
+  title: "Desarrollador Web Freelance",
+  subtitle: "Sitios web · Automatizaciones · Sistemas digitales",
+  availability: "Disponible para nuevos proyectos",
+  location: "Riohacha, La Guajira, Colombia",
   experience: "3+ años",
   social: {
     email: "joshuanavarro933@gmail.com",
     github: "https://github.com/Josh-png12",
+    linkedin: "https://www.linkedin.com/in/joshua-navarro-rad-06ab18258",
     whatsapp: "+57 397 149 647",
     whatsappUrl: "https://wa.me/57397149647",
   },
 };
 
 export const aboutParagraphs: string[] = [
-  "Soy un Ingeniero de Software Full Stack enfocado en construir sistemas reales — desde APIs backend y herramientas de automatización hasta aplicaciones web completas.",
-  "Mi trabajo abarca múltiples dominios: plataformas administrativas usadas en instituciones reales, microservicios backend para arquitecturas escalables, y herramientas de automatización que eliminan trabajo manual.",
-  "Abordo cada proyecto como un problema de ingeniería primero — arquitectura antes que estética, rendimiento antes que presentación.",
+  "Soy Joshua Navarro, desarrollador web freelance con sede en Riohacha, La Guajira. Llevo más de 3 años diseñando y construyendo sitios web, plataformas y automatizaciones para negocios en Colombia.",
+  "He trabajado con estudios de tatuaje, fundaciones, organizaciones y empresas de toda la región. Mi objetivo no es solo que tu negocio se vea bien en internet — es que genere resultados reales.",
+  "Trabajo directamente contigo, sin intermediarios, y me aseguro de que entiendas cada paso del proceso.",
 ];
 
 export const skills = {
   core: ["React", "Next.js", "TypeScript", "Node.js", "Python", "REST APIs"],
-  specialties: ["Systems Architecture", "Backend APIs", "Automation Tools", "Web Scraping", "PostgreSQL", "MySQL"],
-  competent: ["Docker", "MongoDB", "JWT", "bcrypt", "Express", "Framer Motion"],
+  specialties: ["Sitios Web", "Automatización", "Sistemas a Medida", "SEO Local", "PostgreSQL", "MySQL"],
+  competent: ["Docker", "MongoDB", "WhatsApp API", "Framer Motion", "Express", "Vercel"],
   tools: ["Git", "GitHub", "Vercel", "VS Code", "Postman", "Linux"],
 };
