@@ -434,8 +434,8 @@ export const personalInfo = {
     email: "joshuanavarro933@gmail.com",
     github: "https://github.com/Josh-png12",
     linkedin: "https://www.linkedin.com/in/joshua-navarro-rad-06ab18258",
-    whatsapp: "+57 397 149 647",
-    whatsappUrl: "https://wa.me/57397149647",
+    whatsapp: "+57 319 714 9647",
+    whatsappUrl: "https://wa.me/573197149647",
   },
 };
 

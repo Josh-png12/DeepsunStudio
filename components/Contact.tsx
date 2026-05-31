@@ -93,7 +93,7 @@ export default function Contact() {
     const text = encodeURIComponent(
       `Hola Joshua, te escribo desde tu portafolio.\n\n*Nombre:* ${form.name}\n*Asunto:* ${form.subject}\n\n${form.message}`,
     )
-    window.open(`https://wa.me/57397149647?text=${text}`, '_blank')
+    window.open(`https://wa.me/573197149647?text=${text}`, '_blank')
   }
 
   const isLoading = status === 'sending'

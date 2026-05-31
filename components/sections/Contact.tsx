@@ -246,8 +246,8 @@ export default function Contact() {
   const links = [
     {
       label: "WhatsApp",
-      sublabel: "+57 397 149 647",
-      href: "https://wa.me/57397149647",
+      sublabel: "+57 319 714 9647",
+      href: "https://wa.me/573197149647",
       icon: <IconWhatsApp />,
       isWhatsApp: true,
     },
