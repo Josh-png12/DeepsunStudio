@@ -21,8 +21,14 @@ const config: Config = {
         "float-slow": "float 9s ease-in-out infinite",
         "float-fast": "float 4s ease-in-out infinite",
         glow: "glow 3s ease-in-out infinite",
+        "wa-pulse": "wa-pulse 2.4s ease-out infinite",
       },
       keyframes: {
+        "wa-pulse": {
+          "0%": { transform: "scale(1)", opacity: "0.6" },
+          "70%": { transform: "scale(1.7)", opacity: "0" },
+          "100%": { transform: "scale(1.7)", opacity: "0" },
+        },
         float: {
           "0%, 100%": { transform: "translateY(0px) translateX(0px)" },
           "33%": { transform: "translateY(-20px) translateX(8px)" },

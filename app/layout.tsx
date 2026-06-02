@@ -5,6 +5,7 @@ import { LanguageProvider } from '@/lib/i18n'
 import AuroraBackground from '@/components/AuroraBackground'
 import { JsonLd } from '@/components/JsonLd'
 import { LangSync } from '@/components/LangSync'
+import WhatsAppButton from '@/components/WhatsAppButton'
 
 // ─── Fonts ────────────────────────────────────────────────────────────────────
 
@@ -166,6 +167,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           {/* Sincroniza el atributo html[lang] con el idioma activo del usuario */}
           <LangSync />
           {children}
+          <WhatsAppButton />
         </LanguageProvider>
       </body>
     </html>
