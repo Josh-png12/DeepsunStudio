@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { motion, AnimatePresence, useScroll, useSpring } from 'framer-motion'
+import Image from 'next/image'
 import { useLanguage } from '@/lib/i18n'
 
 const NAV_ITEMS = [
@@ -85,14 +86,19 @@ export default function Navbar() {
           {/* Logo */}
           <button
             onClick={() => handleNavClick('#hero')}
-            className="flex items-center gap-2.5 group outline-none"
+            className="flex items-center gap-[10px] group outline-none"
             aria-label="Volver al inicio"
           >
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-violet-600 flex items-center justify-center shadow-[0_0_18px_rgba(59,130,246,0.45)] transition-shadow group-hover:shadow-[0_0_28px_rgba(59,130,246,0.6)]">
-              <span className="text-white font-black text-sm font-heading">J</span>
-            </div>
+            <Image
+              src="/logo.png"
+              width={36}
+              height={36}
+              alt="DeepSun Studio"
+              priority
+              className="rounded-sm"
+            />
             <span className="font-heading font-semibold text-white text-sm hidden sm:block group-hover:text-blue-400 transition-colors duration-200">
-              Joshua Navarro
+              DeepSun Studio
             </span>
           </button>
 
