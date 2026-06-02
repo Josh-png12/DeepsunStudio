@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { motion, AnimatePresence, useScroll, useSpring } from 'framer-motion'
-import Image from 'next/image'
 import { useLanguage } from '@/lib/i18n'
 
 const NAV_ITEMS = [
@@ -89,13 +88,12 @@ export default function Navbar() {
             className="flex items-center gap-[10px] group outline-none"
             aria-label="Volver al inicio"
           >
-            <Image
+            <img
               src="/logo.png"
               width={36}
               height={36}
               alt="DeepSun Studio"
-              priority
-              className="rounded-sm"
+              style={{ objectFit: 'contain' }}
             />
             <span className="font-heading font-semibold text-white text-sm hidden sm:block group-hover:text-blue-400 transition-colors duration-200">
               DeepSun Studio
