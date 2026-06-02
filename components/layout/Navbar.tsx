@@ -85,17 +85,19 @@ export default function Navbar() {
           {/* Logo */}
           <button
             onClick={() => handleNavClick('#hero')}
-            className="flex items-center gap-[10px] group outline-none"
+            style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
+            className="group outline-none"
             aria-label="Volver al inicio"
           >
             <img
               src="/logo.png"
-              width={36}
-              height={36}
               alt="DeepSun Studio"
-              style={{ objectFit: 'contain' }}
+              style={{ width: 32, height: 32, objectFit: 'contain', flexShrink: 0 }}
             />
-            <span className="font-heading font-semibold text-white text-sm hidden sm:block group-hover:text-blue-400 transition-colors duration-200">
+            <span
+              style={{ fontSize: 16, fontWeight: 600, whiteSpace: 'nowrap', color: 'white' }}
+              className="hidden sm:block group-hover:text-blue-400 transition-colors duration-200"
+            >
               DeepSun Studio
             </span>
           </button>
