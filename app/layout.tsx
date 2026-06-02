@@ -6,6 +6,7 @@ import AuroraBackground from '@/components/AuroraBackground'
 import { JsonLd } from '@/components/JsonLd'
 import { LangSync } from '@/components/LangSync'
 import WhatsAppButton from '@/components/WhatsAppButton'
+import { Analytics } from '@vercel/analytics/next'
 
 // ─── Fonts ────────────────────────────────────────────────────────────────────
 
@@ -168,6 +169,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <LangSync />
           {children}
           <WhatsAppButton />
+          <Analytics />
         </LanguageProvider>
       </body>
     </html>
