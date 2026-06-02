@@ -88,7 +88,7 @@ export const projects: Project[] = [
     category: "client",
     featured: true,
     realClient: true,
-    github: "https://github.com/joshuanavarro/lufe-art-tattoo",
+    github: "https://github.com/Josh-png12/LUFE-ART-TATTOO",
     year: 2024,
   },
 
@@ -136,7 +136,6 @@ export const projects: Project[] = [
     category: "client",
     featured: true,
     realClient: true,
-    github: "https://github.com/joshuanavarro/fundacion-vida-amor-salud",
     year: 2023,
   },
 
@@ -184,7 +183,6 @@ export const projects: Project[] = [
     category: "client",
     featured: true,
     realClient: true,
-    github: "https://github.com/joshuanavarro/premios-la-cima",
     year: 2024,
   },
 
@@ -235,7 +233,7 @@ export const projects: Project[] = [
     featured: true,
     realClient: true,
     highlighted: true,
-    github: "https://github.com/joshuanavarro/siepa",
+    github: "https://github.com/Josh-png12/Siepa",
     year: 2023,
   },
 
@@ -282,7 +280,7 @@ export const projects: Project[] = [
     stack: ["Python", "Tkinter", "BeautifulSoup4", "Selenium", "Pandas", "Requests"],
     category: "automation",
     featured: false,
-    github: "https://github.com/joshuanavarro/scraper-app-gui",
+    github: "https://github.com/Josh-png12/scraper-app-gui",
     year: 2024,
   },
 
@@ -331,7 +329,7 @@ export const projects: Project[] = [
     stack: ["Node.js", "Express", "PostgreSQL", "JWT", "bcrypt", "TypeScript"],
     category: "backend",
     featured: false,
-    github: "https://github.com/joshuanavarro/ms-usuarios",
+    github: "https://github.com/Josh-png12/ms-usuarios",
     year: 2024,
   },
 ];
@@ -431,7 +429,7 @@ export const personalInfo = {
   location: "Riohacha, La Guajira, Colombia",
   experience: "3+ años",
   social: {
-    email: "joshuanavarro933@gmail.com",
+    email: "joshua@deepsunstudio.com",
     github: "https://github.com/Josh-png12",
     linkedin: "https://www.linkedin.com/in/joshua-navarro-rad-06ab18258",
     whatsapp: "+57 319 714 9647",

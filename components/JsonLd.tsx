@@ -13,7 +13,7 @@ const personSchema = {
     url: BASE_URL,
   },
   url: BASE_URL,
-  email: 'joshuanavarro933@gmail.com',
+  email: 'joshua@deepsunstudio.com',
   telephone: '+573197149647',
   address: {
     '@type': 'PostalAddress',
@@ -48,7 +48,7 @@ const localBusinessSchema = {
     'Agencia de desarrollo web y automatización para negocios en Colombia. Sitios web profesionales, chatbots WhatsApp y sistemas a medida para empresas en Riohacha, La Guajira y toda Latinoamérica.',
   url: BASE_URL,
   telephone: '+573197149647',
-  email: 'joshuanavarro933@gmail.com',
+  email: 'joshua@deepsunstudio.com',
   founder: {
     '@type': 'Person',
     name: 'Joshua Navarro',

@@ -252,9 +252,9 @@ export default function Contact() {
       isWhatsApp: true,
     },
     {
-      label: "joshuanavarro933@gmail.com",
+      label: "joshua@deepsunstudio.com",
       sublabel: "Email",
-      href: "mailto:joshuanavarro933@gmail.com",
+      href: "mailto:joshua@deepsunstudio.com",
       icon: <IconEmail />,
       isWhatsApp: false,
     },

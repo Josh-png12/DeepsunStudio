@@ -49,7 +49,7 @@ export default function Footer() {
               </svg>
             </a>
             <a
-              href="mailto:joshuanavarro933@gmail.com"
+              href="mailto:joshua@deepsunstudio.com"
               className="text-slate-600 hover:text-slate-300 transition-colors"
               aria-label="Correo de DeepSun Studio"
             >
