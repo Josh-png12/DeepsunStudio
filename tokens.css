@@ -1,0 +1,89 @@
+/*
+ * Hallmark · macrostructure: Split Studio · genre: modern-minimal
+ * theme: custom (vibe: "deep midnight · amber-gold signal · cool-warm tension")
+ * paper: oklch(12% 0.010 260) · accent: oklch(76% 0.16 65) amber
+ * display: Cabinet Grotesk 800 · body: Switzer 400
+ * nav: N1b · footer: Ft5
+ * axes: dark / grotesque-display / warm-accent
+ */
+
+:root {
+  /* ── Paper (dark midnight slate) ─────────────────────────────────── */
+  --color-paper:    oklch(12% 0.010 260);   /* base background           */
+  --color-paper-2:  oklch(17% 0.012 260);   /* raised surface, cards     */
+  --color-paper-3:  oklch(22% 0.014 260);   /* highest surface, nav bg   */
+
+  /* ── Ink ──────────────────────────────────────────────────────────── */
+  --color-ink:      oklch(93% 0.006 260);   /* primary text              */
+  --color-muted:    oklch(58% 0.008 260);   /* secondary / captions      */
+  --color-faint:    oklch(38% 0.010 260);   /* placeholder, disabled     */
+
+  /* ── Structure ────────────────────────────────────────────────────── */
+  --color-rule:     oklch(28% 0.010 260);   /* borders, dividers         */
+  --color-surface:  oklch(17% 0.012 260);   /* card fill                 */
+
+  /* ── Accent (amber-gold — the "sun" in DeepSun) ──────────────────── */
+  --color-accent:      oklch(76% 0.16  65); /* primary accent            */
+  --color-accent-dim:  oklch(76% 0.08  65); /* muted accent for chips    */
+  --color-accent-ink:  oklch(14% 0.012 65); /* text on amber background  */
+  --color-focus:       oklch(78% 0.20  65); /* focus ring                */
+
+  /* ── Semantic signals ────────────────────────────────────────────── */
+  --color-success:  oklch(72% 0.15 150);
+  --color-error:    oklch(62% 0.20  25);
+
+  /* ── Fonts ───────────────────────────────────────────────────────── */
+  --font-display: "Cabinet Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-body:    "Switzer",         ui-sans-serif, system-ui, sans-serif;
+  --font-mono:    "JetBrains Mono",  "Geist Mono",  ui-monospace, monospace;
+
+  /* ── Type scale (major-third ratio · 1.25) ───────────────────────── */
+  --text-xs:       0.64rem;   /*  10px  captions, legal         */
+  --text-sm:       0.80rem;   /*  13px  labels, nav links       */
+  --text-base:     1rem;      /*  16px  body copy               */
+  --text-md:       1.25rem;   /*  20px  lead paragraphs         */
+  --text-lg:       1.5625rem; /*  25px  h3 subheadings          */
+  --text-xl:       1.9531rem; /*  31px  h2 section heads        */
+  --text-2xl:      2.4414rem; /*  39px  h2 large               */
+  --text-3xl:      3.0518rem; /*  49px  h1 section             */
+  --text-display:  clamp(2.75rem, 5vw + 1rem, 5rem); /* hero H1  */
+
+  /* ── Spacing (4pt scale) ─────────────────────────────────────────── */
+  --space-3xs: 0.125rem;  /*   2px */
+  --space-2xs: 0.25rem;   /*   4px */
+  --space-xs:  0.5rem;    /*   8px */
+  --space-sm:  0.75rem;   /*  12px */
+  --space-md:  1rem;      /*  16px */
+  --space-lg:  1.5rem;    /*  24px */
+  --space-xl:  2.5rem;    /*  40px */
+  --space-2xl: 4rem;      /*  64px */
+  --space-3xl: 6rem;      /*  96px */
+  --space-4xl: 9rem;      /* 144px */
+
+  /* ── Layout ──────────────────────────────────────────────────────── */
+  --page-max:    1280px;
+  --page-gutter: clamp(1rem, 5vw, 2.5rem);
+  --nav-height:  64px;
+
+  /* ── Radius ──────────────────────────────────────────────────────── */
+  --radius-sm:   4px;
+  --radius-card: 8px;
+  --radius-pill: 999px;
+
+  /* ── Motion ──────────────────────────────────────────────────────── */
+  --ease-out:    cubic-bezier(0.16, 1, 0.3,  1);
+  --ease-in:     cubic-bezier(0.7,  0, 0.84, 0);
+  --ease-inout:  cubic-bezier(0.45, 0, 0.55, 1);
+  --dur-short:   180ms;
+  --dur-med:     280ms;
+  --dur-long:    400ms;
+
+  /* ── Z-index ─────────────────────────────────────────────────────── */
+  --z-base:     1;
+  --z-raised:   10;
+  --z-dropdown: 100;
+  --z-sticky:   200;
+  --z-modal:    400;
+  --z-toast:    500;
+  --z-tooltip:  600;
+}

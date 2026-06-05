@@ -19,18 +19,18 @@ import type { Testimonial } from '@/types/testimonial'
 const COPY = {
   es: {
     tag: 'Testimonios',
-    title: 'Lo que dicen mis clientes.',
-    subtitle: 'Negocios reales que confiaron en mí para construir su presencia digital.',
-    cta: '¿Trabajaste conmigo? Deja tu testimonio →',
+    title: 'Lo que dicen nuestros clientes.',
+    subtitle: 'Negocios reales que confiaron en DeepSun Studio para construir su presencia digital.',
+    cta: '¿Trabajaste con nosotros? Deja tu testimonio',
     empty: 'Sé el primero en compartir tu experiencia',
     prevLabel: 'Anterior testimonio',
     nextLabel: 'Siguiente testimonio',
   },
   en: {
     tag: 'Testimonials',
-    title: 'What my clients say.',
-    subtitle: 'Real businesses that trusted me to build their digital presence.',
-    cta: 'Did we work together? Leave a testimonial →',
+    title: 'What our clients say.',
+    subtitle: 'Real businesses that trusted DeepSun Studio to build their digital presence.',
+    cta: 'Did we work together? Leave a testimonial',
     empty: 'Be the first to share your experience',
     prevLabel: 'Previous testimonial',
     nextLabel: 'Next testimonial',
@@ -163,33 +163,38 @@ export default function Testimonials() {
 
   return (
     <>
-      <section id="testimonials" ref={ref} className="relative py-32 overflow-hidden">
-        <div className="section-divider mb-32 -mt-16" />
-
-        {/* Background glow */}
-        <div
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[400px] bg-violet-600/[0.04] rounded-full blur-[120px] pointer-events-none"
-          aria-hidden="true"
-        />
-
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section
+        id="testimonials"
+        ref={ref}
+        style={{
+          paddingBlock: 'var(--space-4xl)',
+          paddingInline: 'var(--page-gutter)',
+          background: 'var(--color-paper)',
+        }}
+      >
+        <div className="hm-rule" style={{ marginBottom: 'var(--space-4xl)' }} />
+        <div style={{ maxWidth: 'var(--page-max)', margin: '0 auto' }}>
 
           {/* ── Header ── */}
           <motion.div
-            initial={{ opacity: 0, y: 20, filter: 'blur(4px)' }}
-            animate={inView ? { opacity: 1, y: 0, filter: 'blur(0px)' } : {}}
+            initial={{ opacity: 0, y: 16 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.55, ease: [0.25, 0.4, 0.25, 1] }}
-            className="mb-12"
+            style={{ marginBottom: 'var(--space-2xl)' }}
           >
-            <div className="tag-pill mb-6">{copy.tag}</div>
-            <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
-              <h2
-                className="font-heading font-bold text-white leading-tight tracking-tight"
-                style={{ fontSize: 'clamp(28px, 4vw, 52px)' }}
-              >
-                {copy.title}
-              </h2>
-              <p className="text-slate-500 text-sm sm:text-right max-w-xs sm:max-w-[220px] leading-relaxed">
+            <span className="hm-chip" style={{ marginBottom: 'var(--space-lg)', display: 'inline-flex', alignItems: 'center', gap: 'var(--space-xs)' }}>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <circle cx="12" cy="12" r="3.2" fill="var(--color-accent)" />
+                <line x1="12" y1="2" x2="12" y2="6.8" stroke="var(--color-accent)" strokeWidth="1.6" strokeLinecap="round" />
+                <line x1="17.2" y1="12" x2="22" y2="12" stroke="var(--color-accent)" strokeWidth="1.6" strokeLinecap="round" />
+                <line x1="12" y1="17.2" x2="12" y2="22" stroke="var(--color-accent)" strokeWidth="1.6" strokeLinecap="round" />
+                <line x1="2" y1="12" x2="6.8" y2="12" stroke="var(--color-accent)" strokeWidth="1.6" strokeLinecap="round" />
+              </svg>
+              {copy.tag}
+            </span>
+            <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-end', justifyContent: 'space-between', gap: 'var(--space-md)' }}>
+              <h2 className="hm-heading">{copy.title}</h2>
+              <p className="hm-lead" style={{ maxWidth: '36ch', textAlign: 'right', fontSize: 'var(--text-sm)' }}>
                 {copy.subtitle}
               </p>
             </div>
@@ -201,12 +206,14 @@ export default function Testimonials() {
             animate={inView ? { opacity: 1 } : {}}
             transition={{ duration: 0.5, delay: 0.18 }}
           >
-            {/* Track wrapper */}
+            {/* Track wrapper — pause on hover AND focus (WCAG 2.2.2) */}
             <div
               ref={containerRef}
               className="relative overflow-hidden"
               onMouseEnter={pause}
               onMouseLeave={resume}
+              onFocus={pause}
+              onBlur={resume}
               onTouchStart={handleTouchStart}
               onTouchEnd={handleTouchEnd}
               aria-label="Carrusel de testimonios"
@@ -272,13 +279,25 @@ export default function Testimonials() {
 
             {/* ── Navigation: dots + arrows ── */}
             {!showEmpty && totalCards > visibleCount && (
-              <div className="flex items-center justify-center gap-4 mt-8">
-                {/* Prev arrow */}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 'var(--space-md)', marginTop: 'var(--space-xl)' }}>
+                {/* Prev */}
                 <button
                   onClick={prev}
-                  className="w-9 h-9 rounded-full bg-white/[0.05] hover:bg-white/[0.1] border border-white/[0.08] hover:border-white/[0.15] flex items-center justify-center text-slate-400 hover:text-white transition-all duration-150 disabled:opacity-30 disabled:cursor-not-allowed"
-                  aria-label={copy.prevLabel}
                   disabled={currentIndex === 0}
+                  aria-label={copy.prevLabel}
+                  style={{
+                    width: 36, height: 36,
+                    borderRadius: '50%',
+                    background: 'var(--color-paper-2)',
+                    border: '1px solid var(--color-rule)',
+                    color: 'var(--color-muted)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    cursor: currentIndex === 0 ? 'not-allowed' : 'pointer',
+                    opacity: currentIndex === 0 ? 0.3 : 1,
+                    transition: 'color var(--dur-short) var(--ease-out), border-color var(--dur-short) var(--ease-out)',
+                  }}
+                  onMouseEnter={e => { if (currentIndex !== 0) { (e.currentTarget as HTMLElement).style.color = 'var(--color-ink)'; (e.currentTarget as HTMLElement).style.borderColor = 'var(--color-muted)' } }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = 'var(--color-muted)'; (e.currentTarget as HTMLElement).style.borderColor = 'var(--color-rule)' }}
                 >
                   <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                     <path d="M10 3L5 8l5 5" />
@@ -286,7 +305,7 @@ export default function Testimonials() {
                 </button>
 
                 {/* Dots */}
-                <div className="flex items-center gap-1.5" role="tablist" aria-label="Posición en el carrusel">
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }} role="tablist" aria-label="Posición en el carrusel">
                   {Array.from({ length: maxIndex + 1 }).map((_, i) => (
                     <button
                       key={i}
@@ -294,23 +313,41 @@ export default function Testimonials() {
                       aria-selected={i === currentIndex}
                       aria-label={`Ir a la posición ${i + 1}`}
                       onClick={() => goTo(i)}
-                      className={`
-                        rounded-full transition-all duration-200
-                        ${i === currentIndex
-                          ? 'w-5 h-2 bg-blue-500'
-                          : 'w-2 h-2 bg-white/[0.2] hover:bg-white/[0.35]'
-                        }
-                      `}
+                      style={{
+                        borderRadius: 'var(--radius-pill)',
+                        border: 'none',
+                        cursor: 'pointer',
+                        transition: 'all var(--dur-short) var(--ease-out)',
+                        background: i === currentIndex ? 'var(--color-accent)' : 'var(--color-rule)',
+                        width: i === currentIndex ? 20 : 8,
+                        height: 8,
+                        padding: 0,
+                        minHeight: '44px',
+                        display: 'flex',
+                        alignSelf: 'center',
+                      }}
                     />
                   ))}
                 </div>
 
-                {/* Next arrow */}
+                {/* Next */}
                 <button
                   onClick={next}
-                  className="w-9 h-9 rounded-full bg-white/[0.05] hover:bg-white/[0.1] border border-white/[0.08] hover:border-white/[0.15] flex items-center justify-center text-slate-400 hover:text-white transition-all duration-150 disabled:opacity-30 disabled:cursor-not-allowed"
-                  aria-label={copy.nextLabel}
                   disabled={currentIndex === maxIndex}
+                  aria-label={copy.nextLabel}
+                  style={{
+                    width: 36, height: 36,
+                    borderRadius: '50%',
+                    background: 'var(--color-paper-2)',
+                    border: '1px solid var(--color-rule)',
+                    color: 'var(--color-muted)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    cursor: currentIndex === maxIndex ? 'not-allowed' : 'pointer',
+                    opacity: currentIndex === maxIndex ? 0.3 : 1,
+                    transition: 'color var(--dur-short) var(--ease-out), border-color var(--dur-short) var(--ease-out)',
+                  }}
+                  onMouseEnter={e => { if (currentIndex !== maxIndex) { (e.currentTarget as HTMLElement).style.color = 'var(--color-ink)'; (e.currentTarget as HTMLElement).style.borderColor = 'var(--color-muted)' } }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = 'var(--color-muted)'; (e.currentTarget as HTMLElement).style.borderColor = 'var(--color-rule)' }}
                 >
                   <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                     <path d="M6 3l5 5-5 5" />
@@ -322,30 +359,22 @@ export default function Testimonials() {
 
           {/* ── CTA: leave testimonial ── */}
           <motion.div
-            initial={{ opacity: 0, y: 12 }}
+            initial={{ opacity: 0, y: 10 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.5, delay: 0.35, ease: [0.25, 0.4, 0.25, 1] }}
-            className="mt-10 flex justify-center"
+            transition={{ duration: 0.5, delay: 0.32, ease: [0.25, 0.4, 0.25, 1] }}
+            style={{ marginTop: 'var(--space-xl)', display: 'flex', justifyContent: 'center' }}
           >
-            <MagneticButton
+            <button
               onClick={() => setFormOpen(true)}
-              className="
-                inline-flex items-center gap-2 px-6 py-3 rounded-2xl
-                bg-white/[0.04] hover:bg-white/[0.08]
-                border border-white/[0.1] hover:border-blue-500/[0.35]
-                text-slate-300 hover:text-white
-                text-sm font-medium
-                transition-all duration-200
-                shadow-[0_0_0_0_rgba(59,130,246,0)] hover:shadow-[0_0_20px_-4px_rgba(59,130,246,0.28)]
-                min-h-[44px]
-              "
-              ariaLabel="Abrir formulario de testimonio"
+              className="btn-secondary"
+              style={{ display: 'inline-flex', alignItems: 'center', gap: 'var(--space-xs)' }}
+              aria-label="Abrir formulario de testimonio"
             >
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                 <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
               </svg>
               {copy.cta}
-            </MagneticButton>
+            </button>
           </motion.div>
         </div>
       </section>

@@ -1,29 +1,11 @@
 import type { Metadata, Viewport } from 'next'
-import { Inter, Poppins } from 'next/font/google'
 import './globals.css'
 import { LanguageProvider } from '@/lib/i18n'
-import AuroraBackground from '@/components/AuroraBackground'
 import { JsonLd } from '@/components/JsonLd'
 import { LangSync } from '@/components/LangSync'
 import WhatsAppButton from '@/components/WhatsAppButton'
 import { Analytics } from '@vercel/analytics/next'
-
-// ─── Fonts ────────────────────────────────────────────────────────────────────
-
-const inter = Inter({
-  subsets: ['latin'],
-  variable: '--font-inter',
-  display: 'swap',
-  preload: true,
-})
-
-const poppins = Poppins({
-  weight: ['400', '500', '600', '700', '800', '900'],
-  subsets: ['latin'],
-  variable: '--font-poppins',
-  display: 'swap',
-  preload: true,
-})
+// Fonts loaded via Fontshare <link> tags in <head> — see layout below
 
 // ─── Viewport ─────────────────────────────────────────────────────────────────
 
@@ -150,22 +132,26 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html
-      lang="es"
-      className={`dark ${inter.variable} ${poppins.variable} scroll-smooth`}
-    >
+    <html lang="es" className="scroll-smooth">
       <head>
-        {/* Preconnect para recursos externos — mejora LCP */}
+        {/* Fontshare — Cabinet Grotesk (display) + Switzer (body) */}
+        <link rel="preconnect" href="https://api.fontshare.com" />
+        <link
+          href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@800,700,500&f[]=switzer@400,500,600&display=swap"
+          rel="stylesheet"
+        />
+        {/* JetBrains Mono — mono/code outlier */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap"
+          rel="stylesheet"
+        />
         <link rel="dns-prefetch" href="https://qhfovdpuypnqudrtxpbe.supabase.co" />
-        {/* JSON-LD structured data */}
         <JsonLd />
       </head>
-      <body className="bg-[#08091a] text-slate-100 font-sans antialiased">
-        <AuroraBackground />
+      <body className="antialiased">
         <LanguageProvider>
-          {/* Sincroniza el atributo html[lang] con el idioma activo del usuario */}
           <LangSync />
           {children}
           <WhatsAppButton />

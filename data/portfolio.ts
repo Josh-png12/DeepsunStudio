@@ -337,44 +337,44 @@ export const projects: Project[] = [
 export const experience: ExperienceItem[] = [
   {
     company: { en: "LUFE Art Tattoo Studio", es: "Estudio LUFE Art Tattoo" },
-    role: { en: "Freelance Web Developer", es: "Desarrollador Web Freelance" },
+    role: { en: "Web Development — DeepSun Studio", es: "Desarrollo Web — DeepSun Studio" },
     period: "2024",
     description: {
-      en: "Designed and built a complete commercial website from scratch — gallery, artist profiles, booking integration, and local SEO to establish the studio's digital brand presence.",
-      es: "Diseñé y construí un sitio web comercial completo desde cero — galería, perfiles de artistas, integración de reservas y SEO local para establecer la presencia de marca digital del estudio.",
+      en: "Built a complete commercial website from zero: animated gallery, artist profiles, booking flow, and local SEO. The studio had no digital presence; we built one that converts.",
+      es: "Construimos un sitio web comercial completo desde cero: galería animada, perfiles de artistas, flujo de reservas y SEO local. El estudio no tenía presencia digital; construimos una que convierte.",
     },
     highlights: ["Mobile-first design", "Local SEO", "Booking integration"],
     type: "freelance",
   },
   {
     company: { en: "Premios La Cima", es: "Premios La Cima" },
-    role: { en: "Frontend Engineer", es: "Ingeniero Frontend" },
+    role: { en: "Platform Development — DeepSun Studio", es: "Desarrollo de Plataforma — DeepSun Studio" },
     period: "2024",
     description: {
-      en: "Built the official platform for a prestigious institutional awards ceremony — dynamic nominee management, countdown system, and a premium UI that matched the event's brand.",
-      es: "Construí la plataforma oficial para una ceremonia de premios institucional de prestigio — gestión dinámica de nominados, sistema de cuenta regresiva y UI premium acorde a la marca del evento.",
+      en: "Built the official platform for a prestigious awards ceremony — nominee management, countdown system, and UI that matched the event's brand. Organizers needed zero developer dependency for content updates.",
+      es: "Construimos la plataforma oficial para una ceremonia de premios de prestigio — gestión de nominados, sistema de cuenta regresiva y UI acorde a la marca. Los organizadores no necesitan un desarrollador para actualizar contenido.",
     },
     highlights: ["Event platform", "Dynamic content", "Premium UI/UX"],
     type: "contract",
   },
   {
     company: { en: "Fundación Vida Amor y Salud", es: "Fundación Vida Amor y Salud" },
-    role: { en: "Freelance Full Stack Developer", es: "Desarrollador Full Stack Freelance" },
+    role: { en: "Full Stack Development — DeepSun Studio", es: "Desarrollo Full Stack — DeepSun Studio" },
     period: "2023",
     description: {
-      en: "Built the foundation's complete digital infrastructure — website, program pages, donation flows, and volunteer management — from zero to production.",
-      es: "Construí la infraestructura digital completa de la fundación — sitio web, páginas de programas, flujos de donación y gestión de voluntarios — desde cero hasta producción.",
+      en: "Built the foundation's complete digital infrastructure — website, program pages, donation flows, and volunteer signup — from zero to production. They had no digital presence; we built the whole thing.",
+      es: "Construimos la infraestructura digital completa de la fundación — sitio web, páginas de programas, flujos de donación y registro de voluntarios — de cero a producción. No tenían presencia digital; construimos todo.",
     },
     highlights: ["Nonprofit platform", "Donation system", "Accessible design"],
     type: "freelance",
   },
   {
     company: { en: "Personal Engineering Projects", es: "Proyectos de Ingeniería Personales" },
-    role: { en: "Full Stack Developer", es: "Desarrollador Full Stack" },
-    period: "2023 – Present",
+    role: { en: "Systems Engineering", es: "Ingeniería de Sistemas" },
+    period: "2023 – Presente",
     description: {
-      en: "Independently architected and built production-grade systems: automation desktop tools, backend microservices, and full administrative platforms — always focusing on real-world utility.",
-      es: "Diseñé y construí de forma independiente sistemas de nivel producción: herramientas de escritorio de automatización, microservicios backend y plataformas administrativas completas — siempre enfocado en utilidad real.",
+      en: "Designed and built production-grade systems for internal use and technical validation: automation tools with GUI, backend microservices, and a full administrative platform (SIEPA) that replaced an institution's entire manual workflow.",
+      es: "Diseñé y construí sistemas de nivel producción para uso propio y validación técnica: herramientas de automatización con GUI, microservicios backend y una plataforma administrativa completa (SIEPA) que reemplazó el flujo manual completo de una institución.",
     },
     highlights: ["System architecture", "Backend APIs", "Automation tools"],
     type: "personal",
@@ -423,8 +423,8 @@ export const stats: Stats = {
 
 export const personalInfo = {
   name: "Joshua Navarro",
-  title: "Desarrollador Web Freelance",
-  subtitle: "Sitios web · Automatizaciones · Sistemas digitales",
+  title: "Fundador, DeepSun Studio",
+  subtitle: "Desarrollo web · Sistemas · Automatizaciones",
   availability: "Disponible para nuevos proyectos",
   location: "Riohacha, La Guajira, Colombia",
   experience: "3+ años",

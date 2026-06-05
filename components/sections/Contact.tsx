@@ -1,9 +1,18 @@
 "use client";
 
+/*
+ * Contact — token-consistent, Hallmark midnight+amber
+ * Removed: AvatarStack (fake initials), glass-card, blue accent classes
+ * Added: amber accent on WhatsApp border, hm-card surfaces, btn-primary submit
+ * Copy: specific verbs, no startup clichés
+ */
+
 import { useRef, useState } from "react";
-import { motion, useInView, AnimatePresence } from "framer-motion";
+import { motion, useInView, AnimatePresence, useReducedMotion } from "framer-motion";
 import { useLanguage } from "@/lib/i18n";
-import { MagneticButton } from "@/lib/MagneticButton";
+import { staggerContainer, staggerItem, staggerItemReduced, EASE_OUT, DUR } from "@/lib/motion";
+import { CursorCard } from "@/components/CursorCard";
+import { SectionChip } from "@/components/SectionChip";
 
 type FormState = "idle" | "sending" | "success" | "error";
 
@@ -34,47 +43,14 @@ function IconLinkedIn() {
   );
 }
 
-// ─── Confetti ─────────────────────────────────────────────────────────────────
-
-const CONFETTI_COLORS = ["#3b82f6", "#a78bfa", "#34d399", "#fbbf24", "#f472b6", "#22d3ee"];
-
-function Confetti({ show }: { show: boolean }) {
-  if (!show) return null;
-  return (
-    <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl z-10" aria-hidden="true">
-      {CONFETTI_COLORS.map((color, i) => (
-        <motion.div
-          key={i}
-          className="absolute w-2 h-2 rounded-sm"
-          style={{ background: color, left: `${8 + i * 15}%`, top: "18%" }}
-          initial={{ y: 0, opacity: 1, rotate: 0 }}
-          animate={{
-            y: [0, -20, 180],
-            opacity: [1, 1, 0],
-            rotate: (i % 2 === 0 ? 1 : -1) * 240,
-            x: [(i % 3 === 0 ? 1 : -1) * (8 + i * 4), 0],
-          }}
-          transition={{ duration: 1.4, delay: i * 0.08, ease: "easeIn" }}
-        />
-      ))}
-    </div>
-  );
-}
-
 // ─── Animated checkmark ───────────────────────────────────────────────────────
 
 function CheckMark() {
   return (
-    <motion.svg
-      width="20"
-      height="20"
-      viewBox="0 0 20 20"
-      className="flex-shrink-0"
-      aria-hidden="true"
-    >
+    <motion.svg width="20" height="20" viewBox="0 0 20 20" className="flex-shrink-0" aria-hidden="true">
       <motion.path
         d="M4 10.5l4.5 4.5 7.5-8"
-        stroke="#34d399"
+        stroke="oklch(72% 0.15 150)"
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -91,43 +67,46 @@ function CheckMark() {
 
 interface RippleEntry { id: number; x: number; y: number }
 
-function RippleButton({
-  type,
-  disabled,
-  children,
-  className,
-}: {
-  type?: "submit" | "button" | "reset";
+function RippleSubmit({ disabled, children, sending }: {
   disabled?: boolean;
   children: React.ReactNode;
-  className?: string;
+  sending?: boolean;
 }) {
   const [ripples, setRipples] = useState<RippleEntry[]>([]);
 
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
     const id = Date.now();
-    setRipples((prev) => [...prev, { id, x: e.clientX - rect.left, y: e.clientY - rect.top }]);
-    setTimeout(() => setRipples((prev) => prev.filter((r) => r.id !== id)), 700);
+    setRipples(prev => [...prev, { id, x: e.clientX - rect.left, y: e.clientY - rect.top }]);
+    setTimeout(() => setRipples(prev => prev.filter(r => r.id !== id)), 700);
   };
 
   return (
     <button
-      type={type ?? "button"}
+      type="submit"
       disabled={disabled}
       onClick={handleClick}
-      className={`relative overflow-hidden ${className ?? ""}`}
+      className="btn-primary"
+      style={{
+        width: '100%',
+        justifyContent: 'center',
+        position: 'relative',
+        overflow: 'hidden',
+        opacity: disabled ? 0.5 : 1,
+        cursor: disabled ? 'not-allowed' : 'pointer',
+        transform: 'none',
+      }}
     >
-      {ripples.map((r) => (
+      {ripples.map(r => (
         <span
           key={r.id}
-          className="absolute rounded-full bg-white/20 pointer-events-none"
+          className="absolute rounded-full pointer-events-none"
           style={{
-            left: r.x,
-            top: r.y,
-            width: 220,
-            height: 220,
-            animation: "ripple-out 0.7s ease-out forwards",
+            left: r.x, top: r.y,
+            width: 220, height: 220,
+            background: 'oklch(100% 0 0 / 0.15)',
+            animation: 'ripple-out 0.7s ease-out forwards',
+            transform: 'translate(-50%, -50%)',
           }}
           aria-hidden="true"
         />
@@ -139,35 +118,48 @@ function RippleButton({
 
 // ─── Floating label input ─────────────────────────────────────────────────────
 
-function FloatingInput({
-  id, name, type = "text", required, label,
-}: {
+function FloatingInput({ id, name, type = "text", required, label }: {
   id: string; name: string; type?: string; required?: boolean; label: string;
 }) {
   return (
-    <div className="relative">
+    <div style={{ position: 'relative' }}>
       <input
         id={id}
         type={type}
         name={name}
         required={required}
         placeholder=" "
-        className="
-          peer w-full px-4 pt-6 pb-2 bg-white/[0.04] border border-white/[0.08] rounded-xl
-          text-slate-200 placeholder-transparent text-sm
-          focus:outline-none focus:border-blue-500/60
-          focus:shadow-[0_0_0_3px_rgba(59,130,246,0.1)]
-          transition-all min-h-[56px]
-        "
+        style={{
+          width: '100%',
+          padding: '24px 16px 8px',
+          background: 'var(--color-paper)',
+          border: '1px solid var(--color-rule)',
+          borderRadius: 'var(--radius-card)',
+          color: 'var(--color-ink)',
+          fontSize: 'var(--text-base)',
+          fontFamily: 'var(--font-body)',
+          outline: 'none',
+          minHeight: '56px',
+          transition: 'border-color var(--dur-short) var(--ease-out)',
+          boxSizing: 'border-box',
+        }}
+        onFocus={e => { e.currentTarget.style.borderColor = 'var(--color-accent)' }}
+        onBlur={e => { e.currentTarget.style.borderColor = 'var(--color-rule)' }}
+        className="peer"
       />
       <label
         htmlFor={id}
-        className="
-          absolute left-4 top-4 text-slate-500 text-sm transition-all duration-200 pointer-events-none select-none
-          peer-focus:top-1.5 peer-focus:text-[10px] peer-focus:text-blue-400 peer-focus:font-semibold
-          peer-[:not(:placeholder-shown)]:top-1.5 peer-[:not(:placeholder-shown)]:text-[10px]
-          peer-[:not(:placeholder-shown)]:text-slate-400 peer-[:not(:placeholder-shown)]:font-semibold
-        "
+        style={{
+          position: 'absolute',
+          left: 16,
+          top: 16,
+          color: 'var(--color-faint)',
+          fontSize: 'var(--text-base)',
+          pointerEvents: 'none',
+          transition: 'top 0.15s, font-size 0.15s, color 0.15s',
+          userSelect: 'none',
+        }}
+        className="peer-focus:top-[6px] peer-focus:text-[10px] peer-focus:[color:var(--color-accent)] peer-[:not(:placeholder-shown)]:top-[6px] peer-[:not(:placeholder-shown)]:text-[10px] peer-[:not(:placeholder-shown)]:[color:var(--color-muted)]"
       >
         {label}
       </label>
@@ -175,39 +167,34 @@ function FloatingInput({
   );
 }
 
-// ─── Avatar stack ─────────────────────────────────────────────────────────────
+// ─── Contact links ────────────────────────────────────────────────────────────
 
-const AVATAR_CONFIG = [
-  { initials: "MR", color: "bg-blue-600"   },
-  { initials: "CL", color: "bg-violet-600" },
-  { initials: "JP", color: "bg-emerald-600"},
-  { initials: "AL", color: "bg-amber-600"  },
+const CONTACT_LINKS = [
+  {
+    label: "WhatsApp",
+    sublabel: "+57 319 714 9647",
+    href: "https://wa.me/573197149647",
+    icon: <IconWhatsApp />,
+    accentColor: 'oklch(72% 0.15 150)',  // green
+    isWhatsApp: true,
+  },
+  {
+    label: "joshua@deepsunstudio.com",
+    sublabel: "Correo",
+    href: "mailto:joshua@deepsunstudio.com",
+    icon: <IconEmail />,
+    accentColor: 'var(--color-accent)',
+    isWhatsApp: false,
+  },
+  {
+    label: "LinkedIn",
+    sublabel: "joshua-navarro-rad",
+    href: "https://www.linkedin.com/in/joshua-navarro-rad-06ab18258",
+    icon: <IconLinkedIn />,
+    accentColor: 'var(--color-accent)',
+    isWhatsApp: false,
+  },
 ];
-
-function AvatarStack() {
-  return (
-    <div className="flex items-center gap-3 mt-6 pt-5 border-t border-white/[0.06]">
-      <div className="flex -space-x-2.5">
-        {AVATAR_CONFIG.map(({ initials, color }, i) => (
-          <motion.div
-            key={initials}
-            initial={{ opacity: 0, x: -8 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: i * 0.08, duration: 0.3 }}
-            className={`w-8 h-8 rounded-full ${color} border-2 border-[#08091a] flex items-center justify-center text-[9px] font-bold text-white select-none flex-shrink-0`}
-            title={initials}
-          >
-            {initials}
-          </motion.div>
-        ))}
-      </div>
-      <p className="text-slate-500 text-xs leading-snug">
-        Más de 6 negocios ya confían en{" "}
-        <span className="text-slate-400 font-medium">Joshua</span>
-      </p>
-    </div>
-  );
-}
 
 // ─── Section ──────────────────────────────────────────────────────────────────
 
@@ -216,206 +203,213 @@ export default function Contact() {
   const ref = useRef<HTMLElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
   const inView = useInView(ref, { once: true, margin: "-80px" });
-
   const [formState, setFormState] = useState<FormState>("idle");
-  const [showConfetti, setShowConfetti] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formRef.current) return;
     setFormState("sending");
-
-    const data = new FormData(formRef.current);
-    void { name: data.get("name"), email: data.get("email"), message: data.get("message") };
-
-    await new Promise((r) => setTimeout(r, 1200));
-
+    await new Promise(r => setTimeout(r, 1200));
     try {
-      // Uncomment to wire up EmailJS:
+      // Wire up EmailJS here when ready:
       // const emailjs = (await import('@emailjs/browser')).default
-      // await emailjs.sendForm('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', formRef.current!, 'YOUR_PUBLIC_KEY')
+      // await emailjs.sendForm('SERVICE_ID', 'TEMPLATE_ID', formRef.current!, 'PUBLIC_KEY')
       setFormState("success");
-      setShowConfetti(true);
       formRef.current.reset();
-      setTimeout(() => setShowConfetti(false), 2000);
     } catch {
       setFormState("error");
     }
   };
 
-  const links = [
-    {
-      label: "WhatsApp",
-      sublabel: "+57 319 714 9647",
-      href: "https://wa.me/573197149647",
-      icon: <IconWhatsApp />,
-      isWhatsApp: true,
+  const prefersReduced = useReducedMotion();
+
+  const fadeUp = (delay: number) => ({
+    initial: { opacity: 0, y: prefersReduced ? 0 : 16 },
+    animate: inView ? { opacity: 1, y: 0 } : {},
+    transition: {
+      duration: prefersReduced ? 0.01 : 0.45,
+      delay: prefersReduced ? 0 : delay,
+      ease: EASE_OUT as unknown as string,
     },
-    {
-      label: "joshua@deepsunstudio.com",
-      sublabel: "Email",
-      href: "mailto:joshua@deepsunstudio.com",
-      icon: <IconEmail />,
-      isWhatsApp: false,
-    },
-    {
-      label: "LinkedIn",
-      sublabel: "joshua-navarro-rad",
-      href: "https://www.linkedin.com/in/joshua-navarro-rad-06ab18258",
-      icon: <IconLinkedIn />,
-      isWhatsApp: false,
-    },
-  ];
+  });
 
   return (
-    <section id="contact" ref={ref} className="relative py-32 overflow-hidden">
-      <div className="section-divider mb-32 -mt-16" />
+    <section
+      id="contact"
+      ref={ref}
+      style={{
+        paddingBlock: 'var(--space-4xl)',
+        paddingInline: 'var(--page-gutter)',
+        background: 'var(--color-paper)',
+      }}
+    >
+      <div className="hm-rule" style={{ marginBottom: 'var(--space-4xl)' }} />
 
-      <div
-        className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[700px] h-[400px] bg-blue-600/[0.05] rounded-full blur-[120px] pointer-events-none"
-        aria-hidden="true"
-      />
+      <div style={{ maxWidth: 'var(--page-max)', margin: '0 auto' }}>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 340px), 1fr))',
+            gap: 'var(--space-3xl)',
+          }}
+        >
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid lg:grid-cols-2 gap-16 xl:gap-24">
+          {/* ── Left: copy + contact methods ── */}
+          <motion.div {...fadeUp(0)}>
+            <SectionChip style={{ marginBottom: 'var(--space-xl)' }}>
+              {t("contact.tag")}
+            </SectionChip>
 
-          {/* ── Left: Text + Links ── */}
-          <motion.div
-            initial={{ opacity: 0, y: 20, filter: "blur(4px)" }}
-            animate={inView ? { opacity: 1, y: 0, filter: "blur(0px)" } : {}}
-            transition={{ duration: 0.65, ease: [0.25, 0.4, 0.25, 1] }}
-          >
-            <div className="tag-pill mb-6">{t("contact.tag")}</div>
-
-            <h2
-              className="font-heading font-bold text-white leading-tight tracking-tight mb-5"
-              style={{ fontSize: "clamp(28px, 4vw, 52px)" }}
-            >
+            <h2 className="hm-heading" style={{ marginBottom: 'var(--space-md)' }}>
               {t("contact.title")}
             </h2>
-            <p className="text-slate-400 text-[17px] leading-relaxed mb-10 max-w-md">
+            <p
+              className="hm-lead"
+              style={{ marginBottom: 'var(--space-2xl)', maxWidth: '44ch' }}
+            >
               {t("contact.subtitle")}
             </p>
 
-            {/* Contact links */}
-            <div className="space-y-3">
-              {links.map(({ label, sublabel, href, icon, isWhatsApp }) => (
-                <a
+            {/* Contact links — stagger + cursor spotlight */}
+            <motion.div
+              style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-sm)' }}
+              variants={prefersReduced ? undefined : staggerContainer(0.12)}
+              initial="hidden"
+              animate={inView ? "show" : "hidden"}
+            >
+              {CONTACT_LINKS.map(({ label, sublabel, href, icon, accentColor, isWhatsApp }) => (
+                <motion.div
                   key={label}
+                  variants={prefersReduced ? staggerItemReduced : staggerItem}
+                  whileHover={prefersReduced ? undefined : { y: -2 }}
+                  transition={{ duration: DUR.short, ease: EASE_OUT }}
+                >
+                <CursorCard style={{ borderRadius: 'var(--radius-card)' }}>
+                <a
                   href={href}
                   target={href.startsWith("http") ? "_blank" : undefined}
                   rel={href.startsWith("http") ? "noopener noreferrer" : undefined}
-                  className={`
-                    flex items-center gap-4 p-4 glass-card rounded-xl
-                    border transition-all group shine cursor-pointer
-                    ${isWhatsApp
-                      ? "border-emerald-500/[0.2] hover:border-emerald-500/[0.35] wa-pulse"
-                      : "border-white/[0.07] hover:border-white/[0.14]"
-                    }
-                  `}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 'var(--space-md)',
+                    padding: 'var(--space-md)',
+                    background: 'var(--color-surface)',
+                    border: `1px solid var(--color-rule)`,
+                    borderRadius: 'var(--radius-card)',
+                    textDecoration: 'none',
+                    transition: 'border-color var(--dur-short) var(--ease-out)',
+                    cursor: 'pointer',
+                    minHeight: '64px',
+                  }}
+                  onMouseEnter={e => {
+                    e.currentTarget.style.borderColor = isWhatsApp
+                      ? 'oklch(72% 0.15 150 / 0.4)'
+                      : 'var(--color-accent-dim)'
+                  }}
+                  onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--color-rule)' }}
                 >
-                  <div
-                    className={`flex-shrink-0 transition-colors ${
-                      isWhatsApp
-                        ? "text-emerald-400"
-                        : "text-slate-500 group-hover:text-blue-400"
-                    }`}
-                  >
+                  <span style={{ color: accentColor, flexShrink: 0 }}>
                     {icon}
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-slate-300 group-hover:text-white transition-colors text-sm font-medium truncate">
+                  </span>
+                  <div style={{ minWidth: 0 }}>
+                    <p style={{
+                      color: 'var(--color-ink)',
+                      fontSize: 'var(--text-sm)',
+                      fontWeight: 500,
+                      fontFamily: 'var(--font-body)',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                    }}>
                       {label}
                     </p>
                     {sublabel && label !== sublabel && (
-                      <p className="text-slate-600 text-xs mt-0.5">{sublabel}</p>
+                      <p style={{ color: 'var(--color-faint)', fontSize: 'var(--text-xs)' }}>
+                        {sublabel}
+                      </p>
                     )}
                   </div>
                   <svg
-                    className="ml-auto text-slate-700 group-hover:text-slate-400 transition-colors flex-shrink-0"
+                    style={{ marginLeft: 'auto', color: 'var(--color-faint)', flexShrink: 0 }}
                     width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"
                   >
                     <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                 </a>
+                </CursorCard>
+                </motion.div>
               ))}
-            </div>
-
-            <AvatarStack />
+            </motion.div>
           </motion.div>
 
-          {/* ── Right: Form ── */}
-          <motion.div
-            initial={{ opacity: 0, y: 20, filter: "blur(4px)" }}
-            animate={inView ? { opacity: 1, y: 0, filter: "blur(0px)" } : {}}
-            transition={{ duration: 0.65, delay: 0.12, ease: [0.25, 0.4, 0.25, 1] }}
-          >
+          {/* ── Right: form ── */}
+          <motion.div {...fadeUp(0.12)}>
+            <CursorCard style={{ borderRadius: 'var(--radius-card)' }}>
             <form
               ref={formRef}
               onSubmit={handleSubmit}
-              className="glass-card rounded-2xl p-7 space-y-5 relative"
+              className="hm-card"
+              style={{ padding: 'var(--space-2xl)', display: 'flex', flexDirection: 'column', gap: 'var(--space-md)', position: 'relative', overflow: 'hidden' }}
             >
-              {/* Confetti overlay */}
-              <Confetti show={showConfetti} />
+              <FloatingInput id="contact-name"    name="name"    required label={t("contact.form.name")} />
+              <FloatingInput id="contact-email"   name="email"   type="email" required label={t("contact.form.email")} />
 
-              {/* Floating label inputs */}
-              <FloatingInput
-                id="contact-name"
-                name="name"
-                required
-                label={t("contact.form.name")}
-              />
-              <FloatingInput
-                id="contact-email"
-                name="email"
-                type="email"
-                required
-                label={t("contact.form.email")}
-              />
-
-              {/* Textarea with floating label */}
-              <div className="relative">
+              {/* Textarea */}
+              <div style={{ position: 'relative' }}>
                 <textarea
                   id="contact-message"
                   name="message"
                   required
                   rows={5}
                   placeholder=" "
-                  className="
-                    peer w-full px-4 pt-6 pb-2 bg-white/[0.04] border border-white/[0.08] rounded-xl
-                    text-slate-200 placeholder-transparent text-sm
-                    focus:outline-none focus:border-blue-500/60
-                    focus:shadow-[0_0_0_3px_rgba(59,130,246,0.1)]
-                    transition-all resize-none
-                  "
+                  style={{
+                    width: '100%',
+                    padding: '24px 16px 8px',
+                    background: 'var(--color-paper)',
+                    border: '1px solid var(--color-rule)',
+                    borderRadius: 'var(--radius-card)',
+                    color: 'var(--color-ink)',
+                    fontSize: 'var(--text-base)',
+                    fontFamily: 'var(--font-body)',
+                    outline: 'none',
+                    resize: 'none',
+                    transition: 'border-color var(--dur-short) var(--ease-out)',
+                    boxSizing: 'border-box',
+                  }}
+                  onFocus={e => { e.currentTarget.style.borderColor = 'var(--color-accent)' }}
+                  onBlur={e => { e.currentTarget.style.borderColor = 'var(--color-rule)' }}
+                  className="peer"
                 />
                 <label
                   htmlFor="contact-message"
-                  className="
-                    absolute left-4 top-4 text-slate-500 text-sm transition-all duration-200 pointer-events-none select-none
-                    peer-focus:top-1.5 peer-focus:text-[10px] peer-focus:text-blue-400 peer-focus:font-semibold
-                    peer-[:not(:placeholder-shown)]:top-1.5 peer-[:not(:placeholder-shown)]:text-[10px]
-                    peer-[:not(:placeholder-shown)]:text-slate-400 peer-[:not(:placeholder-shown)]:font-semibold
-                  "
+                  style={{
+                    position: 'absolute',
+                    left: 16, top: 16,
+                    color: 'var(--color-faint)',
+                    fontSize: 'var(--text-base)',
+                    pointerEvents: 'none',
+                    userSelect: 'none',
+                  }}
+                  className="peer-focus:top-[6px] peer-focus:text-[10px] peer-focus:[color:var(--color-accent)] peer-[:not(:placeholder-shown)]:top-[6px] peer-[:not(:placeholder-shown)]:text-[10px] peer-[:not(:placeholder-shown)]:[color:var(--color-muted)]"
                 >
                   {t("contact.form.message")}
                 </label>
               </div>
 
-              {/* Placeholder hint */}
-              <p className="text-slate-600 text-[11px] -mt-2 px-1">
+              <p style={{ color: 'var(--color-faint)', fontSize: 'var(--text-xs)', marginTop: 'calc(var(--space-xs) * -1)' }}>
                 {t("contact.form.message.placeholder")}
               </p>
 
-              {/* Status messages */}
+              {/* Status */}
               <AnimatePresence mode="wait">
                 {formState === "success" && (
                   <motion.p
                     key="success"
-                    initial={{ opacity: 0, y: -6 }}
+                    initial={{ opacity: 0, y: -4 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0 }}
-                    className="text-emerald-400 text-sm font-medium flex items-center gap-2"
+                    style={{ color: 'oklch(72% 0.15 150)', fontSize: 'var(--text-sm)', fontWeight: 500, display: 'flex', alignItems: 'center', gap: 'var(--space-xs)' }}
                   >
                     <CheckMark />
                     {t("contact.form.success")}
@@ -424,27 +418,21 @@ export default function Contact() {
                 {formState === "error" && (
                   <motion.p
                     key="error"
-                    initial={{ opacity: 0, y: -6 }}
+                    initial={{ opacity: 0, y: -4 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0 }}
-                    className="text-rose-400 text-sm font-medium"
+                    style={{ color: 'var(--color-error)', fontSize: 'var(--text-sm)', fontWeight: 500 }}
                   >
                     {t("contact.form.error")}
                   </motion.p>
                 )}
               </AnimatePresence>
 
-              {/* Ripple submit button */}
-              <RippleButton
-                type="submit"
-                disabled={formState === "sending" || formState === "success"}
-                className="w-full py-3.5 bg-blue-500 hover:bg-blue-400 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold rounded-xl transition-all duration-200 text-sm shadow-[0_0_20px_rgba(59,130,246,0.3)] hover:shadow-[0_0_28px_rgba(59,130,246,0.5)] min-h-[44px]"
-              >
-                {formState === "sending"
-                  ? t("contact.form.sending")
-                  : t("contact.form.submit")}
-              </RippleButton>
+              <RippleSubmit disabled={formState === "sending" || formState === "success"} sending={formState === "sending"}>
+                {formState === "sending" ? t("contact.form.sending") : t("contact.form.submit")}
+              </RippleSubmit>
             </form>
+            </CursorCard>
           </motion.div>
         </div>
       </div>
