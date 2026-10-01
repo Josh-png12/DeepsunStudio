@@ -1,0 +1,16 @@
+import { PageHeader, StatusBadge } from '@/components/portal/PortalUI'
+import { createTransactionAction } from '@/lib/portal/actions'
+import { formatDate, formatMoney } from '@/lib/portal/format'
+import { projectAcceptsFinancials } from '@/lib/portal/project-tracking'
+import { getAgreementData } from '@/lib/portal/queries'
+
+export default async function AdminTransactionsPage() {
+  const { viewer, projects, transactions } = await getAgreementData()
+  const names = new Map(projects.map((item) => [item.id, item.name]))
+  const eligibleProjects = projects.filter((item) => projectAcceptsFinancials(item.status))
+  const today = new Date().toISOString().slice(0,10)
+  return <><PageHeader title="Movimientos" description="Registra ingresos efectivamente recibidos, costos, devoluciones y ajustes. Un movimiento confirmado es inmutable."/><div className="portal-admin-grid">
+    <form action={createTransactionAction} className="portal-form portal-admin-form"><h2>Confirmar movimiento</h2><label>Acuerdo<select name="agreement_id" required>{viewer.agreements.map((item) => <option value={item.id} key={item.id}>{item.name}</option>)}</select></label><label>Proyecto<select name="project_id"><option value="">Sin proyecto</option>{eligibleProjects.map((item) => <option value={item.id} key={item.id}>{item.name}</option>)}</select></label><p className="portal-form-hint">Las oportunidades comerciales no aparecen hasta pasar a contratado.</p><div className="portal-form-grid"><label>Tipo<select name="type"><option value="income">Ingreso recibido</option><option value="cost">Costo directo</option><option value="refund">Devolución</option><option value="chargeback">Reverso</option><option value="adjustment">Ajuste</option></select></label><label>Estado<select name="status"><option value="draft">Borrador</option><option value="pending">Pendiente</option><option value="confirmed">Confirmado</option></select></label><label>Valor<input name="amount" type="number" step="0.01" required/></label><label>Moneda<input name="currency" defaultValue="COP" maxLength={3} required/></label><label>Fecha<input name="effective_date" type="date" defaultValue={today} required/></label></div><label>Concepto<input name="description" required/></label><label>Motivo de ajuste o corrección<textarea name="reason"/></label><p className="portal-confirm-copy">El movimiento será visible al inversionista cuando esté confirmado. Para corregirlo, registra un ajuste con motivo.</p><button className="portal-button portal-button-primary" type="submit">Guardar movimiento</button></form>
+    <div className="portal-table-wrap"><table className="portal-table"><thead><tr><th>Fecha</th><th>Proyecto</th><th>Concepto</th><th>Valor</th><th>Estado</th></tr></thead><tbody>{transactions.map((item) => <tr key={item.id}><td data-label="Fecha">{formatDate(item.effective_date)}</td><td data-label="Proyecto">{item.project_id ? names.get(item.project_id) : 'Acuerdo'}</td><td data-label="Concepto">{item.description}<br/><small>{item.type}</small></td><td data-label="Valor" className="portal-number">{formatMoney(item.amount)}</td><td data-label="Estado"><StatusBadge value={item.status}/></td></tr>)}</tbody></table></div>
+  </div></>
+}

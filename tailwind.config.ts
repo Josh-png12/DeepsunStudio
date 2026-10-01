@@ -10,11 +10,16 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['var(--font-inter)', 'system-ui', 'sans-serif'],
-        heading: ['var(--font-poppins)', 'system-ui', 'sans-serif'],
+        sans: ['var(--font-body)'],
+        heading: ['var(--font-display)'],
+        mono: ['var(--font-mono)'],
       },
       colors: {
-        accent: "#3b82f6",
+        accent: 'var(--color-accent)',
+        paper: 'var(--color-paper)',
+        surface: 'var(--color-surface)',
+        ink: 'var(--color-ink)',
+        muted: 'var(--color-muted)',
       },
       animation: {
         float: "float 6s ease-in-out infinite",

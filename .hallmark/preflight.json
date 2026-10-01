@@ -1,0 +1,10 @@
+{
+  "date": "2026-09-30",
+  "framework": "Next.js 16 App Router",
+  "fonts": ["Cabinet Grotesk", "Switzer", "JetBrains Mono"],
+  "palette": "DeepSun midnight with amber-gold signal accent",
+  "motion": "Framer Motion installed; portal motion kept minimal",
+  "spacing": "4pt semantic scale in tokens.css",
+  "preserve": ["public route structure", "existing private portal shell", "tokens.css", "EmailJS contact flow", "financial ledger"],
+  "introduce": ["Narrative Workflow project tracking", "editorial updates timeline", "milestone sequence", "investor visibility controls", "responsive project command center"]
+}

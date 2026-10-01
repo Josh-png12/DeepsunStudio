@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { supabase } from '@/lib/supabase'
+import { createClient } from '@/lib/supabase/client'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -184,7 +184,7 @@ export default function ContactForm() {
     if (!data.name || !data.email) return
     setStatus('sending')
     try {
-      const { error } = await supabase.from('leads').insert({
+      const { error } = await createClient().from('leads').insert({
         business_type: data.businessType,
         needs: data.needs,
         budget: data.budget,

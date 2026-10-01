@@ -31,6 +31,14 @@
   /* ── Semantic signals ────────────────────────────────────────────── */
   --color-success:  oklch(72% 0.15 150);
   --color-error:    oklch(62% 0.20  25);
+  --color-warning:  oklch(78% 0.13 75);
+  --color-info:     oklch(72% 0.10 245);
+  --color-accent-strong: oklch(81% 0.15 65);
+  --color-success-surface: oklch(22% 0.035 150);
+  --color-error-surface:   oklch(21% 0.045 25);
+  --color-warning-surface: oklch(22% 0.035 75);
+  --color-print-paper: oklch(98% 0.006 65);
+  --color-print-ink: oklch(18% 0.01 65);
 
   /* ── Fonts ───────────────────────────────────────────────────────── */
   --font-display: "Cabinet Grotesk", ui-sans-serif, system-ui, sans-serif;

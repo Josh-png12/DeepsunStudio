@@ -1,0 +1,10 @@
+import { createAgreementAction } from '@/lib/portal/actions'
+import { getAdminContext } from '@/lib/portal/queries'
+import { formatDate, formatMoney } from '@/lib/portal/format'
+import { PageHeader, StatusBadge } from '@/components/portal/PortalUI'
+
+export default async function AdminAgreementsPage() {
+  const { viewer, members } = await getAdminContext()
+  return <><PageHeader title="Acuerdos" description="Crea y consulta acuerdos. Los miembros se vinculan desde la sección Usuarios."/><div className="portal-admin-grid"><form action={createAgreementAction} className="portal-form portal-admin-form"><h2>Nuevo acuerdo</h2><label>Nombre<input name="name" required/></label><div className="portal-form-grid"><label>Aporte inicial<input name="initial_contribution" type="number" min="0" step="0.01" required/></label><label>Participación %<input name="participation_percentage" type="number" min="0.0001" max="100" step="0.0001" required/></label><label>Límite contractual<input name="contractual_cap" type="number" min="0" step="0.01" required/></label><label>Moneda<input name="currency" defaultValue="COP" maxLength={3} required/></label><label>Inicio<input name="start_date" type="date" required/></label><label>Final opcional<input name="end_date" type="date"/></label></div><label>Descripción<textarea name="description"/></label><button className="portal-button portal-button-primary" type="submit">Crear acuerdo</button></form><div className="portal-project-list">{viewer.agreements.map((agreement) => <article className="portal-panel" key={agreement.id}><StatusBadge value={agreement.status}/><h2>{agreement.name}</h2><dl className="portal-definition-list"><div><dt>Aporte inicial</dt><dd>{formatMoney(agreement.initial_contribution)}</dd></div><div><dt>Participación</dt><dd>{agreement.participation_percentage}%</dd></div><div><dt>Límite contractual</dt><dd>{formatMoney(agreement.contractual_cap)}</dd></div><div><dt>Inicio</dt><dd>{formatDate(agreement.start_date)}</dd></div><div><dt>Miembros</dt><dd>{members.filter((item) => item.agreement_id === agreement.id).length}</dd></div></dl></article>)}</div></div></>
+}
+

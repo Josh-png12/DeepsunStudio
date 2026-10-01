@@ -6,7 +6,7 @@ import {
 import { motion, AnimatePresence, useInView, useReducedMotion } from 'framer-motion'
 import { useLanguage } from '@/lib/i18n'
 import { useMediaQuery } from '@/hooks/useMediaQuery'
-import { supabase } from '@/lib/supabase'
+import { createClient } from '@/lib/supabase/client'
 import { TestimonialCard, TestimonialCardSkeleton } from '@/components/TestimonialCard'
 import { TestimonialForm } from '@/components/TestimonialForm'
 import { Lightbox } from '@/components/ui/Lightbox'
@@ -145,7 +145,7 @@ export default function Testimonials() {
   useEffect(() => {
     async function load() {
       setIsLoading(true)
-      const { data, error } = await supabase
+      const { data, error } = await createClient()
         .from('testimonials')
         .select('*')
         .eq('approved', true)

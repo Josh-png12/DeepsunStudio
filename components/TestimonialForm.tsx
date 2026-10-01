@@ -3,7 +3,7 @@
 import { useRef, useState, useCallback } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { StarRating } from '@/components/ui/StarRating'
-import { supabase } from '@/lib/supabase'
+import { createClient } from '@/lib/supabase/client'
 import { useMediaQuery } from '@/hooks/useMediaQuery'
 
 type FormState = 'idle' | 'submitting' | 'success' | 'error'
@@ -32,6 +32,7 @@ function formatBytes(bytes: number): string {
 // ─── Upload to Supabase Storage ───────────────────────────────────────────────
 
 async function uploadFile(file: File, bucket: string): Promise<string> {
+  const supabase = createClient()
   const ext = file.name.split('.').pop() ?? 'bin'
   const path = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
   const { data, error } = await supabase.storage.from(bucket).upload(path, file, { upsert: false })
@@ -407,7 +408,7 @@ function TestimonialFormContent({ onClose }: TestimonialFormContentProps) {
       if (resultFile) resultUrl = await uploadFile(resultFile, 'testimonial-results')
       if (videoFile) videoUrl = await uploadFile(videoFile, 'testimonial-videos')
 
-      const { error } = await supabase.from('testimonials').insert({
+      const { error } = await createClient().from('testimonials').insert({
         name: name.trim(),
         company: company.trim() || null,
         role: role.trim() || null,

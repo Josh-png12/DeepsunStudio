@@ -147,7 +147,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap"
           rel="stylesheet"
         />
-        <link rel="dns-prefetch" href="https://qhfovdpuypnqudrtxpbe.supabase.co" />
+        <link rel="dns-prefetch" href="https://svbvkgvtjksvjfvigiah.supabase.co" />
         <JsonLd />
       </head>
       <body className="antialiased">

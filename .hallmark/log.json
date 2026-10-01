@@ -1,0 +1,35 @@
+[
+  {
+    "date": "2026-09-30",
+    "macrostructure": "Narrative Workflow",
+    "theme": "custom-existing",
+    "theme_axes": "dark / grotesque-display / warm-accent",
+    "vibe": "private banking, investor relations, restrained enterprise",
+    "enrichment": "data and timeline visualization",
+    "nav": "N3-adapted shared application rail",
+    "footer": "Ft2",
+    "brief": "DeepSun private investor project tracking, milestones, visibility and monthly reporting"
+  },
+  {
+    "date": "2026-09-29",
+    "macrostructure": "Workbench",
+    "theme": "custom-existing",
+    "theme_axes": "dark / grotesque-display / warm-accent",
+    "vibe": "private banking, contractual ledger, restrained enterprise",
+    "enrichment": "none",
+    "nav": "N3-adapted application rail",
+    "footer": "Ft2",
+    "brief": "DeepSun Studio private contractual tracking and investment portal"
+  },
+  {
+    "date": "2026-06-05",
+    "macrostructure": "Split Studio",
+    "theme": "custom",
+    "theme_axes": "dark / grotesque-display / warm-accent",
+    "vibe": "deep midnight, amber-gold signal, cool-warm tension",
+    "enrichment": "none",
+    "nav": "N1b",
+    "footer": "Ft5",
+    "brief": "DeepSun Studio · software development and digital solutions agency · Colombia"
+  }
+]

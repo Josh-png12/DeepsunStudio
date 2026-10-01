@@ -2,18 +2,22 @@
 
 import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { usePathname } from 'next/navigation'
 
 const WA_URL =
   'https://wa.me/573971496476?text=' +
   encodeURIComponent('Hola Joshua, vi tu portafolio y me interesa hablar sobre un proyecto')
 
 export default function WhatsAppButton() {
+  const pathname = usePathname()
   const [visible, setVisible] = useState(false)
 
   useEffect(() => {
     const t = setTimeout(() => setVisible(true), 3000)
     return () => clearTimeout(t)
   }, [])
+
+  if (pathname.startsWith('/portal')) return null
 
   return (
     <AnimatePresence>
