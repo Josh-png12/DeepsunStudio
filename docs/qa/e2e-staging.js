@@ -6,10 +6,17 @@ const { chromium } = require('playwright-core')
 const fs = require('fs')
 const EDGE = 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe'
 const APP = process.env.APP_URL || 'http://127.0.0.1:3101'
-const API = process.env.STAGING_API || 'http://127.0.0.1:56421'
+const API = (process.env.STAGING_API || 'http://127.0.0.1:56421').replace(/\/+$/, '')
 const SERVICE = process.env.STAGING_SERVICE_KEY
 const seed = JSON.parse(fs.readFileSync(process.env.STAGING_SEED_JSON, 'utf8'))
-if (!/^http:\/\/(127\.0\.0\.1|localhost):\d+$/.test(API) || !/^http:\/\/(127\.0\.0\.1|localhost):\d+$/.test(APP) || !SERVICE) { console.error('ABORTED: local hosts only and STAGING_SERVICE_KEY required'); process.exit(2) }
+const PRODUCTION_REF = 'svbvkgvtjksvjfvigiah'
+const isLocal = (u) => /^http:\/\/(127\.0\.0\.1|localhost):\d+$/.test(u)
+const hostedRef = /^https:\/\/([a-z0-9]+)\.supabase\.co$/.exec(API)?.[1]
+// API: local stack, or a HOSTED STAGING project confirmed with STAGING_CONFIRM=<ref>. APP: local, or the Vercel PREVIEW URL (https).
+if (API.includes(PRODUCTION_REF) || APP.includes(PRODUCTION_REF)) { console.error('ABORTED: that is the production project'); process.exit(2) }
+if (!SERVICE || !(isLocal(API) || (hostedRef && process.env.STAGING_CONFIRM === hostedRef)) || !(isLocal(APP) || /^https:\/\/[a-z0-9-]+\.vercel\.app$/.test(APP))) {
+  console.error('ABORTED: API must be the local stack or https://<ref>.supabase.co with STAGING_CONFIRM=<ref>; APP must be local or a *.vercel.app Preview URL; STAGING_SERVICE_KEY required'); process.exit(2)
+}
 
 const out = []
 const rec = (name, ok, detail = '') => { out.push(ok); console.log(`${ok ? 'PASS' : 'FAIL'}  ${name}${ok ? '' : '  → ' + detail}`) }

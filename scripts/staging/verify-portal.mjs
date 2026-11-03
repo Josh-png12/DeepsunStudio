@@ -9,6 +9,7 @@ const ref = /^https:\/\/([a-z0-9]+)\.supabase\.co$/.exec(URL_)?.[1] ?? /^http:\/
 const die = (m) => { console.error('ABORTED: ' + m); process.exit(2) }
 if (!ref || !KEY || !process.env.STAGING_SEED_JSON) die('set STAGING_SUPABASE_URL, STAGING_ANON_KEY and STAGING_SEED_JSON')
 if (process.env.STAGING_CONFIRM !== ref) die(`set STAGING_CONFIRM=${ref}`)
+if (URL_.includes('svbvkgvtjksvjfvigiah') || (process.env.APP_URL ?? '').includes('svbvkgvtjksvjfvigiah')) die('this is the PRODUCTION project (svbvkgvtjksvjfvigiah): staging suites never run against it')
 const known = new Set()
 try { for (const m of fs.readFileSync('.env.local', 'utf8').matchAll(/NEXT_PUBLIC_SUPABASE_URL\s*=\s*(\S+)/g)) known.add(m[1].replace(/\/+$/, '')) } catch {}
 if (process.env.NEXT_PUBLIC_SUPABASE_URL) known.add(process.env.NEXT_PUBLIC_SUPABASE_URL.replace(/\/+$/, ''))

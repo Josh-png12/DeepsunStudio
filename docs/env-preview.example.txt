@@ -1,0 +1,15 @@
+# VERCEL PREVIEW (staging) — valores propios del proyecto Supabase de STAGING. Nunca pegue aquí datos de producción.
+# En Vercel: Project → Settings → Environment Variables → marque SOLO "Preview" (desmarque Production y Development).
+# Estas variables NO deben existir con el mismo nombre en el entorno Production con valores de staging, ni al revés.
+
+NEXT_PUBLIC_SUPABASE_URL=https://<REF_DE_STAGING>.supabase.co
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=<publishable key del proyecto de STAGING>
+
+# Solo servidor. Solo si probará invitaciones desde /portal/admin/usuarios (requiere SMTP en staging). Nunca con prefijo NEXT_PUBLIC.
+SUPABASE_SERVICE_ROLE_KEY=<service_role de STAGING>
+
+# URL del Preview de Vercel (aparece tras el primer despliegue Preview). Se usa en los correos de recuperación/invitación.
+NEXT_PUBLIC_SITE_URL=https://<su-preview>.vercel.app
+
+NEXT_PUBLIC_WHATSAPP_NUMBER=573246183318
+NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION=

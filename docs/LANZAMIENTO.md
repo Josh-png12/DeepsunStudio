@@ -105,7 +105,7 @@ Después, `VALIDATE CONSTRAINT` de las restricciones `NOT VALID` cuando el bloqu
 | # | Bloqueante | Quién | Estado |
 |---|---|---|---|
 | 1 | Confirmar el proyecto Supabase y las variables del despliegue (Vercel) | titular | No verificable desde aquí |
-| 2 | Staging **alojado** con la cabecera de IP real y Auth del proyecto alojado (registro público OFF, SMTP) | titular (aprobar costo) | Pendiente; el local no lo cubre |
+| 2 | Staging **alojado** con la cabecera de IP real y Auth del proyecto alojado (registro público OFF, SMTP) | titular crea el proyecto Free (guía: `docs/STAGING_ALOJADO.md`); luego se ejecutan las suites | Preparado, **no creado**: esta sesión no puede crear proyectos en su organización |
 | 3 | **B4:** confirmar o retirar cifras (10+/6+/3+), precios (US$600/1.500/800), plazos, condiciones de pago/soporte, tasa COP/EUR y permiso de cada cliente para mostrar su caso (LUFE, Fundación, SIEPA, Premios La Cima) | titular | Siguen publicados en la rama «por confirmar» |
 | 4 | **B5:** política de tratamiento de datos personales (Ley 1581/2012) y casilla/enlace en los formularios, que recogen nombre, correo y teléfono | titular redacta; luego se integra | No implementado (no se inventa texto legal) |
 | 5 | Canal de aviso de solicitudes nuevas (hoy hay que revisar el portal) | titular decide | Sin implementar |

@@ -20,6 +20,7 @@ const die = (m) => { console.error('ABORTED: ' + m); process.exit(2) }
 
 if (!ref || !KEY) die('set STAGING_SUPABASE_URL (https://<ref>.supabase.co or http://127.0.0.1:<port>) and STAGING_ANON_KEY')
 if (process.env.STAGING_CONFIRM !== ref) die(`set STAGING_CONFIRM=${ref} to confirm this is the staging project`)
+if (URL_.includes('svbvkgvtjksvjfvigiah') || (process.env.APP_URL ?? '').includes('svbvkgvtjksvjfvigiah')) die('this is the PRODUCTION project (svbvkgvtjksvjfvigiah): staging suites never run against it')
 const known = new Set()
 try { for (const m of fs.readFileSync('.env.local', 'utf8').matchAll(/NEXT_PUBLIC_SUPABASE_URL\s*=\s*(\S+)/g)) known.add(m[1].replace(/\/+$/, '')) } catch {}
 if (process.env.NEXT_PUBLIC_SUPABASE_URL) known.add(process.env.NEXT_PUBLIC_SUPABASE_URL.replace(/\/+$/, ''))
