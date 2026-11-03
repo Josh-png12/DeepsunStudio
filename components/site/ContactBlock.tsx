@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { useRef, useState, useEffect } from 'react'
 import { useSite, Rich } from '@/lib/site-i18n'
 import { CONTACT as C } from '@/lib/site-content'
-import { SITE, mailtoHref, whatsappHref } from '@/lib/site'
+import { SITE, WHATSAPP_DISPLAY, mailtoHref, whatsappHref } from '@/lib/site'
 import { isEmail, submitLead } from '@/lib/leads'
 
 type Status = 'idle' | 'sending' | 'ok' | 'dup' | 'error' | 'invalid' | 'throttled' | 'limited'
@@ -85,7 +85,7 @@ export default function ContactBlock() {
             <p>{tr(C.lead)}</p>
             <div className="direct-links">
               {wa && (
-                <a href={wa} target="_blank" rel="noopener noreferrer">{tr(C.whatsapp)}</a>
+                <a href={wa} target="_blank" rel="noopener noreferrer">WHATSAPP {WHATSAPP_DISPLAY} ↗</a>
               )}
               <a href={mailtoHref()}>{SITE.email.toUpperCase()} ↗</a>
             </div>

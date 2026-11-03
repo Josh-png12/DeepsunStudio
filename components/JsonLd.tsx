@@ -1,7 +1,8 @@
 // Server component — structured data for the public site (rendered by app/(site)/layout.tsx).
 // Only facts that are published on the site itself. Deliberately NOT included (unverified or not applicable):
-// opening hours, price range, accepted currencies, postal code, coordinates, telephone, social profiles, site search.
-import { SITE, WHATSAPP_NUMBER } from '@/lib/site'
+// opening hours, price range, accepted currencies, postal code, coordinates, social profiles, site search.
+// The telephone is the official WhatsApp number confirmed by the owner (lib/site.ts).
+import { SITE, WHATSAPP_E164 } from '@/lib/site'
 
 const BASE_URL = SITE.url
 const ORG_ID = `${BASE_URL}/#organization`
@@ -17,6 +18,7 @@ const organizationSchema = {
     'Estudio digital independiente en Riohacha, Colombia. Diseño digital, desarrollo web, software a medida y automatización para negocios en Colombia y Latinoamérica.',
   url: BASE_URL,
   email: SITE.email,
+  telephone: WHATSAPP_E164,
   logo: `${BASE_URL}/icon.svg`,
   image: `${BASE_URL}/og-image`,
   address: {
@@ -31,10 +33,7 @@ const organizationSchema = {
   ],
   knowsLanguage: ['es', 'en'],
   founder: { '@type': 'Person', name: 'Joshua Navarro' },
-  // Only emitted once the WhatsApp number is confirmed and configured (see lib/site.ts).
-  ...(WHATSAPP_NUMBER
-    ? { contactPoint: { '@type': 'ContactPoint', contactType: 'customer service', email: SITE.email, availableLanguage: ['es', 'en'] } }
-    : {}),
+  contactPoint: { '@type': 'ContactPoint', contactType: 'customer service', telephone: WHATSAPP_E164, email: SITE.email, availableLanguage: ['es', 'en'] },
   hasOfferCatalog: {
     '@type': 'OfferCatalog',
     name: 'Servicios de DeepSun Studio',

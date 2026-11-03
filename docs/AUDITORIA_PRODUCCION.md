@@ -10,7 +10,7 @@ Rama `redesign/deepsun-editorial` (sin push). No se tocó producción ni se usar
 | B1 | **`leads`, `testimonials` y los 3 buckets no existen en el repo**: se crearon a mano y su seguridad real es desconocida. Con RLS apagado o políticas abiertas (algo común en tablas hechas desde el panel), cualquier visitante podría **leer todos los contactos** (datos personales) y **auto-aprobar testimonios**; la prueba `upgrade` lo demuestra sobre una configuración así | Resuelto en código: `202611030001_public_intake.sql` (RLS, permisos mínimos por columna, validación, disparadores, buckets, políticas de Storage; idempotente y con guarda contra esquemas distintos). **Pendiente: ejecutar `intake_state_readonly.sql` en producción para ver el estado actual, aplicar en staging y verificar** |
 | B2 | **Antispam solo en el navegador** (honeypot + espera de 20 s): cualquiera puede saltárselo llamando a la API | Resuelto en código (disparadores de base de datos: duplicados, límite por dirección, por correo y freno global; el cliente solo traduce las respuestas). **Pendiente en staging: confirmar qué cabecera trae la IP real.** No frena una botnet distribuida |
 | B3 | **Nadie se entera de una solicitud nueva ni hay dónde verla/moderarla**: las solicitudes solo caen en una tabla y los testimonios se aprobaban desde el panel de Supabase | Parcial: nuevas pantallas `/portal/admin/solicitudes` y `/portal/admin/testimonios` (solo administradores de plataforma). **No hay notificación**: decidir canal (ver abajo) |
-| B4 | **Datos comerciales por confirmar por el titular** (cifras 10+/6+/3+, precios, plazos, permiso de clientes, WhatsApp) | Sin cambios de contenido; checklist abajo |
+| B4 | **Datos comerciales por confirmar por el titular** (cifras 10+/6+/3+, precios, plazos, permiso de clientes) | Sin cambios de contenido; checklist abajo |
 | B5 | **Aviso de tratamiento de datos personales**: los formularios recogen nombre, correo y teléfono sin enlace a política ni autorización de tratamiento (Colombia: Ley 1581 de 2012) | No implementado (no se inventa texto legal). Requiere política redactada por el titular y enlace/casilla en los formularios |
 
 ### IMPORTANTES, no bloqueantes
@@ -56,7 +56,7 @@ Recomendación: opción 2 al lanzar y opción 3 solo si aparece abuso. Requiere 
 ## Checklist breve para el titular
 - [ ] Autorizar ejecutar `intake_state_readonly.sql` en producción y compartir los resultados.
 - [ ] Proporcionar un proyecto de **staging** (o confirmar crearlo) para la lista de `docs/PRUEBAS_STAGING_SUPABASE.md`.
-- [ ] Confirmar el número de **WhatsApp** (hay dos distintos en el historial: …6476 y …9647) y definir `NEXT_PUBLIC_WHATSAPP_NUMBER`.
+- [x] **WhatsApp** confirmado: +57 324 618 3318 (centralizado en `lib/site.ts`, con prueba automática).
 - [ ] Confirmar el correo público (`joshua@deepsunstudio.com`) y `NEXT_PUBLIC_SITE_URL`.
 - [ ] Confirmar o retirar: 10+ proyectos, 6+ clientes, 3+ años.
 - [ ] Confirmar precios (US$600 / 1.500 / 800), plazos (7–10 y 15–20 días, 3–4 meses), pago 50/50 y soporte, y la fuente de tasas COP/EUR.

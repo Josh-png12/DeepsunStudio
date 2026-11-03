@@ -1,10 +1,20 @@
-// Single source of truth for public contact data.
-//
-// WhatsApp: the repo contains two conflicting numbers (573971496476 in the
-// floating button / services / studio vs 573197149647 in portfolio data,
-// JSON-LD and the old contact section). Neither is hardcoded here: set
-// NEXT_PUBLIC_WHATSAPP_NUMBER (digits only, with country code) once confirmed.
-// Until then every WhatsApp link is hidden rather than pointing to a guess.
+// Single source of truth for public contact data. Nothing else in the repo may hardcode a phone number.
+
+/** Official WhatsApp number of DeepSun Studio (confirmed by the owner): +57 324 618 3318. */
+const OFFICIAL_WHATSAPP = '573246183318'
+
+// NEXT_PUBLIC_WHATSAPP_NUMBER documents/overrides the value for deployments, but it can never introduce another number:
+// anything that differs from the official one is ignored (and reported) so a stale variable cannot reintroduce an old number.
+const fromEnv = (process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? '').replace(/\D/g, '')
+if (fromEnv && fromEnv !== OFFICIAL_WHATSAPP && typeof window === 'undefined') {
+  console.warn('[site] NEXT_PUBLIC_WHATSAPP_NUMBER differs from the official number and is ignored. Set it to', OFFICIAL_WHATSAPP)
+}
+
+export const WHATSAPP_NUMBER: string = OFFICIAL_WHATSAPP
+/** For humans: "+57 324 618 3318". */
+export const WHATSAPP_DISPLAY = '+57 324 618 3318'
+/** E.164, for structured data / tel: links. */
+export const WHATSAPP_E164 = `+${OFFICIAL_WHATSAPP}`
 
 export const SITE = {
   name: 'DeepSun Studio',
@@ -13,12 +23,8 @@ export const SITE = {
   city: 'Riohacha, Colombia',
 } as const
 
-const digits = (process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? '').replace(/\D/g, '')
-
-export const WHATSAPP_NUMBER: string | null = digits.length >= 10 ? digits : null
-
-export function whatsappHref(text: string): string | null {
-  if (!WHATSAPP_NUMBER) return null
+/** `https://wa.me/<number>?text=<percent-encoded message>` — the text is always URL-encoded (accents, spaces, line breaks). */
+export function whatsappHref(text: string): string {
   return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`
 }
 

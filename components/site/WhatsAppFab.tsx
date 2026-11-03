@@ -8,7 +8,7 @@ const TEXT = {
   en: 'Hi DeepSun, I would like to talk about a project.',
 }
 
-/** Renders nothing until NEXT_PUBLIC_WHATSAPP_NUMBER is configured (see lib/site.ts). */
+/** Floating WhatsApp button; the number comes from lib/site.ts (single source). */
 export default function WhatsAppFab() {
   const { lang } = useSite()
   const href = whatsappHref(TEXT[lang])

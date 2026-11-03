@@ -1,3 +1,4 @@
+import { WHATSAPP_DISPLAY, WHATSAPP_NUMBER } from "@/lib/site";
 export type Lang = "en" | "es";
 export type LocalizedString = Record<Lang, string>;
 export type LocalizedArray = Record<Lang, string[]>;
@@ -432,8 +433,8 @@ export const personalInfo = {
     email: "joshua@deepsunstudio.com",
     github: "https://github.com/Josh-png12",
     linkedin: "https://www.linkedin.com/in/joshua-navarro-rad-06ab18258",
-    whatsapp: "+57 319 714 9647",
-    whatsappUrl: "https://wa.me/573197149647",
+    whatsapp: WHATSAPP_DISPLAY,
+    whatsappUrl: `https://wa.me/${WHATSAPP_NUMBER}`,
   },
 };
 

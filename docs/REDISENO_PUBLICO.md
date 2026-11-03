@@ -7,7 +7,7 @@ Rama: `redesign/deepsun-editorial` (desde `origin/main` 7633042). No fusionada n
 - `app/layout.tsx` conserva metadatos, JSON-LD, Analytics y `globals.css`/`tokens.css` (los usa el portal). Se movieron a `(site)` el idioma, el botón de WhatsApp y la navegación.
 - `ds-base.css`: transcripción del CSS del prototipo `deepsun_propuesta_integral.html`, con selectores prefijados por `.ds`. **El original está versionado en `design-reference/deepsun_propuesta_integral.html`; el CSS transcrito es idéntico al suyo (salvo la regla `.preview-banner`).**
 - Textos ES/EN: `lib/site-content.ts` (+ `lib/site-i18n.tsx`). Preferencia en `localStorage`, `html lang` actualizado en cliente.
-- Contacto centralizado en `lib/site.ts`. WhatsApp **solo** vía `NEXT_PUBLIC_WHATSAPP_NUMBER` (números contradictorios en el repo: 573971496476 vs 573197149647).
+- Contacto centralizado en `lib/site.ts`. WhatsApp oficial confirmado: **+57 324 618 3318** (`573246183318`); es la única fuente y cualquier otro valor de `NEXT_PUBLIC_WHATSAPP_NUMBER` se ignora. `tests/site-contact.test.ts` impide números hardcodeados.
 - Formularios reales: `lib/leads.ts` (insert en `leads`, éxito solo tras confirmar), `ReviewForm` (buckets + `testimonials` con `approved:false`). Antispam: honeypot, tiempo mínimo y espera entre envíos.
 
 ## Decisiones
@@ -16,4 +16,4 @@ Rama: `redesign/deepsun-editorial` (desde `origin/main` 7633042). No fusionada n
 - Cifras 10+/6+/3+ y precios: reutilizados del sitio previo, marcados «por verificar». Tasas COP/EUR: valores previos, marcados como referencia aproximada.
 
 ## Pendiente de confirmar
-Número de WhatsApp; valores no nulos exigidos por la tabla `leads` (el formulario rápido de portada envía `business_type:'otro'`, `needs:['asesoria']`, `budget:'no_se'`, `timeline:'explorando'`); fuente de tasas de cambio; cifras públicas; JSON-LD aún lista tecnologías y el teléfono 573197149647; fuentes Fontshare del root siguen cargando por el portal.
+Valores no nulos exigidos por la tabla `leads` (el formulario rápido de portada envía `business_type:'otro'`, `needs:['asesoria']`, `budget:'no_se'`, `timeline:'explorando'`); fuente de tasas de cambio; cifras públicas; JSON-LD aún lista tecnologías y el teléfono 573197149647; fuentes Fontshare del root siguen cargando por el portal.

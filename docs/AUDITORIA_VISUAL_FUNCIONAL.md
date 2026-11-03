@@ -50,7 +50,7 @@ Backend de prueba: servidor falso local (`localhost`, sin red ni datos reales), 
 | `prefers-reduced-motion` | Reglas presentes y acotadas a `.ds` (no ejecutado con emulación real) |
 | Enlaces internos (40 `href` únicos de 15 rutas) | Todos 200; `/portal` 307 → login (esperado) |
 | ES/EN — 8 rutas con textos y atributos | Sin textos en español visibles salvo artículos del blog (solo ES, con aviso; ahora con `lang="es"`) |
-| WhatsApp sin `NEXT_PUBLIC_WHATSAPP_NUMBER` | Ningún enlace `wa.me` ni botón flotante |
+| WhatsApp | Ahora siempre visible con el número oficial +57 324 618 3318 (ver `lib/site.ts`) |
 
 ## Pendiente
 
@@ -111,7 +111,7 @@ Requiere un **staging real de Supabase**:
 - RLS e inserción real en `leads` y `testimonials` (esquema, columnas NOT NULL y restricciones: el formulario rápido envía `business_type:'otro'`, `needs:['asesoria']`, `budget:'no_se'`, `timeline:'explorando'`).
 - Buckets `testimonial-*` reales: permisos, tamaño máximo, tipos MIME, política de lectura pública y moderación (`approved=false` visible solo para admin).
 - Lectura real de `testimonials` con `approved=true`; imagen y video públicos en el carrusel.
-- Variable `NEXT_PUBLIC_WHATSAPP_NUMBER` (número aún sin confirmar; hoy no se muestra WhatsApp).
+- ~~WhatsApp sin confirmar~~: resuelto, número oficial +57 324 618 3318.
 - Fuente de tasas COP/EUR; cifras 10+/6+/3+; JSON-LD con teléfono y tecnologías; fuentes del layout raíz que usa el portal.
 - Contra el archivo original de v02 (ver limitación).
 
