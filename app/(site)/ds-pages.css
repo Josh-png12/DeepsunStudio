@@ -1,8 +1,10 @@
 /* Extensions to the editorial system for secondary pages. Everything is scoped under .ds so /portal is untouched. */
 html:has(.ds){background:#11151D}
-.ds{position:relative;min-height:100vh}
+.ds{position:relative;min-height:100vh;line-height:normal}
+/* v02 relies on the browser's default paragraph margin; Tailwind preflight zeroes it */
+.ds p{margin-block:1em}
 .ds main{display:block}
-.ds :focus-visible{outline:3px solid var(--coral);outline-offset:5px}
+.ds :focus-visible{outline:2px solid var(--coral);outline-offset:4px}
 .ds .nav-links a[aria-current=page]{color:var(--sun)}
 .ds .hp{position:absolute!important;left:-9999px!important;width:1px!important;height:1px!important;opacity:0;pointer-events:none}
 .ds h1,.ds h2,.ds h3,.ds h4{font-weight:inherit}
@@ -137,20 +139,20 @@ html:has(.ds){background:#11151D}
 .ds .article-meta{display:flex;flex-wrap:wrap;gap:12px 22px;align-items:center;margin-top:30px;font:500 11px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:#c5c5bd}
 .ds .article-desc{font:400 clamp(22px,2.4vw,34px)/1.25 var(--serif);letter-spacing:-.02em;color:#e9e3d5;max-width:820px;margin:30px 0 0}
 .ds .prose-wrap{background:var(--cream);padding:90px clamp(22px,5vw,76px) 100px}
-.ds .blog-prose{max-width:720px;margin:auto;font-size:19px;line-height:1.75;color:#262b33}
-.ds .blog-prose p{margin:0 0 1.35em}
-.ds .blog-prose h2{font:900 clamp(28px,3.4vw,44px)/1.02 var(--display);letter-spacing:-.065em;text-transform:uppercase;margin:2em 0 .7em;color:var(--ink)}
-.ds .blog-prose h3{font:700 clamp(21px,2.1vw,27px)/1.2 var(--sans);letter-spacing:-.045em;margin:1.8em 0 .6em;color:var(--ink)}
-.ds .blog-prose strong{font-weight:700;color:var(--ink)}
-.ds .blog-prose em{font-family:var(--serif);font-size:1.12em;letter-spacing:-.01em;color:#8a3d22}
-.ds .blog-prose a{color:var(--coral);text-decoration:underline;text-underline-offset:4px}
-.ds .blog-prose ul,.ds .blog-prose ol{margin:0 0 1.5em;display:flex;flex-direction:column;gap:.5em}
-.ds .blog-prose li{position:relative;padding-left:28px}
-.ds .blog-prose ul li:before{content:'✳';position:absolute;left:0;top:.25em;font-size:.7em;color:var(--coral)}
-.ds .blog-prose ol{counter-reset:li}
-.ds .blog-prose ol li{counter-increment:li}
-.ds .blog-prose ol li:before{content:counter(li,decimal-leading-zero);position:absolute;left:0;top:.35em;font:600 12px var(--mono);color:var(--coral)}
-.ds .blog-prose hr{border:0;border-top:1px solid rgba(17,21,29,.3);margin:2.4em 0}
+.ds .ds-prose{max-width:720px;margin:auto;font-size:19px;line-height:1.75;color:#262b33}
+.ds .ds-prose p{margin:0 0 1.35em}
+.ds .ds-prose h2{font:900 clamp(28px,3.4vw,44px)/1.02 var(--display);letter-spacing:-.065em;text-transform:uppercase;margin:2em 0 .7em;color:var(--ink)}
+.ds .ds-prose h3{font:700 clamp(21px,2.1vw,27px)/1.2 var(--sans);letter-spacing:-.045em;margin:1.8em 0 .6em;color:var(--ink)}
+.ds .ds-prose strong{font-weight:700;color:var(--ink)}
+.ds .ds-prose em{font-family:var(--serif);font-size:1.12em;letter-spacing:-.01em;color:#8a3d22}
+.ds .ds-prose a{color:var(--coral);text-decoration:underline;text-underline-offset:4px}
+.ds .ds-prose ul,.ds .ds-prose ol{margin:0 0 1.5em;display:flex;flex-direction:column;gap:.5em}
+.ds .ds-prose li{position:relative;padding-left:28px}
+.ds .ds-prose ul li:before{content:'✳';position:absolute;left:0;top:.25em;font-size:.7em;color:var(--coral)}
+.ds .ds-prose ol{counter-reset:li}
+.ds .ds-prose ol li{counter-increment:li}
+.ds .ds-prose ol li:before{content:counter(li,decimal-leading-zero);position:absolute;left:0;top:.35em;font:600 12px var(--mono);color:var(--coral)}
+.ds .ds-prose hr{border:0;border-top:1px solid rgba(17,21,29,.3);margin:2.4em 0}
 
 /* Brief (contacto) */
 .ds .brief-wrap{background:var(--cream);padding:90px clamp(22px,5vw,76px) 110px}
@@ -218,7 +220,7 @@ html:has(.ds){background:#11151D}
   .ds .case-nav{grid-template-columns:1fr}
   .ds .case-nav a+a{border-left:0;border-top:1px solid rgba(17,21,29,.25);padding:28px 0;text-align:left}
   .ds .rv-card{padding:26px 24px;flex-basis:88%}
-  .ds .blog-prose{font-size:17px}
+  .ds .ds-prose{font-size:17px}
   .ds .wa-fab{right:12px;bottom:12px}
   .ds .case-visual{padding:0 22px}
   .ds .scr-grid{right:8%;top:28%}
@@ -240,9 +242,25 @@ html:has(.ds){background:#11151D}
 
 /* Narrow screens: grid tracks must be allowed to shrink or long words push the layout wider than the viewport */
 .ds .project>*,.ds .story>*,.ds .brief>*,.ds .who>*,.ds .contact-grid>*{min-width:0}
-@media(max-width:700px){.ds .project{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:940px){.ds .project{grid-template-columns:minmax(0,1fr)}}
 @media(max-width:700px){.ds .project h3,.ds .more-item h4{overflow-wrap:anywhere}.ds .story,.ds .brief,.ds .who{grid-template-columns:minmax(0,1fr)}}
 @media(max-width:400px){.ds .project h3{font-size:clamp(30px,10.5vw,46px)}.ds .lufe-badge{display:none}.ds .fund-pill{font-size:10px;padding:12px 16px}}
 
 /* Tailwind preflight strips the default bold that the prototype's h3s relied on */
 .ds .plan h3,.ds .article h3{font-weight:700}
+
+/* Accessibility: small text that v02 / my additions rendered under 4.5:1 (visual identity unchanged) */
+.ds .price-note{color:#62666c;margin-bottom:0}
+.ds .contact-mini small{color:#63676a}
+.ds .lang-note,.ds .empty-note,.ds .who .fine{color:#58585a}
+.ds .rv-card figcaption small{color:#585c65}
+.ds .story .no{color:#9F4326}.ds .trio .n{color:#A8472A}
+.ds .ds-prose a,.ds .ds-prose ol li:before{color:#A8472A}
+
+/* axe: coral on sand fails 3:1 even for large type; focus on underlined fields needs more than a hairline colour change */
+.ds .page-section.sand .h2-big em{color:#A8472A}
+.ds .contact-form input:focus,.ds .contact-form textarea:focus,.ds .brief form input:focus,.ds .brief form textarea:focus{box-shadow:0 2px 0 0 var(--coral)}
+.ds .wa-fab{right:12px;min-width:52px;height:52px}
+
+/* Legacy globals.css styles a 4px dark scrollbar; public pages use the default scrollbar like v02 */
+html:has(.ds){scrollbar-width:auto;scrollbar-color:#5A6475 #E8E1D4}

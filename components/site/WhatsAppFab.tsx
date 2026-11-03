@@ -15,8 +15,10 @@ export default function WhatsAppFab() {
   if (!href) return null
   const label = lang === 'es' ? 'Escríbenos por WhatsApp' : 'Message us on WhatsApp'
   return (
-    <a className="wa-fab" href={href} target="_blank" rel="noopener noreferrer" aria-label={label} title={label}>
-      <span aria-hidden="true">WA ↗</span>
-    </a>
+    <aside aria-label="WhatsApp">
+      <a className="wa-fab" href={href} target="_blank" rel="noopener noreferrer" aria-label={label} title={label}>
+        <span aria-hidden="true">WA ↗</span>
+      </a>
+    </aside>
   )
 }

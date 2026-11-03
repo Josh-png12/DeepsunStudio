@@ -21,6 +21,7 @@ export default function Work({ cases, heading = true }: { cases: CaseView[]; hea
   return (
     <section className="work" id="trabajo">
       <div className="wrap">
+        {!heading && <h2 className="sr-only">{tr({ es: 'Casos de estudio', en: 'Case studies' })}</h2>}
         {heading && (
           <div className="section-top">
             <div>

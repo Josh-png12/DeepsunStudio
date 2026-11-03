@@ -85,7 +85,7 @@ export default function Pricing({ detailed = false }: { detailed?: boolean }) {
                 <p>{tr(PLAN_SHORT[p.key])}</p>
               )}
               <Link className="btn dark" href="/contacto">
-                <span>{tr(detailed ? p.cta : p.usd === null ? p.cta : { es: 'Conversemos', en: "Let's talk" })}</span> ↗
+                <span>{tr(detailed ? p.cta : p.usd === null ? { es: 'Cotizar proyecto', en: 'Get a quote' } : { es: 'Conversemos', en: "Let's talk" })}</span> ↗
               </Link>
             </article>
           ))}

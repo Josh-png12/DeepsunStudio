@@ -22,6 +22,7 @@ export default function BlogView({ posts }: { posts: PostMeta[] }) {
       />
       <section className="journal" style={{ paddingTop: 80 }}>
         <div className="wrap">
+          <h2 className="sr-only">{tr({ es: 'Artículos', en: 'Articles' })}</h2>
           {lang === 'en' && <p className="lang-note">{JOURNAL.onlySpanish.en}</p>}
           {cats.length > 1 && (
             <div className="blog-cats" role="group" aria-label={tr({ es: 'Categorías', en: 'Categories' })}>

@@ -37,7 +37,7 @@ export default function ArticleView({ title, description, category, readTime, da
         </div>
       </header>
       <div className="prose-wrap">
-        <article className="blog-prose" lang="es" dangerouslySetInnerHTML={{ __html: html }} />
+        <article className="ds-prose" lang="es" dangerouslySetInnerHTML={{ __html: html }} />
       </div>
       <section className="final-cta">
         <div className="wrap">

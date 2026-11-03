@@ -10,7 +10,8 @@ export function formatPrice(usd: number, currency: Currency, locale: 'es' | 'en'
   const v = usd * RATES[currency]
   if (currency === 'COP') return `$${Math.round(v).toLocaleString(locale === 'es' ? 'es-CO' : 'en-US')} COP`
   if (currency === 'EUR') return `€${Math.round(v).toLocaleString(locale === 'es' ? 'es-ES' : 'en-GB')}`
-  return `US$${v.toLocaleString(locale === 'es' ? 'es-CO' : 'en-US')}`
+  // v02 shows USD with a comma separator in both languages (US$1,500)
+  return `US$${v.toLocaleString('en-US')}`
 }
 
 export const CURRENCY_KEY = 'deepsun-currency'

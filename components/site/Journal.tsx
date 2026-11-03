@@ -7,8 +7,10 @@ import type { PostMeta } from '@/lib/blog'
 
 export function fmtDate(iso: string, lang: 'es' | 'en') {
   if (!iso) return ''
-  const d = new Date(iso)
-  return d.toLocaleDateString(lang === 'es' ? 'es-CO' : 'en-US', { month: 'short', year: 'numeric' }).toUpperCase()
+  const parts = new Intl.DateTimeFormat(lang === 'es' ? 'es-CO' : 'en-US', { month: 'short', year: 'numeric', timeZone: 'UTC' }).formatToParts(new Date(iso))
+  const get = (t: string) => parts.find((x) => x.type === t)?.value ?? ''
+  // "MAR 2026" like the prototype (no "de", no trailing dot)
+  return `${get('month').replace('.', '')} ${get('year')}`.toUpperCase()
 }
 
 export function ArticleCard({ post }: { post: PostMeta }) {

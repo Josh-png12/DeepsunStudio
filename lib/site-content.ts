@@ -283,7 +283,7 @@ export const PLANS: PlanCopy[] = [
   },
   {
     key: 'automatizacion', usd: 800,
-    idx: { es: '03 / AUTOMATIZAR', en: '03 / AUTOMATE' },
+    idx: { es: '03 / AUTOMATIZACIÓN', en: '03 / AUTOMATION' },
     name: { es: 'Automatización & Bots', en: 'Automation & Bots' },
     headline: { es: 'Para el negocio que pierde tiempo respondiendo lo mismo todos los días.', en: 'For the business that loses time answering the same things every day.' },
     features: {
@@ -372,7 +372,7 @@ export const FOOTER = {
     { href: '/proyectos', label: { es: 'Proyectos', en: 'Work' } },
     { href: '/servicios', label: { es: 'Servicios', en: 'Services' } },
     { href: '/#testimonios', label: { es: 'Testimonios', en: 'Testimonials' } },
-    { href: '/blog', label: { es: 'Blog', en: 'Journal' } },
+    { href: '/blog', label: { es: 'Blog', en: 'Blog' } },
     { href: '/studio', label: { es: 'El estudio', en: 'Studio' } },
     { href: '/contacto', label: { es: 'Contacto', en: 'Contact' } },
   ],

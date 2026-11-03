@@ -254,8 +254,8 @@ export const projects: Project[] = [
       es: "La extracción manual de datos de sitios web es lenta, propensa a errores y requiere conocimiento técnico. Los equipos pierden horas en tareas repetitivas sin forma confiable de automatizarlas.",
     },
     solution: {
-      en: "Built a GUI layer over Python's scraping stack (BeautifulSoup + Selenium) that abstracts all complexity. Users configure targets visually, schedule runs, and export to CSV/JSON/Excel with zero code.",
-      es: "Construí una capa GUI sobre el stack de scraping de Python (BeautifulSoup + Selenium) que abstrae toda la complejidad. Los usuarios configuran objetivos visualmente, programan ejecuciones y exportan sin código.",
+      en: "Built a graphical layer over the data-collection tooling that abstracts all the complexity. Users configure targets visually, schedule runs, and export to CSV/JSON/Excel with zero code.",
+      es: "Construí una capa gráfica sobre las herramientas de recolección de datos que abstrae toda la complejidad. Los usuarios configuran objetivos visualmente, programan ejecuciones y exportan sin código.",
     },
     impact: {
       en: "Reduces data collection time by 90%+ compared to manual extraction. Enables teams without engineering knowledge to build automated data pipelines in minutes.",
@@ -301,8 +301,8 @@ export const projects: Project[] = [
       es: "Toda aplicación necesita gestión de usuarios. Construirlo desde cero para cada proyecto es lento, repetitivo y crítico en seguridad — una mala implementación puede exponer todo el sistema.",
     },
     solution: {
-      en: "Designed a domain-isolated microservice following REST principles with clear separation of concerns. Implements JWT stateless authentication, bcrypt password hashing, and fine-grained role-based access control.",
-      es: "Diseñé un microservicio con dominio aislado siguiendo principios REST con clara separación de responsabilidades. Implementa autenticación JWT sin estado, hash bcrypt y control de acceso granular por roles.",
+      en: "Designed a domain-isolated microservice following REST principles with clear separation of concerns. Implements stateless token authentication, hardened password hashing, and fine-grained role-based access control.",
+      es: "Diseñé un microservicio con dominio aislado siguiendo principios REST con clara separación de responsabilidades. Implementa autenticación por tokens sin estado, almacenamiento seguro de contraseñas y control de acceso granular por roles.",
     },
     impact: {
       en: "A plug-and-play user system integrable into any backend architecture in under an hour, with enterprise-grade security baked in from day one.",
@@ -310,17 +310,17 @@ export const projects: Project[] = [
     },
     features: {
       en: [
-        "JWT stateless authentication with access + refresh tokens",
+        "Stateless token authentication with access + refresh tokens",
         "Role-Based Access Control (RBAC) with middleware guards",
-        "bcrypt password hashing with configurable salt rounds",
+        "Hardened password hashing with configurable cost",
         "Full user CRUD with pagination and filtering",
         "Input validation, sanitization, and structured error responses",
         "RESTful API with consistent response envelope",
       ],
       es: [
-        "Autenticación JWT sin estado con tokens de acceso y refresco",
+        "Autenticación por tokens sin estado, con tokens de acceso y de refresco",
         "Control de Acceso Basado en Roles (RBAC) con guards de middleware",
-        "Hash bcrypt con rondas de sal configurables",
+        "Almacenamiento seguro de contraseñas con costo configurable",
         "CRUD completo de usuarios con paginación y filtrado",
         "Validación de entradas, sanitización y respuestas de error estructuradas",
         "API RESTful con envolvente de respuesta consistente",
