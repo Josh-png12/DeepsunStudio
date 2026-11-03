@@ -1,88 +1,65 @@
 import type { Metadata, Viewport } from 'next'
 import './globals.css'
-import { JsonLd } from '@/components/JsonLd'
+import { SITE } from '@/lib/site'
+import { DEFAULT_DESCRIPTION, DEFAULT_TITLE } from '@/lib/seo'
 import { Analytics } from '@vercel/analytics/next'
-// Fonts loaded via Fontshare <link> tags in <head> — see layout below
+// Public fonts: next/font in app/(site)/layout.tsx. Portal fonts (Fontshare + JetBrains Mono): app/portal/layout.tsx.
 
 // ─── Viewport ─────────────────────────────────────────────────────────────────
 
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
+  themeColor: '#11151D',
 }
 
 // ─── SEO Metadata ─────────────────────────────────────────────────────────────
+// Canonical, Open Graph URL and title are set per page (lib/seo.ts); the portal sets its own robots/metadata.
+// No hreflang: English is a client-side view of the same URLs, not separate indexable pages.
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://www.deepsunstudio.com'),
+  metadataBase: new URL(SITE.url),
 
   title: {
-    default: 'DeepSun Studio — Desarrollo Web para Negocios en Colombia',
+    default: DEFAULT_TITLE,
     template: '%s | DeepSun Studio',
   },
 
-  description:
-    'Diseñamos y desarrollamos sitios web profesionales, automatizaciones y sistemas a medida que hacen crecer negocios en Colombia. Trabajo con hoteles, clínicas, restaurantes y empresas en Riohacha, La Guajira y toda Latinoamérica.',
+  description: DEFAULT_DESCRIPTION,
+
+  applicationName: 'DeepSun Studio',
 
   keywords: [
-    'desarrollador web Colombia',
+    'estudio digital independiente',
     'diseño web para negocios Colombia',
-    'agencia de desarrollo web Colombia',
-    'desarrollador web Riohacha',
-    'desarrollo web La Guajira',
-    'diseño web para negocios Riohacha',
-    'crear sitio web para mi negocio Colombia',
-    'desarrollo web freelance Colombia',
-    'automatización WhatsApp para negocios Colombia',
-    'chatbot WhatsApp para restaurantes Colombia',
-    'sistema web a medida para empresas Colombia',
-    'página web para hoteles La Guajira',
-    'desarrollo web para clínicas Colombia',
+    'desarrollo web Colombia',
+    'desarrollo web Riohacha',
+    'diseño web La Guajira',
+    'software a medida Colombia',
+    'automatización de procesos',
+    'automatización WhatsApp para negocios',
+    'sitio web para mi negocio',
     'DeepSun Studio',
-    'Joshua Navarro desarrollador',
-    'Next.js Colombia',
-    'React developer Colombia',
   ],
 
-  authors: [{ name: 'Joshua Navarro', url: 'https://www.deepsunstudio.com' }],
-  creator: 'Joshua Navarro',
+  authors: [{ name: 'DeepSun Studio', url: SITE.url }],
+  creator: 'DeepSun Studio',
   publisher: 'DeepSun Studio',
-
-  alternates: {
-    canonical: 'https://www.deepsunstudio.com',
-    languages: {
-      'es-CO': 'https://www.deepsunstudio.com',
-      'en-US': 'https://www.deepsunstudio.com',
-    },
-  },
 
   openGraph: {
     type: 'website',
     locale: 'es_CO',
-    alternateLocale: 'en_US',
-    url: 'https://www.deepsunstudio.com',
+    url: '/',
     siteName: 'DeepSun Studio',
-    title: 'DeepSun Studio — Desarrollo Web para Negocios en Colombia',
-    description:
-      'Sitios web profesionales, automatizaciones y sistemas a medida que generan resultados reales. Trabajamos con negocios en Riohacha, La Guajira, Colombia y Latinoamérica.',
-    images: [
-      {
-        url: '/og-image',
-        width: 1200,
-        height: 630,
-        alt: 'DeepSun Studio — Desarrollo Web para Negocios en Colombia',
-        type: 'image/png',
-      },
-    ],
+    title: DEFAULT_TITLE,
+    description: DEFAULT_DESCRIPTION,
+    images: [{ url: '/og-image', width: 1200, height: 630, alt: 'DeepSun Studio — Del caos a lo claro.', type: 'image/png' }],
   },
 
   twitter: {
     card: 'summary_large_image',
-    site: '@deepsunstudio',
-    creator: '@joshuanavarro',
-    title: 'DeepSun Studio — Desarrollo Web para Negocios en Colombia',
-    description:
-      'Sitios web, automatizaciones y sistemas a medida para negocios en Colombia y Latinoamérica.',
+    title: DEFAULT_TITLE,
+    description: DEFAULT_DESCRIPTION,
     images: ['/og-image'],
   },
 
@@ -98,30 +75,18 @@ export const metadata: Metadata = {
     },
   },
 
-  // ─── Google Search Console ───────────────────────────────────────────────────
-  // Para activar Google Search Console:
-  // 1. Ir a search.google.com/search-console
-  // 2. Agregar propiedad: www.deepsunstudio.com
-  // 3. Verificar con el meta tag que Google provee
-  // 4. Reemplazar 'PENDIENTE' con el código de verificación (solo el valor, sin el tag completo)
-  // 5. Enviar sitemap: www.deepsunstudio.com/sitemap.xml
-  verification: {
-    google: 'PENDIENTE',
-  },
+  // Google Search Console: set NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION to the token value (no placeholder is emitted otherwise).
+  ...(process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION
+    ? { verification: { google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION } }
+    : {}),
 
-  category: 'technology',
+  category: 'business',
 
-  icons: {
-    icon: '/favicon.ico',
-    shortcut: '/favicon.ico',
-    apple: '/favicon.ico',
-  },
+  // Icon comes from app/icon.svg (file convention).
 
   other: {
     'geo.region': 'CO-LAG',
     'geo.placename': 'Riohacha, La Guajira, Colombia',
-    'geo.position': '11.5444;-72.9072',
-    ICBM: '11.5444, -72.9072',
   },
 }
 
@@ -131,21 +96,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="es" className="scroll-smooth">
       <head>
-        {/* Fontshare — Cabinet Grotesk (display) + Switzer (body) */}
-        <link rel="preconnect" href="https://api.fontshare.com" />
-        <link
-          href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@800,700,500&f[]=switzer@400,500,600&display=swap"
-          rel="stylesheet"
-        />
-        {/* JetBrains Mono — mono/code outlier */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap"
-          rel="stylesheet"
-        />
         <link rel="dns-prefetch" href="https://svbvkgvtjksvjfvigiah.supabase.co" />
-        <JsonLd />
       </head>
       <body className="antialiased">
         {children}

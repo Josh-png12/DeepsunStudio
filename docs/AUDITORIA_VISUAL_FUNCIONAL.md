@@ -114,3 +114,50 @@ Requiere un **staging real de Supabase**:
 - Variable `NEXT_PUBLIC_WHATSAPP_NUMBER` (número aún sin confirmar; hoy no se muestra WhatsApp).
 - Fuente de tasas COP/EUR; cifras 10+/6+/3+; JSON-LD con teléfono y tecnologías; fuentes del layout raíz que usa el portal.
 - Contra el archivo original de v02 (ver limitación).
+
+
+---
+
+# Ronda 4 — contra el v02 **original** (`design-reference/deepsun_propuesta_integral.html`)
+
+La reconstrucción y sus capturas se retiraron: **la fuente de verdad es el archivo original**, ahora versionado en `design-reference/`.
+
+## Verificación de la base
+- CSS del original vs mi transcripción: **idéntico** (única diferencia: la regla `.preview-banner`, propia de la vista previa, que no se portó).
+- Cuerpo del original vs reconstrucción: solo difería el cartel «CONCEPTO 02» y el modal de la vista previa.
+
+## pixelmatch contra el original (Edge headless, animaciones desactivadas, cartel de vista previa oculto)
+
+| Sección | 320 | 375 | 768 | 1440 | 1920 |
+|---|---|---|---|---|---|
+| Hero | 0,06 % | 0,05 % | 0,02 % | 0,01 % | 0,02 % |
+| Franja | 0,09 % | 0,07 % | 0,02 % | 0,01 % | 0,03 % |
+| Introducción | 0,11 % | 0,09 % | 0,07 % | 0,03 % | 0,03 % |
+| Trabajo | alto distinto* | 0,07 % | 0,03 % | 0,02 % | 0,50 % |
+| Servicios | alto −1 px | 0,66 % | 0,42 % | 0,04 % | 0,04 % |
+| Método | 0,26 % | alto −1 px | 0,63 % | 0,01 % | 0,01 % |
+| Testimonios | alto distinto (copy) | alto distinto (copy) | alto distinto (copy) | 0,17 % | 0,12 % |
+| Pie | alto distinto (enlaces) | alto distinto | alto distinto | 0,75 % | 1,37 % |
+
+\* a 320 px el original desborda horizontalmente con títulos largos; la implementación los ajusta (decisión consciente, solo ≤340 px). EN (375/1440): hero 0,01–0,05 %, franja ≤0,07 %, introducción ≤0,16 %, servicios 0,03 %. Las diferencias de 1 px son desplazamientos de redondeo de una fila de píxeles.
+
+## Diferencias reales pendientes (visuales)
+1. **Planes, FAQ, blog, contacto, pie y testimonios** difieren en alto por contenido real intencional: FAQ de 6 preguntas reales (v02: 4), enlace «Ver detalle de cada plan», títulos y descripciones reales de artículos, bloque «formulario completo» y formulario real en contacto, enlaces y correo en el pie, texto de «sin testimonios» sin notas de prototipo. No son errores.
+2. **Hamburguesa hasta 940 px** (v02 igual); v01 no aplica.
+3. **A 320 px** títulos de proyecto algo menores y sin la insignia de LUFE (para evitar desborde y solape).
+4. **Imagen social** (`/og-image`): usa la identidad nueva pero con tipografía del sistema (sin Archivo Black incrustada).
+5. Indicador vertical «scroll» del hero: desplazamiento de unos píxeles respecto al original (antialiasing/redondeo).
+
+## Accesibilidad (axe-core 4.x, 86 comprobaciones)
+Antes: 78 violaciones `label-content-name-mismatch` (WCAG 2.5.3) en 39 páginas/estados × 2 anchos: el enlace de marca («deepsunSTUDIO» sin espacio vs «DeepSun Studio, inicio») y el botón de WhatsApp («WA ↗» vs «Escríbenos por WhatsApp»). Las tres violaciones `region` en EN y la de landmark del WhatsApp ya estaban resueltas desde la ronda 3; el diálogo de reseña no tenía violaciones.
+Ahora: **0 violaciones** en 15 rutas × (ES, EN) × (1440, 375 px), más diálogo de reseña (vacío y con error), página con diálogo abierto, FAQ abierta, menú móvil abierto y formulario de 5 pasos (con y sin error).
+
+## Portal (`/portal/*`) frente a `origin/main`
+- Capturas de `/portal/login`, `/forgot-password` y `/reset-password` a 375 y 1440 px: **0,000 %** de píxeles distintos.
+- 0 reglas `.ds` y 0 keyframes `ds-*` cargados en el portal; mismas hojas de fuentes; `noindex, nofollow, nocache` intacto.
+- Mismos códigos HTTP en 13 rutas del portal/API (`/portal/dashboard`, `/portal/admin/*`, `/api/*`…): 307 → login / 200.
+- Cambios tocados en el portal: **solo** `app/portal/layout.tsx` (recibe las hojas de fuentes Fontshare/JetBrains que antes estaban en el layout raíz). El portal ya no emite el JSON-LD público (antes emitía 4 bloques).
+- No se probaron las pantallas autenticadas: requieren un Supabase real (ver `docs/PRUEBAS_STAGING_SUPABASE.md`).
+
+## SEO / JSON-LD
+Ver tabla en el informe final: canonical propio por página (antes todas apuntaban a la portada), sin `hreflang` falso (antes `en-US` apuntaba a la misma URL), sin token de verificación «PENDIENTE», palabras clave sin tecnologías ni nombre personal, `ProfessionalService` + `WebSite`, `BlogPosting` y `BreadcrumbList` reales, imagen social e icono nuevos.

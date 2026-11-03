@@ -9,6 +9,9 @@ import Journal from '@/components/site/Journal'
 import ContactBlock from '@/components/site/ContactBlock'
 import { getAllPosts } from '@/lib/blog'
 import { getCases } from '@/lib/site-cases'
+import { pageMeta, DEFAULT_TITLE, DEFAULT_DESCRIPTION } from '@/lib/seo'
+
+export const metadata = pageMeta({ title: DEFAULT_TITLE, description: DEFAULT_DESCRIPTION, path: '/', absoluteTitle: true })
 
 export default function Home() {
   return (

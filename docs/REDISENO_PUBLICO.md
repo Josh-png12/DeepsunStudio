@@ -5,7 +5,7 @@ Rama: `redesign/deepsun-editorial` (desde `origin/main` 7633042). No fusionada n
 ## Arquitectura
 - `app/(site)/` agrupa todas las rutas públicas (URLs sin cambios). Su layout carga `ds-base.css` + `ds-pages.css`, todo bajo `.ds`, y las 4 tipografías con `next/font`. `/portal/**` no importa estos estilos.
 - `app/layout.tsx` conserva metadatos, JSON-LD, Analytics y `globals.css`/`tokens.css` (los usa el portal). Se movieron a `(site)` el idioma, el botón de WhatsApp y la navegación.
-- `ds-base.css`: transcripción del CSS del prototipo `deepsun_propuesta_integral.html`, con selectores prefijados por `.ds`. **El archivo de referencia desapareció de Descargas durante el trabajo; se transcribió de la lectura hecha antes. Compáralo con el original.**
+- `ds-base.css`: transcripción del CSS del prototipo `deepsun_propuesta_integral.html`, con selectores prefijados por `.ds`. **El original está versionado en `design-reference/deepsun_propuesta_integral.html`; el CSS transcrito es idéntico al suyo (salvo la regla `.preview-banner`).**
 - Textos ES/EN: `lib/site-content.ts` (+ `lib/site-i18n.tsx`). Preferencia en `localStorage`, `html lang` actualizado en cliente.
 - Contacto centralizado en `lib/site.ts`. WhatsApp **solo** vía `NEXT_PUBLIC_WHATSAPP_NUMBER` (números contradictorios en el repo: 573971496476 vs 573197149647).
 - Formularios reales: `lib/leads.ts` (insert en `leads`, éxito solo tras confirmar), `ReviewForm` (buckets + `testimonials` con `approved:false`). Antispam: honeypot, tiempo mínimo y espera entre envíos.

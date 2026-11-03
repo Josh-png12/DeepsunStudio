@@ -244,7 +244,7 @@ html:has(.ds){background:#11151D}
 .ds .project>*,.ds .story>*,.ds .brief>*,.ds .who>*,.ds .contact-grid>*{min-width:0}
 @media(max-width:940px){.ds .project{grid-template-columns:minmax(0,1fr)}}
 @media(max-width:700px){.ds .project h3,.ds .more-item h4{overflow-wrap:anywhere}.ds .story,.ds .brief,.ds .who{grid-template-columns:minmax(0,1fr)}}
-@media(max-width:400px){.ds .project h3{font-size:clamp(30px,10.5vw,46px)}.ds .lufe-badge{display:none}.ds .fund-pill{font-size:10px;padding:12px 16px}}
+@media(max-width:340px){.ds .project h3{font-size:clamp(30px,9.2vw,46px)}.ds .lufe-badge{display:none}.ds .fund-pill{font-size:10px;padding:12px 16px}}
 
 /* Tailwind preflight strips the default bold that the prototype's h3s relied on */
 .ds .plan h3,.ds .article h3{font-weight:700}
@@ -260,7 +260,7 @@ html:has(.ds){background:#11151D}
 /* axe: coral on sand fails 3:1 even for large type; focus on underlined fields needs more than a hairline colour change */
 .ds .page-section.sand .h2-big em{color:#A8472A}
 .ds .contact-form input:focus,.ds .contact-form textarea:focus,.ds .brief form input:focus,.ds .brief form textarea:focus{box-shadow:0 2px 0 0 var(--coral)}
-.ds .wa-fab{right:12px;min-width:52px;height:52px}
+.ds .wa-fab{right:12px;min-width:52px;height:48px;padding:0 16px}
 
 /* Legacy globals.css styles a 4px dark scrollbar; public pages use the default scrollbar like v02 */
 html:has(.ds){scrollbar-width:auto;scrollbar-color:#5A6475 #E8E1D4}

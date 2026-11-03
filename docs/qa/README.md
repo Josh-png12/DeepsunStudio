@@ -7,10 +7,11 @@ npm i playwright-core pixelmatch@5 pngjs axe-core   # en una carpeta aparte
 ```
 
 - `mock-supabase.js` — Supabase **falso** en `localhost:54399` (`/__set?t=data|empty|error|slow&l=ok|fail&s=ok|fail`). Sirve para ver estados de UI; **no valida RLS, buckets ni esquema reales**.
-- `visual.js` — compara el prototipo v02 con la implementación (capturas + diferencia de píxeles del hero a 320/375/768/1440/1920).
-- `audit.js` — carrusel (scroll suave / movimiento reducido), orden de foco y axe-core en todas las rutas.
+- `visual2.js` — compara el **prototipo v02 original** (`design-reference/deepsun_propuesta_integral.html`, servido en `localhost:3200`) con la implementación: capturas por sección y diferencia de píxeles (pixelmatch), ES/EN y varios anchos.
+- `axe2.js` — axe-core (wcag2a/2aa/21a/21aa/22aa + best-practice) en todas las rutas, ES/EN, 1440/375 px, con diálogo de reseña, menú móvil, FAQ abierta y formulario con error.
+- `audit.js` — carrusel (scroll suave / movimiento reducido) y orden de foco.
 - `text.js` — diferencia de cadenas visibles ES/EN entre v02 y la implementación.
+- `portal.js` — compara `/portal/*` público entre `origin/main` (puerto 3300) y la rama (puerto 3100): píxeles, reglas `.ds`, fuentes, robots.
+- `seo-check.js` — título, canonical, Open Graph, robots, hreflang y JSON-LD emitidos por ruta.
 
 Compilación de prueba: `NEXT_PUBLIC_SUPABASE_URL=http://localhost:54399 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=test NEXT_PUBLIC_WHATSAPP_NUMBER=570000000000 npm run build`.
-
-`docs/comparacion/v02/integral-reconstruccion.html` es una **reconstrucción** del prototipo v02 hecha a partir de su lectura (el archivo original no estaba en disco): no sustituye al original.

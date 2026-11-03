@@ -53,8 +53,8 @@ export const projects: Project[] = [
       es: "Sitio web comercial para estudio — galería animada, perfiles de artistas, integración de reservas",
     },
     description: {
-      en: "A high-converting commercial website for a professional tattoo studio. Focused on brand storytelling, portfolio showcase, and turning visitors into booked appointments.",
-      es: "Un sitio web comercial de alta conversión para un estudio de tatuajes profesional. Enfocado en narrativa de marca, showcase de portafolio y convertir visitantes en citas reservadas.",
+      en: "A commercial website for a professional tattoo studio. Focused on brand storytelling, portfolio showcase, and turning visitors into booked appointments.",
+      es: "Un sitio web comercial para un estudio de tatuajes profesional. Enfocado en narrativa de marca, muestra de portafolio y convertir visitantes en citas reservadas.",
     },
     problem: {
       en: "The studio had no online presence — losing clients to competitors with digital visibility. The quality of their work wasn't reaching its target audience.",
@@ -191,8 +191,8 @@ export const projects: Project[] = [
     title: "SIEPA",
     slug: "siepa",
     tagline: {
-      en: "Full-stack administrative platform built for real institutional operations",
-      es: "Plataforma administrativa full-stack construida para operaciones institucionales reales",
+      en: "Administrative platform built for real institutional operations",
+      es: "Plataforma administrativa construida para operaciones institucionales reales",
     },
     description: {
       en: "SIEPA is a complete administrative system designed to manage institutional processes end-to-end — student records, reporting, analytics, and multi-role dashboards. Built for a real institution replacing manual spreadsheet workflows.",
@@ -207,8 +207,8 @@ export const projects: Project[] = [
       es: "Construí una plataforma web centralizada con acceso por roles para administradores, docentes y estudiantes. Los reportes automatizados, dashboards en tiempo real y herramientas de datos masivos reemplazaron todo el flujo manual.",
     },
     impact: {
-      en: "Report generation time cut from days to seconds. Eliminated data inconsistencies entirely. The institution now operates with real-time visibility into all processes.",
-      es: "Tiempo de generación de reportes reducido de días a segundos. Inconsistencias de datos eliminadas por completo. La institución ahora opera con visibilidad en tiempo real de todos los procesos.",
+      en: "Replaced fragmented spreadsheets with a centralized system: automated reporting and real-time dashboards give the institution a single, up-to-date view of its operations.",
+      es: "Reemplazó hojas de cálculo dispersas por un sistema centralizado: reportes automatizados y paneles en tiempo real dan a la institución una visión única y actualizada de su operación.",
     },
     features: {
       en: [
@@ -258,8 +258,8 @@ export const projects: Project[] = [
       es: "Construí una capa gráfica sobre las herramientas de recolección de datos que abstrae toda la complejidad. Los usuarios configuran objetivos visualmente, programan ejecuciones y exportan sin código.",
     },
     impact: {
-      en: "Reduces data collection time by 90%+ compared to manual extraction. Enables teams without engineering knowledge to build automated data pipelines in minutes.",
-      es: "Reduce el tiempo de recolección de datos más del 90% frente a la extracción manual. Permite a equipos sin conocimiento técnico construir pipelines de datos automatizados en minutos.",
+      en: "Replaces repetitive manual copy-and-paste with automated, scheduled data collection that teams without engineering knowledge can set up on their own.",
+      es: "Reemplaza el copiar y pegar manual repetitivo por una recolección de datos automatizada y programada que equipos sin conocimientos técnicos pueden configurar por su cuenta.",
     },
     features: {
       en: [
@@ -289,8 +289,8 @@ export const projects: Project[] = [
     title: "ms-usuarios",
     slug: "ms-usuarios",
     tagline: {
-      en: "Production-grade user management microservice — JWT auth, RBAC, full lifecycle API",
-      es: "Microservicio de gestión de usuarios de nivel producción — auth JWT, RBAC, API de ciclo de vida completo",
+      en: "Reusable user management microservice — token authentication, role-based access, full lifecycle API",
+      es: "Microservicio reutilizable de gestión de usuarios — autenticación por tokens, acceso por roles, API de ciclo de vida completo",
     },
     description: {
       en: "A standalone user management microservice built for scalable backend architectures. Handles authentication, authorization, user lifecycle, and role management through a clean, well-documented REST API.",
@@ -305,8 +305,8 @@ export const projects: Project[] = [
       es: "Diseñé un microservicio con dominio aislado siguiendo principios REST con clara separación de responsabilidades. Implementa autenticación por tokens sin estado, almacenamiento seguro de contraseñas y control de acceso granular por roles.",
     },
     impact: {
-      en: "A plug-and-play user system integrable into any backend architecture in under an hour, with enterprise-grade security baked in from day one.",
-      es: "Un sistema de usuarios plug-and-play integrable en cualquier arquitectura backend en menos de una hora, con seguridad de nivel empresarial incorporada desde el inicio.",
+      en: "A reusable user-management service that can be plugged into other backends, with authentication and role-based access control built in from the start.",
+      es: "Un servicio de gestión de usuarios reutilizable que puede conectarse a otros sistemas, con autenticación y control de acceso por roles incorporados desde el inicio.",
     },
     features: {
       en: [

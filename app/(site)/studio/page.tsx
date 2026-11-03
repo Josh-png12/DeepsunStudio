@@ -1,11 +1,12 @@
-import type { Metadata } from 'next'
+import { pageMeta } from '@/lib/seo'
 import StudioView from '@/components/site/StudioView'
 
-export const metadata: Metadata = {
-  title: 'DeepSun Studio — Agencia de Desarrollo Web Colombia',
+export const metadata = pageMeta({
+  title: 'El estudio',
   description:
-    'Agencia de desarrollo web y automatización para negocios en Colombia. Sitios web, WhatsApp bots y sistemas a medida que generan resultados reales.',
-}
+    'DeepSun Studio es un estudio digital independiente en Riohacha, Colombia: diseño y desarrollo web, software a medida y automatización para negocios.',
+  path: '/studio',
+})
 
 export default function StudioPage() {
   return <StudioView />

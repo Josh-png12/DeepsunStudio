@@ -4,6 +4,7 @@ import Nav from '@/components/site/Nav'
 import Footer from '@/components/site/Footer'
 import WhatsAppFab from '@/components/site/WhatsAppFab'
 import SkipLink from '@/components/site/SkipLink'
+import { JsonLd } from '@/components/JsonLd'
 import './ds-base.css'
 import './ds-pages.css'
 
@@ -16,6 +17,7 @@ const serif = Instrument_Serif({ weight: '400', style: ['normal', 'italic'], sub
 export default function SiteLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className={`ds ${display.variable} ${sans.variable} ${mono.variable} ${serif.variable}`} id="top">
+      <JsonLd />
       <SiteLangProvider>
         <SkipLink />
         <Nav />

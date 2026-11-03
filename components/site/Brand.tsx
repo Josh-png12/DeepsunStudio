@@ -14,7 +14,8 @@ export function BrandLink({ label, href = '/' }: { label: string; href?: string 
     <Link className="brand" href={href} aria-label={label}>
       <SunMark />
       <span className="brandword">
-        deepsun<small>STUDIO</small>
+        deepsun{' '}
+        <small>STUDIO</small>
       </span>
     </Link>
   )

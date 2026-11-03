@@ -1,13 +1,14 @@
-import type { Metadata } from 'next'
+import { pageMeta } from '@/lib/seo'
 import ContactoView from '@/components/site/ContactoView'
 
 export const dynamic = 'force-dynamic'
 
-export const metadata: Metadata = {
+export const metadata = pageMeta({
   title: 'Contacto',
   description:
-    'Cuéntanos qué necesita tu negocio. Respondemos en menos de 24 horas con una propuesta concreta.',
-}
+    'Cuéntanos qué necesita tu negocio y te respondemos con una propuesta concreta. Formulario de cinco pasos, WhatsApp y correo.',
+  path: '/contacto',
+})
 
 export default function ContactoPage() {
   return <ContactoView />
