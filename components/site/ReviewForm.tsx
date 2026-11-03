@@ -63,9 +63,15 @@ export default function ReviewForm({ onClose }: { onClose: () => void }) {
         avatar_url,
         result_image_url,
         video_url,
-        approved: false,
-      })
-      if (err) throw err
+      }) // `approved` is never sent: it defaults to false and the database refuses anything else
+      if (err) {
+        if (err.code === 'DS001') return setState('done') // an identical review is already stored
+        if (err.code === 'DS002' || err.code === 'DS003') {
+          setError(tr(F.eLimit))
+          return setState('idle')
+        }
+        throw err
+      }
       setState('done')
     } catch (err) {
       console.error('[reviews] submit failed', err)

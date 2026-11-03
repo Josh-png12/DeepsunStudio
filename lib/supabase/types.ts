@@ -304,6 +304,11 @@ export interface PublicLead {
   whatsapp: string | null
   message: string | null
   created_at: string
+  /** Added by 202611030001_public_intake.sql. */
+  source?: 'brief' | 'home_quick'
+  status?: 'new' | 'contacted' | 'qualified' | 'won' | 'lost' | 'spam'
+  admin_notes?: string | null
+  handled_at?: string | null
 }
 
 export interface PublicTestimonial {
@@ -319,6 +324,7 @@ export interface PublicTestimonial {
   approved: boolean
   featured: boolean
   created_at: string
+  moderated_at?: string | null
 }
 
 type Table<Row, Insert = Partial<Row>, Update = Partial<Insert>> = {

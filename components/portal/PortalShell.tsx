@@ -30,6 +30,8 @@ const adminNav: NavItem[] = [
   { label: 'Novedades', href: '/portal/admin/novedades', icon: 'updates' },
   { label: 'Reportes', href: '/portal/admin/reportes', icon: 'reports' },
   { label: 'Usuarios', href: '/portal/admin/usuarios', icon: 'users' },
+  { label: 'Solicitudes', href: '/portal/admin/solicitudes', icon: 'updates' },
+  { label: 'Testimonios', href: '/portal/admin/testimonios', icon: 'reports' },
   { label: 'Auditoría', href: '/portal/admin/auditoria', icon: 'audit' },
 ]
 

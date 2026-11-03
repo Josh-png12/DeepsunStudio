@@ -34,6 +34,7 @@ export default function BriefForm() {
   const [budget, setBudget] = useState('')
   const [timeline, setTimeline] = useState('')
   const [status, setStatus] = useState<'idle' | 'sending' | 'done'>('idle')
+  const [dup, setDup] = useState(false)
   const [error, setError] = useState('')
   const openedAt = useRef(0)
   useEffect(() => { openedAt.current = Date.now() }, [])
@@ -63,10 +64,13 @@ export default function BriefForm() {
       email,
       whatsapp: String(fd.get('whatsapp') ?? '').trim() || null,
       message: String(fd.get('message') ?? '').trim() || null,
+      source: 'brief',
     })
-    if (res.ok) setStatus('done')
-    else {
-      setError(tr(res.reason === 'throttled' ? B.throttled : B.error))
+    if (res.ok) {
+      setDup(!!res.duplicate)
+      setStatus('done')
+    } else {
+      setError(tr(res.reason === 'throttled' ? B.throttled : res.reason === 'rate_limited' || res.reason === 'paused' ? B.limit : res.reason === 'invalid' ? B.rejected : B.error))
       setStatus('idle')
     }
   }
@@ -76,7 +80,7 @@ export default function BriefForm() {
     return (
       <div className="done" role="status">
         <h2>{tr(B.doneTitle)}</h2>
-        <p>{tr(B.doneBody)}</p>
+        <p>{tr(dup ? B.doneDup : B.doneBody)}</p>
         {wa && (
           <p style={{ marginTop: 28 }}>
             <span className="tiny" style={{ display: 'block', marginBottom: 10 }}>{tr(B.urgent)}</span>

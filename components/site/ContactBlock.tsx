@@ -7,7 +7,7 @@ import { CONTACT as C } from '@/lib/site-content'
 import { SITE, mailtoHref, whatsappHref } from '@/lib/site'
 import { isEmail, submitLead } from '@/lib/leads'
 
-type Status = 'idle' | 'sending' | 'ok' | 'error' | 'invalid' | 'throttled'
+type Status = 'idle' | 'sending' | 'ok' | 'dup' | 'error' | 'invalid' | 'throttled' | 'limited'
 
 export function QuickForm() {
   const { tr, lang } = useSite()
@@ -34,16 +34,19 @@ export function QuickForm() {
       name,
       email,
       whatsapp: null,
-      message: `[Formulario rápido · portada] ${idea}`,
+      message: idea,
+      source: 'home_quick',
     })
     if (res.ok) {
       form.reset()
-      setStatus('ok')
-    } else setStatus(res.reason === 'throttled' ? 'throttled' : 'error')
+      setStatus(res.duplicate ? 'dup' : 'ok')
+    } else setStatus(res.reason === 'throttled' ? 'throttled' : res.reason === 'rate_limited' || res.reason === 'paused' ? 'limited' : res.reason === 'invalid' ? 'invalid' : 'error')
   }
 
   const msg: Record<Exclude<Status, 'idle' | 'sending'>, string> = {
     ok: tr(C.ok),
+    dup: tr(C.dup),
+    limited: tr(C.limit),
     error: tr(C.err),
     invalid: tr(C.invalid),
     throttled: lang === 'es' ? 'Espera unos segundos antes de reenviar.' : 'Please wait a few seconds before sending again.',
@@ -62,7 +65,7 @@ export function QuickForm() {
         <span>{tr(status === 'sending' ? C.sending : C.send)}</span>
         <span className="arrow" aria-hidden="true">↗</span>
       </button>
-      <span className={`form-note ${status === 'ok' ? 'ok' : status === 'idle' || status === 'sending' ? '' : 'bad'}`} role="status" aria-live="polite">
+      <span className={`form-note ${status === 'ok' || status === 'dup' ? 'ok' : status === 'idle' || status === 'sending' ? '' : 'bad'}`} role="status" aria-live="polite">
         {status !== 'idle' && status !== 'sending' ? msg[status] : tr(C.privacy)}
       </span>
     </form>

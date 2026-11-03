@@ -29,6 +29,8 @@ http.createServer((req, res) => {
     }
     if (req.method === 'POST' && u.pathname.startsWith('/rest/v1/')) {
       log.push({ table: u.pathname.split('/').pop(), body: body.slice(0, 400) })
+      const codes = { dup: ['DS001', 'duplicate_lead'], rate: ['DS002', 'rate_limited'], paused: ['DS003', 'intake_paused'], invalid: ['23514', 'violates check constraint'] }
+      if (codes[l]) { res.writeHead(400, h); return res.end(JSON.stringify({ code: codes[l][0], details: null, hint: null, message: codes[l][1] })) }
       if (l === 'fail') { res.writeHead(401, h); return res.end(JSON.stringify({ message: 'new row violates row-level security policy' })) }
       res.writeHead(201, h); return res.end('')
     }

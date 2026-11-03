@@ -40,7 +40,7 @@ export default function Reviews() {
     try {
       createClient()
         .from('testimonials')
-        .select('*')
+        .select('id,created_at,name,company,role,message,rating,avatar_url,result_image_url,video_url,approved,featured')
         .eq('approved', true)
         .order('featured', { ascending: false })
         .order('created_at', { ascending: false })

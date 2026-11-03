@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { requireAdmin, requireViewer } from './auth'
+import { canManageAgreement } from './authorization'
 import {
   boundedInteger,
   isoDate,
@@ -395,7 +396,8 @@ export async function inviteUserAction(formData: FormData) {
   const email = requiredText(formData, 'email', 'El correo', 254).toLowerCase()
   const fullName = requiredText(formData, 'full_name', 'El nombre', 160)
   const agreementId = uuid(formData, 'agreement_id')
-  if (!viewer.agreements.some((agreement) => agreement.id === agreementId)) throw new PortalValidationError('Acuerdo no autorizado.')
+  // The service-role client below bypasses RLS, so authorise here: the caller must MANAGE this agreement, not merely belong to it.
+  if (!canManageAgreement(viewer.user.id, agreementId, viewer.memberships, viewer.profile.role)) throw new PortalValidationError('Acuerdo no autorizado.')
   const admin = createAdminClient()
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'
   const invite = await admin.auth.admin.inviteUserByEmail(email, {
