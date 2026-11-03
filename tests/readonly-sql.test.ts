@@ -20,7 +20,7 @@ test('the file contains only SELECT statements (no writes, DDL, locks, transacti
 })
 
 test('only harmless functions are called (no side effects, no dynamic SQL, no file or network access)', () => {
-  const allowed = new Set(['count', 'min', 'max', 'string_agg', 'current_setting', 'in', 'not', 'and', 'or', 'on', 'where', 'from', 'as', 'select', 'union', 'all', 'exists', 'between', 'order', 'by', 'group', 'left', 'join', 'values', 'is', 'like'])
+  const allowed = new Set(['count', 'min', 'max', 'string_agg', 'current_setting', 'has_table_privilege', 'has_column_privilege', 'has_function_privilege', 'pg_get_triggerdef', 'pg_get_function_identity_arguments', 'r', 'p' /* column-alias lists: as r(grantee), as p(priv) */, 'in', 'not', 'and', 'or', 'on', 'where', 'from', 'as', 'select', 'union', 'all', 'exists', 'between', 'order', 'by', 'group', 'left', 'join', 'values', 'is', 'like'])
   const found = new Set<string>()
   for (const s of statements) {
     const noStrings = s.replace(/'[^']*'/g, "''")
@@ -46,13 +46,17 @@ test('no personal data is ever selected: our two tables are only counted or summ
 test('it runs without errors on the legacy (pre-migration) and migrated databases and changes nothing', async () => {
   const sqlFile = fs.readFileSync(new URL('../supabase/migrations/202611030001_public_intake.sql', import.meta.url), 'utf8')
   for (const mode of ['legacy', 'migrated'] as const) {
-    const db = await makeDb({ only: ['202609290001_portal_core.sql', '202609290002_rls_storage_audit.sql'] })
+    const legacyOnly = ['202609290001_portal_core.sql', '202609290002_rls_storage_audit.sql']
+    const db = await makeDb({ only: mode === 'migrated' ? [...legacyOnly, '202609300003_project_tracking.sql', '202609300004_project_tracking_rls.sql'] : legacyOnly })
     await as(db, 'postgres')
     await db.exec(`create table public.leads (id uuid primary key default gen_random_uuid(), created_at timestamptz not null default now(), business_type text, needs text[], budget text, timeline text, name text, email text, whatsapp text, message text);
       create table public.testimonials (id uuid primary key default gen_random_uuid(), created_at timestamptz not null default now(), name text, company text, role text, message text, rating int, avatar_url text, result_image_url text, video_url text, approved boolean default false, featured boolean default false);
       insert into public.leads (business_type, needs, budget, timeline, name, email) values ('hotel','{asesoria}','no_se','asap','Ficticio Uno','uno@example.test');
       insert into public.testimonials (name, message, rating) values ('Ficticia Dos','Texto ficticio de prueba para el inventario.',5);`)
-    if (mode === 'migrated') await db.exec(sqlFile)
+    if (mode === 'migrated') {
+      await db.exec(sqlFile)
+      for (const f of ['202611030002_fix_storage_document_read.sql', '202611030003_harden_privileges.sql']) await db.exec(fs.readFileSync(new URL(`../supabase/migrations/${f}`, import.meta.url), 'utf8'))
+    }
     const counts = async () => (await db.query<{ t: string; n: number }>(`select 'leads' t, count(*)::int n from public.leads union all select 'testimonials', count(*)::int from public.testimonials union all select 'policies', count(*)::int from pg_policies`)).rows
     const before = await counts()
     await db.exec('begin read only')

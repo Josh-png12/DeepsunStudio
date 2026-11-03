@@ -25,20 +25,31 @@ from information_schema.columns where table_schema = 'public' and table_name in 
 select tablename, policyname, cmd, roles, qual, with_check from pg_policies
 where schemaname = 'public' and tablename in ('leads', 'testimonials') order by tablename, cmd, policyname;
 
--- 4) Privileges held by the API roles. DANGER: anon with SELECT/UPDATE/DELETE on leads, or UPDATE on testimonials.
-select table_name, grantee, privilege_type from information_schema.role_table_grants
-where table_schema = 'public' and table_name in ('leads', 'testimonials') and grantee in ('anon', 'authenticated', 'public')
-order by table_name, grantee, privilege_type;
+-- 4) Table privileges ACTUALLY held by the API roles, computed with has_table_privilege() — which sees real ACLs including inherited and
+--    default ones. (information_schema.role_table_grants shows only grants visible to the CURRENT role: run by a non-owner it returns an
+--    empty list that looks "safe" and is not. That is how the audit first under-reported.)
+--    DANGER: anon with select/update/delete on leads, or update on testimonials. Expected after: anon → insert on leads, select on testimonials.
+select c.relname as table_name, r.grantee, string_agg(p.priv, ', ' order by p.priv) as privileges
+from pg_class c
+cross join (values ('anon'), ('authenticated')) as r(grantee)
+cross join (values ('select'), ('insert'), ('update'), ('delete'), ('truncate'), ('references'), ('trigger')) as p(priv)
+where c.relnamespace = 'public'::regnamespace and c.relname in ('leads', 'testimonials') and has_table_privilege(r.grantee, c.oid, p.priv)
+group by c.relname, r.grantee order by 1, 2;
 
 -- 5) Column-level privileges (after migration anon may INSERT only the form columns and SELECT testimonials, filtered by RLS to approved rows)
-select table_name, grantee, privilege_type, string_agg(column_name, ', ' order by column_name) as columns
-from information_schema.column_privileges
-where table_schema = 'public' and table_name in ('leads', 'testimonials') and grantee in ('anon', 'authenticated')
-group by table_name, grantee, privilege_type order by 1, 2, 3;
+select c.relname as table_name, r.grantee, p.priv as privilege_type, string_agg(a.attname, ', ' order by a.attname) as columns
+from pg_class c
+join pg_attribute a on a.attrelid = c.oid and a.attnum > 0 and not a.attisdropped
+cross join (values ('anon'), ('authenticated')) as r(grantee)
+cross join (values ('select'), ('insert'), ('update')) as p(priv)
+where c.relnamespace = 'public'::regnamespace and c.relname in ('leads', 'testimonials') and has_column_privilege(r.grantee, c.oid, a.attnum, p.priv)
+group by c.relname, r.grantee, p.priv order by 1, 2, 3;
 
--- 6) Triggers (after migration: *_intake_guard before insert, testimonials_moderation_guard / leads_handling_guard before update)
-select event_object_table as table_name, trigger_name, action_timing, event_manipulation
-from information_schema.triggers where event_object_schema = 'public' and event_object_table in ('leads', 'testimonials') order by 1, 2;
+-- 6) Triggers from the system catalog (information_schema.triggers is also filtered by the current role's privileges).
+--    After migration: *_intake_guard before insert, testimonials_moderation_guard / leads_handling_guard before update.
+select c.relname as table_name, t.tgname as trigger_name, pg_get_triggerdef(t.oid) as definition
+from pg_trigger t join pg_class c on c.oid = t.tgrelid
+where not t.tgisinternal and c.relnamespace = 'public'::regnamespace and c.relname in ('leads', 'testimonials') order by 1, 2;
 
 -- 7) Buckets: public flag, size limit and MIME types (expected after: 2 MB / 5 MB / 50 MB and the listed MIME types)
 select id, public, file_size_limit, allowed_mime_types from storage.buckets where id like 'testimonial-%' or id = 'agreement-documents';
@@ -60,3 +71,27 @@ union all select 'testimonials external media url', count(*) from public.testimo
   where (avatar_url is not null and avatar_url !~ '^https?://[^/\s]+/storage/v1/object/public/testimonial-avatars/')
      or (result_image_url is not null and result_image_url !~ '^https?://[^/\s]+/storage/v1/object/public/testimonial-results/')
      or (video_url is not null and video_url !~ '^https?://[^/\s]+/storage/v1/object/public/testimonial-videos/');
+
+-- 11) Portal hardening (migration 202611030003). How many public tables each API role can TRUNCATE / REFERENCE / TRIGGER, and how many
+--     it can read or write at all. DANGER before 003: anon and authenticated hold truncate/references/trigger on every table and anon
+--     holds select/insert/update/delete on the portal tables. Expected after 003: truncate/references/trigger = 0 for both roles;
+--     anon only has what the public forms need: select on testimonials (1 table here; its INSERT on leads/testimonials is column-level, see block 5).
+select r.grantee, p.priv as privilege, count(*) as tables_with_privilege
+from pg_class c
+cross join (values ('anon'), ('authenticated')) as r(grantee)
+cross join (values ('select'), ('insert'), ('update'), ('delete'), ('truncate'), ('references'), ('trigger')) as p(priv)
+where c.relnamespace = 'public'::regnamespace and c.relkind = 'r' and has_table_privilege(r.grantee, c.oid, p.priv)
+group by r.grantee, p.priv order by 1, 2;
+
+-- 12) Who can EXECUTE each function of the public schema (RPC surface). DANGER before 003: anon_exec = true on is_platform_admin,
+--     is_agreement_admin, is_agreement_member, project_accepts_financials, calculate_project_participation.
+--     Expected after: anon_exec = false everywhere; authenticated_exec = true ONLY for those five helpers/RPCs and storage_agreement_id.
+select p.proname as function_name, pg_get_function_identity_arguments(p.oid) as arguments, p.prosecdef as security_definer,
+       has_function_privilege('anon', p.oid, 'execute') as anon_exec, has_function_privilege('authenticated', p.oid, 'execute') as authenticated_exec
+from pg_proc p where p.pronamespace = 'public'::regnamespace order by 1, 2;
+
+-- 13) Storage read policy for private documents. Read the "qual" text. DEFECT (before 002): it contains  d.storage_path = d.name  — the
+--     subquery is not tied to the object. Expected after 002: it references  objects.name  together with  storage_agreement_id(objects.name)
+--     and the project visibility check.
+select policyname, cmd, roles, qual from pg_policies
+where schemaname = 'storage' and tablename = 'objects' and policyname like '%read agreement documents%' order by policyname;

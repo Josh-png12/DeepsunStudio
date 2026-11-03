@@ -1,7 +1,7 @@
 // Local Postgres (PGlite, WASM — no network) that imitates the parts of Supabase our migrations rely on:
 // roles anon/authenticated/service_role, auth.uid()/auth.role() driven by request.jwt.claim.*, a storage schema,
 // PostgREST-style request.headers, and Supabase's default privileges (ALL on new public tables for the API roles).
-// It proves schema, constraints, triggers, RLS and grants. It does NOT prove behaviour of the hosted platform
+// It proves schema, constraints, triggers, RLS and grants (default privileges for tables AND functions imitate Supabase, which is what exposed the helper RPCs). It does NOT prove behaviour of the hosted platform
 // (header names, Storage API enforcement, PostgREST error mapping) — see docs/PRUEBAS_STAGING_SUPABASE.md.
 import fs from 'node:fs'
 import { PGlite } from '@electric-sql/pglite'
@@ -24,6 +24,7 @@ create function storage.foldername(name text) returns text[] language sql immuta
 create function storage.filename(name text) returns text language sql immutable as $$ select (string_to_array(name, '/'))[array_length(string_to_array(name, '/'),1)] $$;
 create publication supabase_realtime;
 alter default privileges in schema public grant all on tables to anon, authenticated, service_role;
+alter default privileges in schema public grant execute on functions to anon, authenticated, service_role;
 grant usage on schema public, auth, storage to anon, authenticated, service_role;
 grant select, insert, update, delete on all tables in schema storage to authenticated;
 grant insert on storage.objects to anon;
