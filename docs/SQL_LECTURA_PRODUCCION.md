@@ -37,3 +37,9 @@
 | 2 | Columnas distintas a las esperadas | La migración abortará a propósito (guarda de deriva de esquema): enviar el resultado para adaptarla |
 
 Si el bloque 3/4 muestra una señal de alarma, **no es una emergencia que justifique cambiar producción de inmediato sin plan**: avise para decidir un cierre mínimo (`ALTER TABLE … ENABLE ROW LEVEL SECURITY`) con copia de seguridad previa.
+
+## Actualización (2026-11-03)
+- Los bloques 4, 5 y 6 ya no usan `information_schema`: esa vista **solo muestra lo que el rol actual puede ver** y, ejecutada con un rol que no es dueño de las tablas (por ejemplo un usuario de solo lectura), devuelve vacío y parece «seguro». Ahora usan `has_table_privilege`, `has_column_privilege` y `pg_trigger`, que ven los privilegios reales.
+- Bloques nuevos: **11** (cuántas tablas pueden `TRUNCATE`/`REFERENCES`/`TRIGGER` y leer/escribir `anon` y `authenticated`), **12** (quién puede `EXECUTE` cada función = superficie RPC) y **13** (texto de la política de lectura de Storage).
+- `has_table_privilege` cuenta privilegios de **tabla**; el `INSERT` de `anon` sobre `leads` es **por columna** y aparece en el bloque 5.
+- Los bloques 9 y 10 leen `public.leads` / `public.testimonials`: si el bloque 1 no devuelve filas (producción hoy), sáltelos; fallarían con «relation does not exist».

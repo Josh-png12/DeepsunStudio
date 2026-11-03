@@ -8,6 +8,8 @@
 |---|---|---|
 | Esquema, restricciones, disparadores, RLS y permisos de columna de `leads`, `testimonials` y Storage | `tests/intake-db.test.ts` (25 pruebas, `npm test`) con las migraciones reales sobre Postgres local (PGlite) | Prueba la **lógica SQL**. No prueba PostgREST, Auth ni Storage reales |
 | Aislamiento entre inversionistas y datos solo-admin del portal | `tests/portal-rls-db.test.ts` (7 pruebas) con las migraciones reales | Idem. No prueba sesiones, cookies ni `proxy.ts` |
+| Defectos de la auditoría real (lectura cruzada en Storage, oráculo de helpers, `TRUNCATE`, proyecto de otro acuerdo) y sus correcciones `002`/`003` + reversas | `tests/hardening-db.test.ts` (16 pruebas): cada defecto se reproduce primero sobre las migraciones que ya están en producción y luego se corrige en la MISMA base | Lógica SQL. No prueba Storage/PostgREST/Auth reales |
+| Todo lo anterior, sobre **Supabase real en local** (Postgres 17 + GoTrue + PostgREST + Storage): `scripts/staging/verify.mjs` (23), `verify-portal.mjs` (52) y `docs/qa/e2e-staging.js` (28, navegador Edge contra el sitio compilado) | Ver `docs/LANZAMIENTO.md` §2 | Auth, PostgREST, Storage y las pantallas del portal con sesiones reales. **No** prueba: cabecera de IP real (Cloudflare), correo real, configuración de Auth del proyecto alojado |
 | Actualización de una configuración permisiva «hecha a mano» | Prueba `upgrade` | Demuestra que la migración cierra RLS apagado / políticas abiertas y conserva filas |
 | Formularios (error, límite, inválido, duplicado, éxito) y carga útil | `docs/qa/forms.js` en Edge real contra un servidor **falso** | Prueba la **interfaz**; el servidor falso no es Supabase |
 
@@ -16,7 +18,7 @@ El Postgres local imita `auth.uid()/auth.role()`, los roles `anon/authenticated/
 ## Orden de despliegue (staging → producción)
 
 1. En **producción**, ejecutar `supabase/verification/intake_state_readonly.sql` (solo lectura) y guardar los resultados: indica si hoy hay RLS, políticas abiertas o permisos amplios.
-2. Crear/usar un proyecto **staging**. Restaurar un volcado de esquema de producción (sin datos personales) o aplicar las migraciones: `202609290001` … `202609300004` y luego `202611030001_public_intake.sql` y `202611030002_fix_storage_document_read.sql`.
+2. Crear/usar un proyecto **staging** (o el stack local de `docs/LANZAMIENTO.md` §2, que es gratis y no toca producción). Aplicar las migraciones en orden: `202609290001` … `202609300004`, luego `202611030001_public_intake.sql`, `202611030002_fix_storage_document_read.sql` y `202611030003_harden_privileges.sql`.
    - Si la migración aborta con `schema differs from what the frontend sends`, **no forzar**: ajustar el esquema real (la tabla de producción difiere) y volver a intentar.
 3. Con `.env.local` de staging (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`; nunca la `service_role` en el navegador) ejecutar la lista de abajo.
 4. Procedimiento completo, respaldo, reversa y orden de publicación: **`docs/PUBLICACION_SEGURA.md`**. Si todo pasa: aplicar en producción en una ventana de bajo tráfico, con copia de seguridad previa. Después ejecutar de nuevo el archivo de solo lectura y `VALIDATE CONSTRAINT` de las restricciones `NOT VALID` cuando el bloque 10 devuelva 0.
