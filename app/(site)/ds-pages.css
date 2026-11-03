@@ -237,3 +237,12 @@ html:has(.ds){background:#11151D}
 
 /* overflow-x:hidden made .ds a programmatic scroll container (menu focus shifted the page); clip does not */
 .ds{overflow-x:clip}
+
+/* Narrow screens: grid tracks must be allowed to shrink or long words push the layout wider than the viewport */
+.ds .project>*,.ds .story>*,.ds .brief>*,.ds .who>*,.ds .contact-grid>*{min-width:0}
+@media(max-width:940px){.ds .project{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:700px){.ds .project h3,.ds .more-item h4{overflow-wrap:anywhere}.ds .story,.ds .brief,.ds .who{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:400px){.ds .project h3{font-size:clamp(30px,10.5vw,46px)}.ds .lufe-badge{display:none}.ds .fund-pill{font-size:10px;padding:12px 16px}}
+
+/* Tailwind preflight strips the default bold that the prototype's h3s relied on */
+.ds .plan h3,.ds .article h3{font-weight:700}
