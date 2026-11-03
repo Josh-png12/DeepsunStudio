@@ -1,9 +1,6 @@
 import type { Metadata, Viewport } from 'next'
 import './globals.css'
-import { LanguageProvider } from '@/lib/i18n'
 import { JsonLd } from '@/components/JsonLd'
-import { LangSync } from '@/components/LangSync'
-import WhatsAppButton from '@/components/WhatsAppButton'
 import { Analytics } from '@vercel/analytics/next'
 // Fonts loaded via Fontshare <link> tags in <head> — see layout below
 
@@ -151,12 +148,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <JsonLd />
       </head>
       <body className="antialiased">
-        <LanguageProvider>
-          <LangSync />
-          {children}
-          <WhatsAppButton />
-          <Analytics />
-        </LanguageProvider>
+        {children}
+        <Analytics />
       </body>
     </html>
   )
