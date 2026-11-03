@@ -40,7 +40,7 @@ before(async () => {
     update public.profiles set role='admin' where id='${ADMIN}';
     alter table public.profiles enable trigger protect_profile_role_trigger;`)
 })
-beforeEach(async () => { await as(db, 'postgres'); await db.exec('truncate public.leads, public.testimonials') })
+beforeEach(async () => { await as(db, 'postgres'); await db.exec(`truncate public.leads, public.testimonials, public.intake_client_log, public.intake_moderation_log; update public.intake_settings set value='5' where key='leads_per_ip_hour'`) })
 
 // ───────────────────────────────────────────────────────────── schema ──
 test('tables, RLS and buckets exist and match the columns the frontend sends', async () => {
@@ -81,7 +81,7 @@ test('leads: an anonymous visitor cannot read, edit or delete anything', async (
 
 test('leads: server-controlled columns cannot be set by the client', async () => {
   await as(db, 'anon', { headers: ip(1) })
-  for (const col of ['status', 'admin_notes', 'client_hash', 'handled_by', 'created_at', 'id']) {
+  for (const col of ['status', 'admin_notes', 'handled_by', 'created_at', 'id']) {
     const f = await failure(db, `insert into public.leads (business_type, needs, budget, timeline, name, email, ${col}) values ('hotel','{asesoria}','no_se','asap','QA','x@example.com', null)`)
     assert.equal(f?.code, '42501', `${col} must not be insertable by anon`)
   }
@@ -96,11 +96,16 @@ test('leads: invalid values are rejected by the database (not only by the browse
   for (const [label, o] of bad) { const f = await insertLead(o, ip(9)); assert.equal(f?.code, '23514', `${label} should violate a CHECK, got ${f?.message}`) }
 })
 
-test('leads: the stored row is normalised and carries only a hash of the client address', async () => {
+test('leads: the stored row is normalised; the client address lives only (hashed, peppered) in a private log, never on the lead', async () => {
   await insertLead({ email: '  QA@Example.COM ', name: '  Ana  ', message: '  hola  ' }, ip(7))
-  const [r] = await q('postgres', 'select email, name, message, client_hash, status from public.leads')
+  const [r] = await q('postgres', 'select email, name, message, status from public.leads')
   assert.equal(r.email, 'qa@example.com'); assert.equal(r.name, 'Ana'); assert.equal(r.message, 'hola'); assert.equal(r.status, 'new')
-  assert.match(String(r.client_hash), /^[0-9a-f]{64}$/); assert.ok(!JSON.stringify(r).includes('203.0.113.7'))
+  const log = await q('postgres', 'select kind, client_hash from public.intake_client_log')
+  assert.equal(log.length, 1); assert.equal(log[0].kind, 'lead')
+  assert.match(String(log[0].client_hash), /^[0-9a-f]{64}$/); assert.ok(!JSON.stringify(log).includes('203.0.113.7'))
+  await as(db, 'anon'); assert.equal((await failure(db, 'select * from public.intake_client_log'))?.code, '42501')
+  await as(db, 'authenticated', { sub: ADMIN }); assert.equal((await failure(db, 'select * from public.intake_client_log'))?.code, '42501')
+  await as(db, 'anon'); assert.equal((await failure(db, 'select * from public.intake_settings'))?.code, '42501')
 })
 
 // ───────────────────────────────────────────────────────── leads: anti-abuse ──
@@ -123,13 +128,39 @@ test('leads: per-email limit — the 4th request in 24h for one email is rejecte
 
 test('leads: a global circuit breaker pauses intake after a flood (DS003) and does not hide that rows were stored', async () => {
   await as(db, 'postgres')
-  await db.exec(`insert into public.leads (business_type, needs, budget, timeline, name, email, client_hash) select 'hotel','{asesoria}','no_se','asap','Flood '||g, 'f'||g||'@example.com', 'h'||g from generate_series(1,200) g`)
+  await db.exec(`insert into public.leads (business_type, needs, budget, timeline, name, email) select 'hotel','{asesoria}','no_se','asap','Flood '||g, 'f'||g||'@example.com' from generate_series(1,500) g`)
   assert.equal((await insertLead({ email: 'real@example.com' }, ip(40)))?.code, 'DS003')
 })
 
 test('leads: without any client-address header the email and global limits still apply', async () => {
   for (let i = 0; i < 3; i++) assert.equal(await insertLead({ email: 'noip@example.com', message: `n${i}` }, {}), null)
   assert.equal((await insertLead({ email: 'noip@example.com', message: 'n3' }, {}))?.code, 'DS002')
+})
+
+test('leads: a browser-supplied X-Forwarded-For / X-Real-IP is ignored, so it cannot dodge or frame anybody', async () => {
+  // Same trusted address, different spoofed headers: still counted as one client.
+  for (let i = 0; i < 5; i++) assert.equal(await insertLead({ email: `s${i}@example.com` }, { 'cf-connecting-ip': '203.0.113.90', 'x-forwarded-for': `198.51.100.${i}`, 'x-real-ip': `198.51.100.${i}` }), null)
+  assert.equal((await insertLead({ email: 's5@example.com' }, { 'cf-connecting-ip': '203.0.113.90', 'x-forwarded-for': '198.51.100.99' }))?.code, 'DS002')
+  // Only spoofable headers (no trusted one): no per-address counting at all, so a victim's address cannot be burned by an attacker.
+  for (let i = 0; i < 7; i++) assert.equal(await insertLead({ email: `v${i}@example.com` }, { 'x-forwarded-for': '203.0.113.50' }), null)
+  assert.equal((await q('postgres', `select count(*)::int n from public.intake_client_log`))[0].n, 5)
+})
+
+test('leads: rejected requests (invalid or duplicate) do not consume the visitor quota', async () => {
+  for (let i = 0; i < 10; i++) assert.equal((await insertLead({ business_type: 'casino' }, ip(95)))?.code, '23514')
+  assert.equal(await insertLead({ email: 'ok@example.com' }, ip(95)), null)
+  assert.equal((await q('postgres', `select count(*)::int n from public.intake_client_log`))[0].n, 1)
+})
+
+test('leads: the 6th lead from the same address is blocked but a different visitor is never affected by it', async () => {
+  for (let i = 0; i < 5; i++) await insertLead({ email: `a${i}@example.com` }, ip(96))
+  assert.equal((await insertLead({ email: 'b@example.com' }, ip(97))), null)
+})
+
+test('settings: limits are tunable by the owner without a deploy', async () => {
+  await as(db, 'postgres'); await db.exec(`update public.intake_settings set value='1' where key='leads_per_ip_hour'`)
+  assert.equal(await insertLead({ email: 'one@example.com' }, ip(98)), null)
+  assert.equal((await insertLead({ email: 'two@example.com' }, ip(98)))?.code, 'DS002')
 })
 
 // ──────────────────────────────────────────────────── leads: admin handling ──
@@ -178,8 +209,9 @@ test('testimonials: the public sees only approved rows and only the public colum
   const rows = await q('anon', 'select id, name, message, rating, approved, featured from public.testimonials')
   assert.deepEqual(rows.map((r) => r.name), ['Aprobada'])
   await as(db, 'anon')
-  for (const col of ['client_hash', 'moderated_by']) assert.equal((await failure(db, `select ${col} from public.testimonials`))?.code, '42501')
-  assert.equal((await failure(db, 'select * from public.testimonials'))?.code, '42501', 'select * is denied: the frontend must name its columns')
+  assert.equal(await failure(db, 'select * from public.testimonials'), null, 'select * (the currently deployed site) keeps working: the table holds no internal columns')
+  const cols = (await db.query<Record<string, unknown>>('select * from public.testimonials')).rows[0]
+  for (const internal of ['client_hash', 'moderated_by', 'moderated_at']) assert.ok(!(internal in cols), `${internal} must not exist on the public table`)
 })
 
 test('testimonials: only a platform admin moderates, content stays immutable, featured requires approved', async () => {
@@ -189,9 +221,11 @@ test('testimonials: only a platform admin moderates, content stays immutable, fe
   assert.equal((await db.query(`update public.testimonials set featured=true`)).affectedRows, 1) // trigger clears featured while not approved
   assert.equal((await db.query<{ featured: boolean }>('select featured from public.testimonials')).rows[0].featured, false)
   assert.equal((await db.query(`update public.testimonials set approved=true, featured=true`)).affectedRows, 1)
-  const [r] = (await db.query<Record<string, unknown>>('select approved, featured, moderated_at, message from public.testimonials')).rows
-  assert.deepEqual([r.approved, r.featured], [true, true]); assert.ok(r.moderated_at)
-  assert.equal((await q('postgres', 'select moderated_by from public.testimonials'))[0].moderated_by, ADMIN)
+  const [r] = (await db.query<Record<string, unknown>>('select approved, featured, message from public.testimonials')).rows
+  assert.deepEqual([r.approved, r.featured], [true, true])
+  const log = await q('postgres', 'select action, actor from public.intake_moderation_log order by id')
+  assert.deepEqual(log.map((l) => l.action), ['approve', 'feature']); assert.equal(log[0].actor, ADMIN)
+  await as(db, 'authenticated', { sub: INVESTOR }); assert.equal((await db.query('select * from public.intake_moderation_log')).rows.length, 0, 'moderation log invisible to non-admins')
   await as(db, 'authenticated', { sub: ADMIN })
   assert.equal((await failure(db, `update public.testimonials set message='editado'`))?.code, '42501')
   assert.equal((await q('anon', 'select id from public.testimonials')).length, 1)
@@ -222,7 +256,7 @@ test('testimonials: anti-abuse — duplicates, per-address and global limits', a
   for (let i = 1; i < 3; i++) assert.equal(await insertTesti({ name: `Persona ${i}`, message: MSG + i }, ip(60)), null)
   assert.equal((await insertTesti({ name: 'Persona 4', message: MSG + 4 }, ip(60)))?.code, 'DS002')
   await as(db, 'postgres')
-  await db.exec(`insert into public.testimonials (name, message, rating, client_hash) select 'Flood '||g, '${MSG} flood '||g, 5, 'h'||g from generate_series(1,60) g`)
+  await db.exec(`insert into public.testimonials (name, message, rating) select 'Flood '||g, '${MSG} flood '||g, 5 from generate_series(1,120) g`)
   assert.equal((await insertTesti({ name: 'Real', message: MSG + ' real' }, ip(70)))?.code, 'DS003')
 })
 
@@ -237,6 +271,7 @@ test('storage: anonymous uploads are limited to the three buckets, by file-name 
   await as(db, 'anon')
   const put = (bucket: string, name: string) => failure(db, `insert into storage.objects (bucket_id, name) values ($1,$2)`, [bucket, name])
   assert.equal(await put('testimonial-avatars', '1700000000000-abc123def45.png'), null)
+  assert.equal(await put('testimonial-avatars', '1700000000001-ABC123DEF45.JPG'), null, 'upper-case names/extensions from the deployed site are accepted')
   assert.equal(await put('testimonial-results', '1700000000000-abc123def45.jpeg'), null)
   assert.equal(await put('testimonial-videos', '1700000000000-abc123def45.mp4'), null)
   assert.equal((await put('testimonial-videos', '1700000000000-abc123def45.png'))?.code, '42501')
@@ -280,8 +315,11 @@ test('upgrade: the migration closes a legacy dashboard-made setup (RLS off / ope
   assert.equal((await legacy.query(`update public.testimonials set approved=true`)).affectedRows, 1, 'BEFORE: anonymous can self-approve')
   await as(legacy, 'postgres')
   await legacy.exec(sql)
+  await legacy.exec(sql) // idempotent: a second run (e.g. after a partial attempt) must not fail
   await as(legacy, 'anon')
   assert.equal((await failure(legacy, 'select * from public.leads'))?.code, '42501', 'AFTER: leads closed')
+  assert.equal(await failure(legacy, 'select * from public.testimonials'), null, 'AFTER: legacy `select *` still works for the public (approved rows only; rows approved before the migration stay published — review them)')
+  assert.equal(await failure(legacy, `insert into public.testimonials (name, message, rating, approved) values ('Vieja web','${MSG}',5,false)`), null, 'AFTER: the currently deployed site can still submit')
   assert.equal((await failure(legacy, `update public.testimonials set approved=true`))?.code, '42501', 'AFTER: self-approval impossible')
   await as(legacy, 'postgres')
   assert.equal((await legacy.query('select * from public.leads')).rows.length, 1, 'existing rows preserved')
@@ -306,4 +344,35 @@ test('contract: the exact column lists used by the public carousel and the admin
   const leadKeys = ['business_type', 'needs', 'budget', 'timeline', 'name', 'email', 'whatsapp', 'message', 'source']
   const g = await q('postgres', `select column_name from information_schema.column_privileges where table_name='leads' and grantee='anon' and privilege_type='INSERT'`)
   for (const k of leadKeys) assert.ok(g.some((r) => r.column_name === k), `anon must be able to insert leads.${k}`)
+})
+
+// ───────────────────────────────────────────────────────────── rollback ──
+test('rollback: the rollback file removes the machinery, keeps every row and does not break inserts afterwards', async () => {
+  const fs = await import('node:fs')
+  const rb = fs.readFileSync(new URL('../supabase/rollback/202611030001_public_intake_rollback.sql', import.meta.url), 'utf8')
+  const d = await makeDb()
+  await as(d, 'postgres')
+  await insertLeadOn(d)
+  await d.exec(rb)
+  assert.equal((await d.query<{ n: number }>('select count(*)::int n from public.leads')).rows[0].n, 1, 'rows preserved')
+  assert.equal((await d.query<{ n: number }>(`select count(*)::int n from pg_trigger where tgname in ('leads_intake_guard','testimonials_intake_guard','testimonials_moderation_guard','leads_handling_guard')`)).rows[0].n, 0)
+  assert.equal((await d.query<{ n: number }>(`select count(*)::int n from pg_class where relname in ('intake_settings','intake_client_log','intake_moderation_log')`)).rows[0].n, 0)
+  await as(d, 'anon')
+  assert.equal(await failure(d, LEAD_SQL, leadArgs(lead({ email: 'after@example.com' }))), null, 'the site can still insert after the rollback')
+  await d.exec(`reset role`).catch(() => {})
+})
+async function insertLeadOn(d: PGlite) { await d.query(LEAD_SQL, leadArgs(lead())) }
+
+// ───────────────────────────────────────── staging fixture rehearsal ──
+test('staging fixture: the legacy fixture + migration + rollback rehearse cleanly and keep the synthetic rows', async () => {
+  const fs = await import('node:fs')
+  const read = (p: string) => fs.readFileSync(new URL(p, import.meta.url), 'utf8')
+  const d = await makeDb({ only: ['202609290001_portal_core.sql', '202609290002_rls_storage_audit.sql'] })
+  await as(d, 'postgres')
+  await d.exec(read('../supabase/staging/legacy_fixture.sql'))
+  await d.exec(read('../supabase/migrations/202611030001_public_intake.sql'))
+  assert.equal((await d.query<{ n: number }>('select count(*)::int n from public.leads')).rows[0].n, 3, 'the 3 synthetic rows survive, including the one that violates the new CHECKs')
+  assert.equal((await d.query<{ n: number }>(`select count(*)::int n from pg_constraint where conrelid='public.leads'::regclass and contype='c' and not convalidated`)).rows[0].n > 0, true, 'CHECKs are NOT VALID')
+  await d.exec(read('../supabase/rollback/202611030001_public_intake_rollback.sql'))
+  assert.equal((await d.query<{ n: number }>('select count(*)::int n from public.leads')).rows[0].n, 3)
 })

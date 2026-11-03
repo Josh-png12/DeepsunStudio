@@ -324,7 +324,6 @@ export interface PublicTestimonial {
   approved: boolean
   featured: boolean
   created_at: string
-  moderated_at?: string | null
 }
 
 type Table<Row, Insert = Partial<Row>, Update = Partial<Insert>> = {

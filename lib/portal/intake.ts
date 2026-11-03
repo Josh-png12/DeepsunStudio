@@ -16,10 +16,10 @@ export async function requirePlatformAdmin(): Promise<Viewer> {
 export const LEAD_STATUSES = ['new', 'contacted', 'qualified', 'won', 'lost', 'spam'] as const
 export type LeadStatus = (typeof LEAD_STATUSES)[number]
 export type AdminLead = PublicLead & { source: string; status: LeadStatus; admin_notes: string | null; handled_at: string | null }
-export type AdminTestimonial = PublicTestimonial & { moderated_at: string | null }
+export type AdminTestimonial = PublicTestimonial
 
 const LEAD_COLUMNS = 'id,created_at,business_type,needs,budget,timeline,name,email,whatsapp,message,source,status,admin_notes,handled_at'
-const TESTIMONIAL_COLUMNS = 'id,created_at,name,company,role,message,rating,avatar_url,result_image_url,video_url,approved,featured,moderated_at'
+const TESTIMONIAL_COLUMNS = 'id,created_at,name,company,role,message,rating,avatar_url,result_image_url,video_url,approved,featured'
 
 export async function getLeads(): Promise<{ leads: AdminLead[]; error: boolean }> {
   await requirePlatformAdmin()

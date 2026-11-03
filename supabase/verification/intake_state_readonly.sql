@@ -1,7 +1,15 @@
 -- DeepSun Studio — READ-ONLY inspection of the real intake setup (leads / testimonials / buckets).
--- Safe to run in the Supabase SQL editor of STAGING or PRODUCTION: it only SELECTs from catalogs. It changes nothing.
--- Purpose: learn what is deployed today BEFORE applying 202611030001_public_intake.sql, and re-run it afterwards to confirm the result.
--- Paste each block's result into the report. Expected "after migration" values are in the comments.
+-- Every statement is a plain SELECT over system catalogs, or a COUNT/MIN/MAX over our two tables. It changes nothing and returns
+-- no personal data (no names, emails, phones, messages or URLs are ever selected). tests/readonly-sql.test.ts enforces this.
+--
+-- HOW TO RUN (full guide: docs/SQL_LECTURA_PRODUCCION.md):
+--   * Supabase Dashboard → SQL Editor → New query. Paste ONE numbered block at a time and run it ("Run" on the selection).
+--   * Optional extra guarantee: wrap a block as  BEGIN READ ONLY;  <block>  ROLLBACK;  — Postgres then refuses any write.
+--   * If block 1 shows that a table does not exist, skip the blocks that mention it (they would just error).
+-- Expected "after migration" values are in the comments.
+
+-- 0) Session sanity (expected: transaction_read_only = on when you used BEGIN READ ONLY)
+select current_user as running_as, current_setting('transaction_read_only') as transaction_read_only, current_setting('server_version') as postgres_version;
 
 -- 1) Do the tables exist, and is Row Level Security ON? (expected after: both rows, rls_enabled = true)
 select c.relname as table_name, c.relrowsecurity as rls_enabled, c.relforcerowsecurity as rls_forced
@@ -22,7 +30,7 @@ select table_name, grantee, privilege_type from information_schema.role_table_gr
 where table_schema = 'public' and table_name in ('leads', 'testimonials') and grantee in ('anon', 'authenticated', 'public')
 order by table_name, grantee, privilege_type;
 
--- 5) Column-level privileges (after migration anon may INSERT only the form columns and SELECT only public testimonial columns)
+-- 5) Column-level privileges (after migration anon may INSERT only the form columns and SELECT testimonials, filtered by RLS to approved rows)
 select table_name, grantee, privilege_type, string_agg(column_name, ', ' order by column_name) as columns
 from information_schema.column_privileges
 where table_schema = 'public' and table_name in ('leads', 'testimonials') and grantee in ('anon', 'authenticated')
