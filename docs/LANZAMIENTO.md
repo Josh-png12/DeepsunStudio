@@ -114,6 +114,9 @@ Después, `VALIDATE CONSTRAINT` de las restricciones `NOT VALID` cuando el bloqu
 
 No son bloqueantes pero conviene saberlo: la invitación de usuarios y el restablecimiento de contraseña no se ejercitaron (requieren SMTP); el límite por IP no detiene una botnet distribuida (hay freno global); el MIME de las subidas públicas es el declarado por el navegador y los archivos huérfanos de reseñas requieren limpieza periódica por la API de Storage.
 
-## 8. Estado del repositorio
+## 8. Estado del repositorio (al 2026-11-03)
 
-Ver el final de este archivo, sección «Commits», actualizada al cerrar la fase.
+- Rama `redesign/deepsun-editorial`, árbol limpio. **Nada publicado**: sin push, sin merge, sin despliegue.
+- **12 commits locales por delante de `origin/main`**: los **8 previos** (`a5094f6` … `d4f2292`: rediseño público, SEO/afirmaciones, endurecimiento y captación, WhatsApp oficial, revisión de `001`) — son 8, no 6 — y **4 nuevos** de esta fase: `2bb1e4d` (002 + 003 + reversas + pruebas), `9ed436d` (staging local y pruebas de caja negra/e2e), `074944c` (documentación) y el último, que añade esta sección. El portal de inversionistas (`7633042`) ya está en `origin/main`.
+- Existe un `stash@{0}` antiguo de la rama `feat/investor-portal` (`next-env.d.ts` autogenerado); no se tocó.
+- `npm run check` (typecheck + lint + 82 pruebas) en verde.
