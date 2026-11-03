@@ -14,10 +14,11 @@ import fs from 'node:fs'
 
 const URL_ = (process.env.STAGING_SUPABASE_URL ?? '').replace(/\/+$/, '')
 const KEY = process.env.STAGING_ANON_KEY ?? ''
-const ref = /^https:\/\/([a-z0-9]+)\.supabase\.co$/.exec(URL_)?.[1]
+// Hosted staging: https://<ref>.supabase.co  (STAGING_CONFIRM = ref).  Local stack (supabase start): http://127.0.0.1:<port>  (STAGING_CONFIRM = port).
+const ref = /^https:\/\/([a-z0-9]+)\.supabase\.co$/.exec(URL_)?.[1] ?? /^http:\/\/(?:127\.0\.0\.1|localhost):(\d+)$/.exec(URL_)?.[1]
 const die = (m) => { console.error('ABORTED: ' + m); process.exit(2) }
 
-if (!ref || !KEY) die('set STAGING_SUPABASE_URL (https://<ref>.supabase.co) and STAGING_ANON_KEY')
+if (!ref || !KEY) die('set STAGING_SUPABASE_URL (https://<ref>.supabase.co or http://127.0.0.1:<port>) and STAGING_ANON_KEY')
 if (process.env.STAGING_CONFIRM !== ref) die(`set STAGING_CONFIRM=${ref} to confirm this is the staging project`)
 const known = new Set()
 try { for (const m of fs.readFileSync('.env.local', 'utf8').matchAll(/NEXT_PUBLIC_SUPABASE_URL\s*=\s*(\S+)/g)) known.add(m[1].replace(/\/+$/, '')) } catch {}
@@ -51,13 +52,22 @@ r = await rest('leads', { method: 'POST', body: lead() }); check('identical lead
 r = await rest('leads', { method: 'POST', body: lead({ email: `bad-${stamp}@example.test`, business_type: 'casino' }) }); check('invalid value rejected (CHECK)', r.status === 400 || r.status === 409, `status ${r.status}`)
 r = await rest('leads', { method: 'POST', body: lead({ email: `st-${stamp}@example.test`, status: 'won' }) }); check('anon cannot set status', r.status >= 400, `status ${r.status}`)
 
-// spoofed forwarding headers must not change the outcome for a trusted-header setup (informational: see doc §antispam)
-let sawLimit = false
+// Per-address limit. (a) The browser-supplied X-Forwarded-For must NOT be what limits (it is ignored by design): informational.
+let sawLimitXff = false
 for (let i = 0; i < 7; i++) {
-  const x = await rest('leads', { method: 'POST', body: lead({ email: `lim-${stamp}-${i}@example.test`, message: `lim ${i}` }), headers: { 'X-Forwarded-For': `198.51.100.${i + 1}` } })
-  if ((await code(x)) === 'DS002') sawLimit = true
+  const x = await rest('leads', { method: 'POST', body: lead({ email: `xff-${stamp}-${i}@example.test`, message: `xff ${i}` }), headers: { 'X-Forwarded-For': `198.51.100.${i + 1}` } })
+  if ((await code(x)) === 'DS002') sawLimitXff = true
 }
-check('rapid submissions with changing X-Forwarded-For are still limited (DS002)  [needs the real edge header; WARN if not]', sawLimit, 'not limited: check intake_settings.trusted_ip_header against the real header (docs/PUBLICACION_SEGURA.md)')
+console.log(`INFO  rotating X-Forwarded-For ${sawLimitXff ? 'was limited (an edge proxy overwrote it, or xff_from_right is set)' : 'is ignored, as designed (no bypass and no limit from that header)'}`)
+// (b) The trusted platform header (intake_settings.trusted_ip_header, default cf-connecting-ip) DOES limit: proves the mechanism.
+//     On hosted Supabase that header is set by Cloudflare and cannot be forged by the visitor; on a local stack anybody can send it.
+//     Whether the REAL header reaches the database can only be confirmed on a hosted project: see docs/LANZAMIENTO.md.
+let sawLimitCf = false
+for (let i = 0; i < 7; i++) {
+  const x = await rest('leads', { method: 'POST', body: lead({ email: `cf-${stamp}-${i}@example.test`, message: `cf ${i}` }), headers: { 'cf-connecting-ip': `203.0.113.${(stamp % 200) + 1}` } })
+  if ((await code(x)) === 'DS002') sawLimitCf = true
+}
+check('more than 5 leads/hour from the same trusted-header address → DS002', sawLimitCf, 'not limited: the trusted header does not reach the database or intake_settings.trusted_ip_header is wrong')
 
 r = await rest('testimonials', { method: 'POST', body: { name: '[staging-test] Ficticia', message: MSG, rating: 5, approved: true } })
 check('anon review accepted but never published', r.status === 201, `status ${r.status}`)
