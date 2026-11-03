@@ -15,9 +15,9 @@ export function ArticleCard({ post }: { post: PostMeta }) {
   const { tr, lang } = useSite()
   return (
     <article className="article">
-      <small>{post.category} / {fmtDate(post.date, lang)}</small>
-      <h3>{post.title}</h3>
-      <p>{post.description}</p>
+      <small><span lang="es">{post.category}</span> / {fmtDate(post.date, lang)}</small>
+      <h3 lang="es">{post.title}</h3>
+      <p lang="es">{post.description}</p>
       <Link href={`/blog/${post.slug}`}>
         <span>{tr(UI.readArticle)}</span> ↗
       </Link>
