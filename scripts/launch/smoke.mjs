@@ -26,7 +26,7 @@ const OK_PAGES = ['/', '/studio', '/servicios', '/proyectos', '/proyectos/scrape
   '/blog/automatizar-whatsapp-negocio', '/blog/por-que-tu-negocio-necesita-sitio-web', '/contacto']
 const GONE = ['/portal', '/portal/login', '/portal/admin/solicitudes', '/proyectos/lufe-art-tattoo', '/proyectos/fundacion-vida-amor-salud',
   '/proyectos/siepa', '/proyectos/premios-la-cima', '/blog/cuanto-cuesta-sitio-web-colombia', '/api/stats', '/api/projects', '/api/experience']
-const BANNED_TEXT = [/US\$\s?\d/, /\b4\.200\b/, /\b10\+/, /\b6\+/, /\b3\+ años/i, /24\/7/, /tu-dominio\.com/i, /LUFE|SIEPA|Premios La Cima|Fundaci[oó]n Vida/i, /\+57 319|573197149647/]
+const BANNED_TEXT = [/US\$\s?\d/, /\b4\.200\b/, /\b10\+/, /\b6\+/, /\b3\+ años/i, /24\/7/, /tu-dominio\.com/i, /LUFE|SIEPA|Premios La Cima|Fundaci[oó]n Vida/i, /\+57 319|573197149647/, /supabase.co/]
 
 const browser = await chromium.launch({ executablePath: EDGE, headless: true })
 const extraHeaders = SECRET ? { 'x-vercel-protection-bypass': SECRET, 'x-vercel-set-bypass-cookie': 'true' } : undefined

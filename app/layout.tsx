@@ -4,6 +4,7 @@ import { SITE } from '@/lib/site'
 import { DEFAULT_DESCRIPTION, DEFAULT_TITLE } from '@/lib/seo'
 import { Analytics } from '@vercel/analytics/next'
 import { isIndexable } from '@/lib/indexing'
+import { FORMS_ENABLED, PORTAL_ENABLED } from '@/lib/launch'
 // Public fonts: next/font in app/(site)/layout.tsx. Portal fonts (Fontshare + JetBrains Mono): app/portal/layout.tsx.
 
 // ─── Viewport ─────────────────────────────────────────────────────────────────
@@ -100,7 +101,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="es" className="scroll-smooth">
       <head>
-        <link rel="dns-prefetch" href="https://svbvkgvtjksvjfvigiah.supabase.co" />
+        {/* Launch 1.0: public pages use no database, so no hint to Supabase (lib/launch.ts). */}
+        {(FORMS_ENABLED || PORTAL_ENABLED) && <link rel="dns-prefetch" href="https://svbvkgvtjksvjfvigiah.supabase.co" />}
       </head>
       <body className="antialiased">
         {children}
