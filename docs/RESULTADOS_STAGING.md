@@ -103,3 +103,12 @@ Proyecto Vercel: `joshua-dev` (`prj_vI43upRikxitK0hUiSuFw5NwcS5m`, equipo `josh-
 - **Indexación:** `lib/indexing.js` (solo `VERCEL_ENV=production` es indexable). Fuera de producción: `X-Robots-Tag: noindex, nofollow, noarchive` (next.config.js), `<meta robots noindex>` y `robots.txt` con `Disallow: /`. Producción: `index, follow` y robots con el dominio oficial. Se eliminó `public/robots.txt` (dominio de ejemplo y conflicto con `app/robots.ts`). Comprobado con build + `next start` en ambos modos.
 - **service_role:** solo la usa `inviteUserAction` (invitar inversionista, requiere SMTP en staging); código `server-only`, 0 apariciones en `.next/static` y `public`. El E2E, los formularios y el resto del portal no la necesitan.
 - `npm run check`: typecheck + lint + 84/84 pruebas unitarias. Build correcto con las variables de Preview.
+
+## 7. Primer Preview de Vercel — 2026-11-04
+- **Despliegue:** `vercel deploy` sin `--prod`, proyecto `joshua-dev` (id verificado), origen CLI, sin alias ni target de producción. Producción intacta: último despliegue de producción del 2026-06-05, variables de Production sin cambios.
+- **Preview vigente:** `https://joshua-h4pr4teb1-josh-png12s-projects.vercel.app` (`dpl_3zdG23wz2GZkz6itaxtd8E1rawzj`). El primero (`joshua-jr1gwrhxi…`) tenía canonical/OG hacia `www.deepsunstudio.com` y quedó superado.
+- **Protección:** un visitante anónimo recibe 302 al login de Vercel. Rutas revisadas con la sesión del CLI: `/`, `/studio`, `/servicios`, `/proyectos`, `/blog`, `/contacto`, `/portal/login`, `/robots.txt`, `/sitemap.xml` → 200; `/portal` → 307 a `/portal/login`. Todas con `X-Robots-Tag: noindex, nofollow, noarchive`; `robots.txt` = `Disallow: /`.
+- **Metadatos:** canonical, `og:url` y sitemap usan la URL del propio despliegue (`VERCEL_URL`); ninguna mención a `www.deepsunstudio.com` en `<head>`. Se eliminó `public/sitemap.xml` (dominio de ejemplo que tapaba a `app/sitemap.ts`).
+- **Supabase:** el único JWT en el código del navegador es la publishable key (`role=anon`, `ref=qvqcnljtckdyykqracol`); 0 referencias al ref de producción y 0 a `service_role` en los 13 chunks servidos.
+- **WhatsApp:** solo `wa.me/573246183318`; texto visible «+57 324 618 3318».
+- **NEXT_PUBLIC_SITE_URL:** no configurada. El sitio no la necesita; solo `lib/portal/actions.ts` la usa para el enlace de recuperación de contraseña y las invitaciones (si falta, cae a `http://localhost:3000`).
