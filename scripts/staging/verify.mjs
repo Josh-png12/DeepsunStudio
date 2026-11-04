@@ -63,12 +63,25 @@ console.log(`INFO  rotating X-Forwarded-For ${sawLimitXff ? 'was limited (an edg
 // (b) The trusted platform header (intake_settings.trusted_ip_header, default cf-connecting-ip) DOES limit: proves the mechanism.
 //     On hosted Supabase that header is set by Cloudflare and cannot be forged by the visitor; on a local stack anybody can send it.
 //     Whether the REAL header reaches the database can only be confirmed on a hosted project: see docs/LANZAMIENTO.md.
+//     HOSTED (Cloudflare in front): a client-sent cf-connecting-ip is rejected at the edge (403), so it cannot be forged, and the REAL address
+//     is injected by the edge: sending WITHOUT the header must hit the per-IP limit. LOCAL stack (no edge): the client-sent header is accepted.
+//     NOTE: on hosted, the XFF loop above already consumes the real-IP quota, so its "was limited" INFO means the edge address limited it, not XFF.
 let sawLimitCf = false
-for (let i = 0; i < 7; i++) {
-  const x = await rest('leads', { method: 'POST', body: lead({ email: `cf-${stamp}-${i}@example.test`, message: `cf ${i}` }), headers: { 'cf-connecting-ip': `203.0.113.${(stamp % 200) + 1}` } })
-  if ((await code(x)) === 'DS002') sawLimitCf = true
+const probe = await rest('leads', { method: 'POST', body: lead({ email: `cfp-${stamp}@example.test`, message: 'cf probe' }), headers: { 'cf-connecting-ip': `203.0.113.${(stamp % 200) + 1}` } })
+if (probe.status === 403) {
+  console.log('INFO  edge rejects a client-sent cf-connecting-ip with 403 (cannot be forged); testing the real address injected by the edge')
+  for (let i = 0; i < 7; i++) {
+    const x = await rest('leads', { method: 'POST', body: lead({ email: `real-${stamp}-${i}@example.test`, message: `real ${i}` }) })
+    if ((await code(x)) === 'DS002') sawLimitCf = true
+  }
+} else {
+  sawLimitCf = (await code(probe)) === 'DS002'
+  for (let i = 0; i < 7 && !sawLimitCf; i++) {
+    const x = await rest('leads', { method: 'POST', body: lead({ email: `cf-${stamp}-${i}@example.test`, message: `cf ${i}` }), headers: { 'cf-connecting-ip': `203.0.113.${(stamp % 200) + 1}` } })
+    if ((await code(x)) === 'DS002') sawLimitCf = true
+  }
 }
-check('more than 5 leads/hour from the same trusted-header address → DS002', sawLimitCf, 'not limited: the trusted header does not reach the database or intake_settings.trusted_ip_header is wrong')
+check('more than 5 leads/hour from the same client address → DS002', sawLimitCf, 'not limited: the client address does not reach the database or intake_settings.trusted_ip_header is wrong')
 
 r = await rest('testimonials', { method: 'POST', body: { name: '[staging-test] Ficticia', message: MSG, rating: 5, approved: true } })
 check('anon review accepted but never published', r.status === 201, `status ${r.status}`)
