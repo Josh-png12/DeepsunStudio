@@ -1,23 +1,14 @@
 import { MetadataRoute } from 'next'
-import { getAllSlugs } from '@/data/projects'
+import { getCases } from '@/lib/site-cases'
+import { getPublishedSlugs } from '@/lib/blog'
 import { SITE } from '@/lib/site'
-import fs from 'fs'
-import path from 'path'
 
 const BASE = SITE.url // official domain in production, the deployment's own URL elsewhere
 
-function getBlogSlugs(): string[] {
-  const dir = path.join(process.cwd(), 'content', 'blog')
-  if (!fs.existsSync(dir)) return []
-  return fs
-    .readdirSync(dir)
-    .filter((f) => f.endsWith('.mdx'))
-    .map((f) => f.replace('.mdx', ''))
-}
-
 export default function sitemap(): MetadataRoute.Sitemap {
-  const projectSlugs = getAllSlugs()
-  const blogSlugs = getBlogSlugs()
+  // Only what is actually published: hidden cases and draft posts never reach the sitemap.
+  const projectSlugs = getCases().map((c) => c.meta.slug)
+  const blogSlugs = getPublishedSlugs()
 
   return [
     { url: BASE, lastModified: new Date(), changeFrequency: 'weekly', priority: 1 },

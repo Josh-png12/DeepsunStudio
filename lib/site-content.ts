@@ -1,6 +1,7 @@
 // Bilingual editorial copy for the public site (ES = source of truth, EN = faithful translation).
 // Markup allowed in strings: <br>, <em>, <b>. Nothing here comes from user input.
 import type { L } from '@/lib/site-i18n'
+import { FORMS_ENABLED } from '@/lib/launch'
 
 export const NAV: { href: string; label: L }[] = [
   { href: '/proyectos', label: { es: 'Trabajo', en: 'Work' } },
@@ -8,7 +9,7 @@ export const NAV: { href: string; label: L }[] = [
   { href: '/#testimonios', label: { es: 'Opiniones', en: 'Reviews' } },
   { href: '/blog', label: { es: 'Blog', en: 'Journal' } },
   { href: '/studio', label: { es: 'El estudio', en: 'Studio' } },
-]
+].filter((n) => FORMS_ENABLED || n.href !== '/#testimonios') // the testimonials section is part of the (disabled) forms feature
 
 export const UI = {
   skip: { es: 'Ir al contenido', en: 'Skip to content' },
@@ -223,8 +224,8 @@ export const PLANS_SECTION = {
   eyebrow: { es: '05 / SERVICIOS Y PLANES', en: '05 / SERVICES & PRICING' },
   title: { es: 'CLARO<br>DESDE EL DÍA UNO.', en: 'CLEAR<br>FROM DAY ONE.' },
   intro: {
-    es: 'Cuatro opciones con entregables claros y sin promesas infladas. Los precios son de referencia en USD; el alcance se define contigo.',
-    en: 'Four options with clear deliverables and no inflated promises. Prices are USD reference values; the scope is defined together with you.',
+    es: 'Cuatro formas de trabajar juntos. El alcance, los plazos y la inversión se definen contigo en una propuesta.',
+    en: 'Four ways of working together. Scope, timing and investment are defined with you in a proposal.',
   },
   from: { es: 'Desde', en: 'From' },
   quote: { es: 'A COTIZAR', en: 'QUOTE' },
@@ -256,7 +257,64 @@ export interface PlanCopy {
   cta: L
 }
 
+/**
+ * LAUNCH 1.0 plans: scope only. No prices, page counts, revision rounds, delivery times, support terms or "24/7" promises, because none of
+ * that is verified. Pricing and terms are agreed in a proposal (WhatsApp). The previous full copy is kept in PLANS_FULL below.
+ */
 export const PLANS: PlanCopy[] = [
+  {
+    key: 'basica', usd: null,
+    idx: { es: '01 / EMPEZAR', en: '01 / START HERE' },
+    name: { es: 'Presencia Básica', en: 'Basic Presence' },
+    headline: { es: 'Para el negocio que necesita existir en internet ya.', en: 'For the business that needs to exist online now.' },
+    features: {
+      es: ['Sitio web a la medida de tu negocio', 'Diseño responsive pensado primero para móvil', 'SEO básico', 'Integración con WhatsApp'],
+      en: ['A website tailored to your business', 'Mobile-first responsive design', 'Basic SEO', 'WhatsApp integration'],
+    },
+    ideal: { es: 'Restaurantes, tiendas, consultorios, negocios locales', en: 'Restaurants, shops, practices, local businesses' },
+    cta: { es: 'Cotizar por WhatsApp', en: 'Get a quote on WhatsApp' },
+  },
+  {
+    key: 'profesional', usd: null,
+    idx: { es: '02 / CRECER', en: '02 / GROW FURTHER' },
+    name: { es: 'Presencia Profesional', en: 'Professional Presence' },
+    headline: { es: 'Para el negocio que quiere liderar su mercado digital.', en: 'For the business that wants to lead its digital market.' },
+    features: {
+      es: ['Todo lo del plan Básico', 'Sitio web de mayor alcance', 'SEO avanzado con palabras clave locales', 'Blog integrado', 'Bot básico de WhatsApp', 'Google Business Profile', 'Analítica y seguimiento de conversiones'],
+      en: ['Everything in Basic', 'A larger website', 'Advanced SEO with local keywords', 'Built-in blog', 'Basic WhatsApp bot', 'Google Business Profile', 'Analytics and conversion tracking'],
+    },
+    ideal: { es: 'Hoteles, clínicas, empresas establecidas, instituciones', en: 'Hotels, clinics, established companies, institutions' },
+    cta: { es: 'Cotizar por WhatsApp', en: 'Get a quote on WhatsApp' },
+  },
+  {
+    key: 'automatizacion', usd: null,
+    idx: { es: '03 / AUTOMATIZACIÓN', en: '03 / AUTOMATION' },
+    name: { es: 'Automatización & Bots', en: 'Automation & Bots' },
+    headline: { es: 'Para el negocio que pierde tiempo respondiendo lo mismo todos los días.', en: 'For the business that loses time answering the same things every day.' },
+    features: {
+      es: ['Bot de WhatsApp personalizado', 'Respuestas automáticas', 'Flujos de ventas automatizados', 'Agendamiento automático', 'Integración con tu sistema actual', 'Panel de control para gestionar el bot', 'Capacitación de uso'],
+      en: ['Custom WhatsApp bot', 'Automatic replies', 'Automated sales flows', 'Automatic scheduling', 'Integration with your current system', 'Control panel to manage the bot', 'Usage training'],
+    },
+    ideal: { es: 'Cualquier negocio con alto volumen de mensajes de WhatsApp', en: 'Any business with a high volume of WhatsApp messages' },
+    cta: { es: 'Cotizar por WhatsApp', en: 'Get a quote on WhatsApp' },
+  },
+  {
+    key: 'medida', usd: null,
+    idx: { es: '04 / A MEDIDA', en: '04 / MADE TO FIT' },
+    name: { es: 'Software a Medida', en: 'Custom Software' },
+    headline: { es: 'Tu negocio es único. Tu software también debería serlo.', en: 'Your business is unique. Your software should be too.' },
+    features: {
+      es: ['Plataformas administrativas', 'Sistemas de gestión (ERP / CRM)', 'Dashboards y analíticas', 'APIs e integraciones', 'Automatizaciones complejas', 'E-commerce personalizado', 'Apps web progresivas (PWA)'],
+      en: ['Administrative platforms', 'Management systems (ERP / CRM)', 'Dashboards and analytics', 'APIs and integrations', 'Complex automations', 'Custom e-commerce', 'Progressive web apps (PWA)'],
+    },
+    ideal: { es: 'Proceso: diagnóstico → propuesta → cotización → desarrollo por etapas', en: 'Process: diagnosis → proposal → quote → staged development' },
+    cta: { es: 'Solicitar cotización', en: 'Request a quote' },
+  },
+]
+
+/** NOT PUBLISHED. Previous plan copy with prices (US$600 / 1,500 / 800), page counts, revision rounds, delivery times and support terms.
+ *  Kept to restore once the owner confirms every figure and term. */
+export const PLANS_FULL: PlanCopy[] = [
   {
     key: 'basica', usd: 600,
     idx: { es: '01 / EMPEZAR', en: '01 / START HERE' },
@@ -307,7 +365,18 @@ export const PLANS: PlanCopy[] = [
   },
 ]
 
+/** LAUNCH 1.0 FAQ: no delivery times, payment terms or support promises (not verified). Previous copy: FAQ_FULL. */
 export const FAQ: { q: L; a: L }[] = [
+  { q: { es: '¿Qué necesito para empezar?', en: 'What do I need to get started?' }, a: { es: 'Una idea clara de lo que quieres lograr. Escríbenos por WhatsApp y la vamos definiendo juntos.', en: 'A clear idea of what you want to achieve. Message us on WhatsApp and we will shape it together.' } },
+  { q: { es: '¿Cuánto tiempo tarda?', en: 'How long will it take?' }, a: { es: 'Depende del alcance del proyecto. En la propuesta acordamos las etapas y las fechas de entrega.', en: 'It depends on the scope of the project. In the proposal we agree the stages and delivery dates.' } },
+  { q: { es: '¿Cómo es el pago?', en: 'How does payment work?' }, a: { es: 'Las condiciones de pago se acuerdan en la propuesta, según el alcance del proyecto.', en: 'Payment terms are agreed in the proposal, according to the scope of the project.' } },
+  { q: { es: '¿Qué pasa después de la entrega?', en: 'What happens after delivery?' }, a: { es: 'Lo conversamos en la propuesta: qué acompañamiento necesitas después de publicar.', en: 'We discuss it in the proposal: what support you need after launch.' } },
+  { q: { es: '¿Trabajan con negocios fuera de Colombia?', en: 'Do you work with businesses outside Colombia?' }, a: { es: 'Trabajamos de forma remota. Escríbenos por WhatsApp y revisamos tu caso.', en: 'We work remotely. Message us on WhatsApp and we will look at your case.' } },
+  { q: { es: '¿Puedo ver trabajos anteriores?', en: 'Can I see previous work?' }, a: { es: 'En la sección de proyectos están los casos de estudio disponibles. Otros casos se publican cuando sus responsables lo autorizan.', en: 'The projects section has the case studies currently available. Other cases are published once their owners authorize it.' } },
+]
+
+/** NOT PUBLISHED. Previous FAQ (delivery times, 50/50 payment, post-delivery support, clients in US/Spain). */
+export const FAQ_FULL: { q: L; a: L }[] = [
   { q: { es: '¿Qué necesito para empezar?', en: 'What do I need to get started?' }, a: { es: 'Solo necesitas una idea clara de lo que quieres y tu información de contacto. Nosotros nos encargamos del resto.', en: 'You only need a clear idea of what you want and your contact details. We take care of the rest.' } },
   { q: { es: '¿Cuánto tiempo tarda?', en: 'How long will it take?' }, a: { es: 'Depende del plan: desde 7 días para presencia básica hasta 3-4 meses para software personalizado. Siempre con fechas de entrega claras desde el inicio.', en: 'It depends on the plan: from 7 days for a basic presence to 3–4 months for custom software. Always with clear delivery dates from the start.' } },
   { q: { es: '¿Puedo pagar en cuotas?', en: 'Can I pay in installments?' }, a: { es: 'Sí. Trabajamos con 50% al iniciar y 50% al entregar. Para proyectos grandes podemos hacer 3 cuotas.', en: 'Yes. We work with 50% at the start and 50% on delivery. For larger projects we can split it into 3 payments.' } },
@@ -377,7 +446,7 @@ export const FOOTER = {
     { href: '/blog', label: { es: 'Blog', en: 'Blog' } },
     { href: '/studio', label: { es: 'El estudio', en: 'Studio' } },
     { href: '/contacto', label: { es: 'Contacto', en: 'Contact' } },
-  ],
+  ].filter((l) => FORMS_ENABLED || l.href !== '/#testimonios'),
 }
 
 export const STUDIO = {
@@ -411,7 +480,7 @@ export const STUDIO = {
     { n: '3+', l: { es: 'Años de experiencia', en: 'Years of experience' } },
   ],
   sectorsEyebrow: { es: '03 / SECTORES', en: '03 / SECTORS' },
-  sectorsTitle: { es: 'SECTORES<br>QUE <em>atendemos.</em>', en: 'SECTORS<br>WE <em>serve.</em>' },
+  sectorsTitle: { es: 'SECTORES DONDE<br>PODEMOS <em>ayudar.</em>', en: 'SECTORS WHERE<br>WE CAN <em>help.</em>' },
   sectors: [
     { n: { es: 'Hoteles y turismo', en: 'Hotels and tourism' }, d: { es: 'Que tu hotel aparezca cuando alguien busca dónde alojarse en La Guajira.', en: 'So your hotel shows up when someone looks for a place to stay in La Guajira.' } },
     { n: { es: 'Clínicas y salud', en: 'Clinics and health' }, d: { es: 'Pacientes que te encuentran en Google antes de llamar.', en: 'Patients who find you on Google before they call.' } },
@@ -428,8 +497,8 @@ export const PROJECTS_PAGE = {
   eyebrow: { es: 'PROYECTOS', en: 'PROJECTS' },
   title: { es: 'TRABAJO<br>REAL, <em>con historia.</em>', en: 'REAL WORK,<br><em>with a story.</em>' },
   intro: {
-    es: 'Seis casos de estudio. Para cada uno: el problema, la solución y lo que cambió.',
-    en: 'Six case studies. For each one: the problem, the solution and what changed.',
+    es: 'Casos de estudio. Para cada uno: el problema, la solución y lo que se construyó.',
+    en: 'Case studies. For each one: the problem, the solution and what was built.',
   },
   clientBadge: { es: 'Proyecto de cliente', en: 'Client project' },
   ownBadge: { es: 'Proyecto propio', en: 'In-house project' },
@@ -541,8 +610,19 @@ export const REVIEW_FORM = {
 
 // Short plan descriptions for the home page (full inclusion lists live in PLANS).
 export const PLAN_SHORT: Record<string, L> = {
-  basica: { es: 'Hasta 5 páginas, diseño móvil, SEO básico, WhatsApp, formulario y primer año de dominio y hosting.', en: 'Up to 5 pages, mobile-first design, basic SEO, WhatsApp, contact form and a first year of hosting and domain.' },
-  profesional: { es: 'Hasta 12 páginas, SEO avanzado, blog, bot básico de WhatsApp, analíticas y soporte posterior.', en: 'Up to 12 pages, advanced SEO, a blog, basic WhatsApp bot, analytics and post-launch support.' },
+  basica: { es: 'Sitio web a tu medida, diseño móvil, SEO básico e integración con WhatsApp.', en: 'A website tailored to you, mobile-first design, basic SEO and WhatsApp integration.' },
+  profesional: { es: 'Sitio de mayor alcance, SEO avanzado, blog, bot básico de WhatsApp y analítica.', en: 'A larger website, advanced SEO, a blog, basic WhatsApp bot and analytics.' },
   automatizacion: { es: 'Bot personalizado, flujos automáticos, agendamiento, integraciones, panel y capacitación.', en: 'Custom WhatsApp bot, smart workflows, scheduling, integrations, dashboard and training.' },
   medida: { es: 'Plataformas administrativas, dashboards, sistemas, APIs, integraciones complejas y aplicaciones.', en: 'Administrative platforms, dashboards, tailored systems, APIs, complex integrations and apps.' },
+}
+
+// Contact without forms (launch 1.0): WhatsApp is the main channel.
+export const CONTACT_WA = {
+  title: { es: 'ESCRÍBENOS POR WHATSAPP', en: 'MESSAGE US ON WHATSAPP' },
+  body: {
+    es: 'Es nuestro canal principal para empezar un proyecto: cuéntanos tu idea y la conversamos.',
+    en: 'It is our main channel to start a project: tell us your idea and we will talk it through.',
+  },
+  cta: { es: 'Abrir WhatsApp', en: 'Open WhatsApp' },
+  briefIntro: { es: 'Escríbenos por WhatsApp y cuéntanos qué necesitas.', en: 'Message us on WhatsApp and tell us what you need.' },
 }

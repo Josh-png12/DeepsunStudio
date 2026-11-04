@@ -37,6 +37,8 @@ export default function Pricing({ detailed = false }: { detailed?: boolean }) {
     try { localStorage.setItem(CURRENCY_KEY, c) } catch {}
   }
   const cur: Currency = detailed ? currency : 'USD'
+  // Launch 1.0 publishes no prices: the currency selector and the exchange-rate note only make sense if some plan has one.
+  const hasPrices = PLANS.some((p) => p.usd !== null)
 
   return (
     <section className={`pricing${detailed ? ' detailed' : ''}`} id="planes">
@@ -49,7 +51,7 @@ export default function Pricing({ detailed = false }: { detailed?: boolean }) {
           <p>{tr(P.intro)}</p>
         </div>
 
-        {detailed && (
+        {detailed && hasPrices && (
           <div className="currency-bar">
             <span className="tiny">{tr(P.priceIn)}</span>
             <div className="chips" role="group" aria-label={tr(P.currencyLabel)}>
@@ -91,7 +93,7 @@ export default function Pricing({ detailed = false }: { detailed?: boolean }) {
           ))}
         </div>
 
-        <div className="price-note">{tr(P.rateNote)}</div>
+        {hasPrices && <div className="price-note">{tr(P.rateNote)}</div>}
         {!detailed && (
           <div className="price-more">
             <Link className="project-link" href="/servicios">

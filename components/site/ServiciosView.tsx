@@ -13,11 +13,11 @@ export default function ServiciosView() {
   return (
     <>
       <PageHead
-        eyebrow={{ es: 'SERVICIOS Y PRECIOS', en: 'SERVICES & PRICING' }}
+        eyebrow={{ es: 'SERVICIOS', en: 'SERVICES' }}
         title={{ es: 'SOLUCIONES<br>QUE <em>funcionan.</em>', en: 'SOLUTIONS<br>THAT <em>work.</em>' }}
         lead={{
-          es: 'No cobramos por hacer páginas bonitas. Cobramos por resultados que impactan tu negocio.',
-          en: "We don't charge for pretty pages. We charge for results that move your business.",
+          es: 'Soluciones digitales pensadas para cómo funciona tu negocio. El alcance y la inversión se definen contigo.',
+          en: 'Digital solutions built around how your business works. Scope and investment are defined with you.',
         }}
       />
       <Pricing detailed />

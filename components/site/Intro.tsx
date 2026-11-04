@@ -2,6 +2,7 @@
 
 import { useSite, Rich } from '@/lib/site-i18n'
 import { INTRO } from '@/lib/site-content'
+import { SHOW_UNVERIFIED_FIGURES } from '@/lib/launch'
 
 export default function Intro() {
   const { tr } = useSite()
@@ -19,14 +20,16 @@ export default function Intro() {
           <Rich v={INTRO.seal} />
         </div>
       </div>
-      <div className="proof" aria-label={tr(INTRO.proofLabel)}>
-        {INTRO.proof.map((p) => (
-          <div className="proof-item" key={p.n}>
-            <div className="proof-num">{p.n}</div>
-            <div className="proof-label">{tr(p.label)}</div>
-          </div>
-        ))}
-      </div>
+      {SHOW_UNVERIFIED_FIGURES && (
+        <div className="proof" aria-label={tr(INTRO.proofLabel)}>
+          {INTRO.proof.map((p) => (
+            <div className="proof-item" key={p.n}>
+              <div className="proof-num">{p.n}</div>
+              <div className="proof-label">{tr(p.label)}</div>
+            </div>
+          ))}
+        </div>
+      )}
     </section>
   )
 }

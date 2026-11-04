@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { useSite, Rich } from '@/lib/site-i18n'
 import { STUDIO as S, UI } from '@/lib/site-content'
+import { SHOW_UNVERIFIED_FIGURES } from '@/lib/launch'
 import PageHead from './PageHead'
 
 export default function StudioView() {
@@ -41,14 +42,16 @@ export default function StudioView() {
               <p>{tr(S.who1)}</p>
               <p>{tr(S.who2)}</p>
             </div>
-            <div>
-              <div className="stats">
-                {S.stats.map((s) => (
-                  <div key={s.n}><b>{s.n}</b><span>{tr(s.l)}</span></div>
-                ))}
+            {SHOW_UNVERIFIED_FIGURES && (
+              <div>
+                <div className="stats">
+                  {S.stats.map((s) => (
+                    <div key={s.n}><b>{s.n}</b><span>{tr(s.l)}</span></div>
+                  ))}
+                </div>
+                <p className="fine">{tr(S.figures)}</p>
               </div>
-              <p className="fine">{tr(S.figures)}</p>
-            </div>
+            )}
           </div>
         </div>
       </section>

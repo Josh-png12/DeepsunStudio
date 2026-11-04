@@ -3,7 +3,8 @@
 import Link from 'next/link'
 import { useRef, useState, useEffect } from 'react'
 import { useSite, Rich } from '@/lib/site-i18n'
-import { CONTACT as C } from '@/lib/site-content'
+import { CONTACT as C, CONTACT_WA } from '@/lib/site-content'
+import { FORMS_ENABLED } from '@/lib/launch'
 import { SITE, WHATSAPP_DISPLAY, mailtoHref, whatsappHref } from '@/lib/site'
 import { isEmail, submitLead } from '@/lib/leads'
 
@@ -72,6 +73,22 @@ export function QuickForm() {
   )
 }
 
+/** Launch 1.0: no data-collecting form; WhatsApp is the contact channel. Nothing here is ever "sent" or "received". */
+export function WhatsAppCard() {
+  const { tr } = useSite()
+  const wa = whatsappHref(tr(C.waText))
+  return (
+    <div className="contact-form">
+      <strong>{tr(CONTACT_WA.title)}</strong>
+      <p>{tr(CONTACT_WA.body)}</p>
+      <a className="btn" href={wa} target="_blank" rel="noopener noreferrer">
+        <span>{tr(CONTACT_WA.cta)} · {WHATSAPP_DISPLAY}</span>
+        <span className="arrow" aria-hidden="true">↗</span>
+      </a>
+    </div>
+  )
+}
+
 export default function ContactBlock() {
   const { tr } = useSite()
   const wa = whatsappHref(tr(C.waText))
@@ -89,14 +106,16 @@ export default function ContactBlock() {
               )}
               <a href={mailtoHref()}>{SITE.email.toUpperCase()} ↗</a>
             </div>
-            <div className="contact-mini">
-              <small className="tiny">{tr(C.fullBrief)}</small>
-              <strong>{tr(C.fullTitle)}</strong>
-              <p>{tr(C.fullBody)}</p>
-              <Link href="/contacto">{tr(C.fullCta)} ↗</Link>
-            </div>
+            {FORMS_ENABLED && (
+              <div className="contact-mini">
+                <small className="tiny">{tr(C.fullBrief)}</small>
+                <strong>{tr(C.fullTitle)}</strong>
+                <p>{tr(C.fullBody)}</p>
+                <Link href="/contacto">{tr(C.fullCta)} ↗</Link>
+              </div>
+            )}
           </div>
-          <QuickForm />
+          {FORMS_ENABLED ? <QuickForm /> : <WhatsAppCard />}
         </div>
       </div>
     </section>

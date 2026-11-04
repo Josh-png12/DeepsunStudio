@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { useSite, Rich } from '@/lib/site-i18n'
 import { FOOTER, UI } from '@/lib/site-content'
+import { PORTAL_ENABLED } from '@/lib/launch'
 import { SITE, WHATSAPP_DISPLAY, mailtoHref, whatsappHref } from '@/lib/site'
 import { BrandLink } from './Brand'
 
@@ -23,7 +24,7 @@ export default function Footer() {
           ))}
           <a href={mailtoHref()}>{SITE.email}</a>
           <a href={whatsappHref(tr({ es: 'Hola DeepSun, quisiera hablar sobre un proyecto.', en: 'Hi DeepSun, I would like to talk about a project.' }))} target="_blank" rel="noopener noreferrer">WhatsApp {WHATSAPP_DISPLAY}</a>
-          <Link href="/portal">{tr(UI.clientPortal)}</Link>
+          {PORTAL_ENABLED && <Link href="/portal">{tr(UI.clientPortal)}</Link>}
         </nav>
         <div className="footer-word" aria-hidden="true">
           DEEPSUN.

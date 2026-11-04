@@ -1,7 +1,9 @@
 'use client'
 
 import { useSite } from '@/lib/site-i18n'
-import { BRIEF as B, CONTACT as C } from '@/lib/site-content'
+import { BRIEF as B, CONTACT as C, CONTACT_WA } from '@/lib/site-content'
+import { FORMS_ENABLED } from '@/lib/launch'
+import { WhatsAppCard } from './ContactBlock'
 import { SITE, WHATSAPP_DISPLAY, mailtoHref, whatsappHref } from '@/lib/site'
 import PageHead from './PageHead'
 import BriefForm from './BriefForm'
@@ -11,7 +13,7 @@ export default function ContactoView() {
   const wa = whatsappHref(tr(C.waText))
   return (
     <>
-      <PageHead eyebrow={B.eyebrow} title={B.title} lead={B.intro} />
+      <PageHead eyebrow={B.eyebrow} title={B.title} lead={FORMS_ENABLED ? B.intro : CONTACT_WA.briefIntro} />
       <section className="brief-wrap">
         <div className="brief">
           <aside className="brief-side">
@@ -22,7 +24,7 @@ export default function ContactoView() {
             </div>
             <p className="tiny">{SITE.city}</p>
           </aside>
-          <BriefForm />
+          {FORMS_ENABLED ? <BriefForm /> : <WhatsAppCard />}
         </div>
       </section>
     </>

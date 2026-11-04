@@ -32,7 +32,7 @@ export default function Work({ cases, heading = true }: { cases: CaseView[]; hea
           </div>
         )}
         <div className="filterbar" role="group" aria-label={tr(WORK.filterLabel)}>
-          {FILTERS.map((f) => (
+          {FILTERS.filter((f) => f === 'all' || cases.some((c) => c.meta.cat === f)).map((f) => (
             <button key={f} type="button" className={filter === f ? 'active' : ''} aria-pressed={filter === f} onClick={() => setFilter(f)}>
               {tr(WORK.filters[f])}
             </button>

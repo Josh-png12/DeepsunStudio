@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { useSite, Rich } from '@/lib/site-i18n'
 import { REVIEWS as R } from '@/lib/site-content'
 import { createClient } from '@/lib/supabase/client'
+import { FORMS_ENABLED } from '@/lib/launch'
 import { isSupabaseConfigured } from '@/lib/supabase/env'
 import type { Testimonial } from '@/types/testimonial'
 import Modal from './Modal'
@@ -21,7 +22,7 @@ function Stars({ n }: { n: number }) {
   )
 }
 
-export default function Reviews() {
+function ReviewsSection() {
   const { tr } = useSite()
   const [items, setItems] = useState<Testimonial[]>([])
   const [load, setLoad] = useState<Load>('loading')
@@ -149,4 +150,9 @@ export default function Reviews() {
       )}
     </section>
   )
+}
+
+/** Testimonials are part of the forms feature (visitors submit them, they live in Supabase). Launch 1.0 renders nothing and never calls the backend. */
+export default function Reviews() {
+  return FORMS_ENABLED ? <ReviewsSection /> : null
 }

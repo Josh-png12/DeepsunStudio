@@ -1,20 +1,13 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import fs from 'fs'
-import path from 'path'
 import ArticleView from '@/components/site/ArticleView'
-import { getPost } from '@/lib/blog'
+import { getPost, getPublishedSlugs } from '@/lib/blog'
 import { markdownToHtml } from '@/lib/markdownToHtml'
 import { pageMeta } from '@/lib/seo'
 import { ArticleJsonLd, BreadcrumbJsonLd } from '@/components/JsonLd'
 
 export async function generateStaticParams() {
-  const dir = path.join(process.cwd(), 'content', 'blog')
-  if (!fs.existsSync(dir)) return []
-  return fs
-    .readdirSync(dir)
-    .filter((f) => f.endsWith('.mdx'))
-    .map((f) => ({ slug: f.replace('.mdx', '') }))
+  return getPublishedSlugs().map((slug) => ({ slug }))
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
