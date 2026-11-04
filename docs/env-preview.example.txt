@@ -1,15 +1,18 @@
 # VERCEL PREVIEW (staging) — valores propios del proyecto Supabase de STAGING. Nunca pegue aquí datos de producción.
-# En Vercel: Project → Settings → Environment Variables → marque SOLO "Preview" (desmarque Production y Development).
-# Estas variables NO deben existir con el mismo nombre en el entorno Production con valores de staging, ni al revés.
+# En Vercel: Project (joshua-dev) → Settings → Environment Variables → marque SOLO "Preview" (desmarque Production y Development).
+# Las variables de Production (NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY) deben tener SOLO el entorno
+# Production. Si una variable comparte Production y Preview, el Preview usaría producción.
+# El código prefiere NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY sobre NEXT_PUBLIC_SUPABASE_ANON_KEY (lib/supabase/env.ts).
 
-NEXT_PUBLIC_SUPABASE_URL=https://<REF_DE_STAGING>.supabase.co
-NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=<publishable key del proyecto de STAGING>
-
-# Solo servidor. Solo si probará invitaciones desde /portal/admin/usuarios (requiere SMTP en staging). Nunca con prefijo NEXT_PUBLIC.
-SUPABASE_SERVICE_ROLE_KEY=<service_role de STAGING>
+NEXT_PUBLIC_SUPABASE_URL=https://qvqcnljtckdyykqracol.supabase.co
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=<publishable/anon key del proyecto de STAGING>
+NEXT_PUBLIC_WHATSAPP_NUMBER=573246183318
 
 # URL del Preview de Vercel (aparece tras el primer despliegue Preview). Se usa en los correos de recuperación/invitación.
 NEXT_PUBLIC_SITE_URL=https://<su-preview>.vercel.app
 
-NEXT_PUBLIC_WHATSAPP_NUMBER=573246183318
+# NO configurada en Preview por defecto. Solo la usa la acción «Invitar inversionista» (lib/portal/actions.ts → inviteUserAction), que
+# además requiere SMTP en staging. Si se necesita: SOLO la service_role de STAGING, SOLO "Preview", tipo Sensitive. Nunca la de producción.
+# SUPABASE_SERVICE_ROLE_KEY=<service_role de STAGING>
+
 NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION=

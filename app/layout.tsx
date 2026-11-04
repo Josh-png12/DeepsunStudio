@@ -3,6 +3,7 @@ import './globals.css'
 import { SITE } from '@/lib/site'
 import { DEFAULT_DESCRIPTION, DEFAULT_TITLE } from '@/lib/seo'
 import { Analytics } from '@vercel/analytics/next'
+import { isIndexable } from '@/lib/indexing'
 // Public fonts: next/font in app/(site)/layout.tsx. Portal fonts (Fontshare + JetBrains Mono): app/portal/layout.tsx.
 
 // ─── Viewport ─────────────────────────────────────────────────────────────────
@@ -63,17 +64,20 @@ export const metadata: Metadata = {
     images: ['/og-image'],
   },
 
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      'max-video-preview': -1,
-      'max-image-preview': 'large',
-      'max-snippet': -1,
-    },
-  },
+  // Only the real production deployment is indexable (lib/indexing.js); Preview/local builds get noindex here, in robots.txt and in X-Robots-Tag.
+  robots: isIndexable
+    ? {
+        index: true,
+        follow: true,
+        googleBot: {
+          index: true,
+          follow: true,
+          'max-video-preview': -1,
+          'max-image-preview': 'large',
+          'max-snippet': -1,
+        },
+      }
+    : { index: false, follow: false, nocache: true },
 
   // Google Search Console: set NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION to the token value (no placeholder is emitted otherwise).
   ...(process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION
