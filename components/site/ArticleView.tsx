@@ -17,7 +17,7 @@ interface Props {
 export default function ArticleView({ title, description, category, readTime, date, html }: Props) {
   const { tr, lang } = useSite()
   const formatted = date
-    ? new Date(date).toLocaleDateString(lang === 'es' ? 'es-CO' : 'en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+    ? new Date(date).toLocaleDateString(lang === 'es' ? 'es-CO' : 'en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' }) // fixed zone: server (UTC) and browser must render the same day
     : ''
   return (
     <>
