@@ -1,4 +1,5 @@
 // Single source of truth for public contact data. Nothing else in the repo may hardcode a phone number.
+import { siteOrigin } from './indexing.js'
 
 /** Official WhatsApp number of DeepSun Studio (confirmed by the owner): +57 324 618 3318. */
 const OFFICIAL_WHATSAPP = '573246183318'
@@ -18,7 +19,8 @@ export const WHATSAPP_E164 = `+${OFFICIAL_WHATSAPP}`
 
 export const SITE = {
   name: 'DeepSun Studio',
-  url: 'https://www.deepsunstudio.com',
+  // Official domain in production; the deployment's own URL elsewhere (see lib/indexing.js).
+  url: siteOrigin('https://www.deepsunstudio.com'),
   email: 'joshua@deepsunstudio.com',
   city: 'Riohacha, Colombia',
 } as const

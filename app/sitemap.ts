@@ -1,9 +1,10 @@
 import { MetadataRoute } from 'next'
 import { getAllSlugs } from '@/data/projects'
+import { SITE } from '@/lib/site'
 import fs from 'fs'
 import path from 'path'
 
-const BASE = 'https://www.deepsunstudio.com'
+const BASE = SITE.url // official domain in production, the deployment's own URL elsewhere
 
 function getBlogSlugs(): string[] {
   const dir = path.join(process.cwd(), 'content', 'blog')

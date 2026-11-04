@@ -28,3 +28,27 @@ test('preview, development and unknown environments are never indexable', () => 
   assert.equal(isIndexableWith('development'), false)
   assert.equal(isIndexableWith(undefined), false)
 })
+
+function originWith(vercelEnv: string | undefined, vercelUrl: string | undefined): string {
+  const prev = { e: process.env.VERCEL_ENV, u: process.env.VERCEL_URL }
+  for (const [k, v] of [['VERCEL_ENV', vercelEnv], ['VERCEL_URL', vercelUrl]] as const) {
+    if (v === undefined) delete process.env[k]
+    else process.env[k] = v
+  }
+  delete require.cache[modulePath]
+  try {
+    return require(modulePath).siteOrigin('https://www.deepsunstudio.com')
+  } finally {
+    for (const [k, v] of [['VERCEL_ENV', prev.e], ['VERCEL_URL', prev.u]] as const) {
+      if (v === undefined) delete process.env[k]
+      else process.env[k] = v
+    }
+    delete require.cache[modulePath]
+  }
+}
+
+test('production advertises the official domain; a Preview advertises its own host, never deepsunstudio.com', () => {
+  assert.equal(originWith('production', 'joshua-abc.vercel.app'), 'https://www.deepsunstudio.com')
+  assert.equal(originWith('preview', 'joshua-abc.vercel.app'), 'https://joshua-abc.vercel.app')
+  assert.equal(originWith(undefined, undefined), 'http://localhost:3000')
+})
