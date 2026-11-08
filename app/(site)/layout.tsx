@@ -7,6 +7,7 @@ import SkipLink from '@/components/site/SkipLink'
 import { JsonLd } from '@/components/JsonLd'
 import './ds-base.css'
 import './ds-pages.css'
+import './ds-motion.css'
 
 const display = Archivo_Black({ weight: '400', subsets: ['latin'], variable: '--f-display', display: 'swap' })
 const sans = DM_Sans({ subsets: ['latin'], variable: '--f-sans', display: 'swap' })

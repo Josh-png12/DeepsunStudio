@@ -1,0 +1,154 @@
+/*
+ * Motion and blog-media additions for the public site. ds-base.css is a verbatim transcription of the design
+ * reference and is never edited: everything new lives here, always under `.ds`.
+ */
+
+/* ───────── Hero intro: "del caos a lo claro" ─────────
+ * `.sun-art[data-intro]` goes pending (server HTML) → prep → run → done (see components/site/useSunIntro.ts).
+ * Only transform, opacity and fill are animated. No filters, no loops. */
+
+.ds .sun-art {
+  --intro-t: 1.5s; /* assembly of each piece */
+  --intro-fill: 1.2s; /* color settle */
+  --intro-stg: 70ms; /* stagger between pieces */
+  --intro-hl: .5s; /* horizon hairlines delay */
+  --intro-end: 1.5s; /* cross-fade to the real .sun-disk starts */
+  --intro-fade: .35s;
+}
+@media (max-width: 639.98px) {
+  .ds .sun-art {
+    --intro-t: .95s;
+    --intro-fill: .8s;
+    --intro-stg: 40ms;
+    --intro-hl: .3s;
+    --intro-end: .85s;
+    --intro-fade: .3s;
+  }
+}
+
+/* Laid exactly over .sun-disk (inset 8%); overflow visible so the horizon lines can sit below the disk. */
+.ds .sun-shards {
+  position: absolute;
+  left: 8%;
+  top: 8%;
+  width: 84%;
+  height: 84%;
+  overflow: visible;
+  pointer-events: none;
+  opacity: 0;
+}
+.ds .sun-shards .shard,
+.ds .sun-shards .hairline {
+  transform-box: fill-box;
+  transform-origin: center;
+  fill: var(--sun);
+}
+.ds .sun-shards .hairline { opacity: 0; }
+
+/* pending: server markup, before JS. The real sun is hidden but comes back by itself after 3 s if JS never runs. */
+.ds .sun-art[data-intro='pending'] .sun-disk,
+.ds .sun-art[data-intro='pending'] .sun-ring {
+  opacity: 0;
+  animation: ds-sun-failsafe .01s linear 3s forwards;
+}
+@keyframes ds-sun-failsafe { to { opacity: 1; } }
+
+/* pending + prep: pieces scattered, no transition. */
+.ds .sun-art[data-intro='pending'] .shard,
+.ds .sun-art[data-intro='prep'] .shard {
+  transform: translate(var(--dx), var(--dy)) rotate(var(--rot)) scale(var(--s));
+  fill: var(--c);
+  transition: none;
+}
+.ds .sun-art[data-intro='pending'] .hairline,
+.ds .sun-art[data-intro='prep'] .hairline {
+  transform: scaleX(.2);
+  opacity: 0;
+  transition: none;
+}
+.ds .sun-art[data-intro='prep'] .sun-shards { opacity: 1; }
+.ds .sun-art[data-intro='prep'] .sun-disk { opacity: 0; }
+.ds .sun-art[data-intro='prep'] .sun-ring { opacity: 0; transform: scale(.94); }
+
+/* run: pieces assemble, take the sun color and the real disk's lower fade; then cross-fade to .sun-disk. */
+.ds .sun-art[data-intro='run'] .sun-shards {
+  opacity: 0;
+  transition: opacity var(--intro-fade) ease var(--intro-end);
+}
+.ds .sun-art[data-intro='run'] .shard {
+  transform: none;
+  fill: var(--sun);
+  opacity: var(--o, 1);
+  transition:
+    transform var(--intro-t) cubic-bezier(.2, .8, .2, 1) calc(var(--i) * var(--intro-stg)),
+    fill var(--intro-fill) ease calc(var(--i) * var(--intro-stg)),
+    opacity var(--intro-fill) ease calc(var(--i) * var(--intro-stg));
+}
+.ds .sun-art[data-intro='run'] .hairline {
+  transform: none;
+  opacity: .55;
+  transition:
+    transform var(--intro-fill) cubic-bezier(.2, .8, .2, 1) calc(var(--intro-hl) + var(--i) * 80ms),
+    opacity var(--intro-fill) ease calc(var(--intro-hl) + var(--i) * 80ms);
+}
+.ds .sun-art[data-intro='run'] .sun-disk {
+  opacity: 1;
+  transition: opacity var(--intro-fade) ease var(--intro-end);
+}
+.ds .sun-art[data-intro='run'] .sun-ring {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity .9s ease var(--ring-d, 0ms),
+    transform 1.2s cubic-bezier(.2, .8, .2, 1) var(--ring-d, 0ms);
+}
+.ds .sun-art[data-intro='run'] .sun-ring.two { --ring-d: 120ms; }
+.ds .sun-art[data-intro='run'] .sun-ring.three { --ring-d: 240ms; }
+
+/* done: the real CSS sun, exactly as before the intro existed. */
+.ds .sun-art[data-intro='done'] .sun-shards { display: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .ds .sun-art[data-intro] .sun-disk,
+  .ds .sun-art[data-intro] .sun-ring {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+    animation: none !important;
+  }
+  .ds .sun-shards { display: none !important; }
+}
+
+/* ───────── Blog media ───────── */
+
+/* Figures inside articles: ![alt](/blog/<slug>/<file>.webp "caption") */
+.ds .ds-fig { margin: 2em 0; }
+.ds .ds-fig img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border: 1px solid rgba(17, 21, 29, .15);
+}
+.ds .ds-fig figcaption {
+  font: 500 11px var(--mono);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: #5A6475;
+  margin-top: 10px;
+}
+
+/* Covers: the box is reserved by aspect-ratio before the image arrives (no layout shift). */
+.ds .article-cover,
+.ds .article-thumb {
+  aspect-ratio: 1200 / 630;
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  display: block;
+  background: var(--ink);
+}
+.ds .article-thumb { margin-bottom: 18px; }
+.ds .article-cover-wrap { max-width: 960px; margin: 0 auto 70px; }
+@media (max-width: 700px) {
+  .ds .article-cover-wrap { margin-bottom: 44px; }
+}

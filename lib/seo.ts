@@ -14,6 +14,7 @@ export function pageMeta({
   type = 'website',
   absoluteTitle = false,
   publishedTime,
+  image,
 }: {
   title: string
   description: string
@@ -21,8 +22,11 @@ export function pageMeta({
   type?: 'website' | 'article'
   absoluteTitle?: boolean
   publishedTime?: string
+  /** Same-site path of a page-specific social image (e.g. a blog cover); defaults to the brand /og-image. */
+  image?: string
 }): Metadata {
   const fullTitle = absoluteTitle ? title : `${title} | ${SITE.name}`
+  const ogImage = image ? { url: image, width: 1200, height: 630, alt: title } : OG_IMAGE
   return {
     title: absoluteTitle ? { absolute: title } : title,
     description,
@@ -34,10 +38,10 @@ export function pageMeta({
       locale: 'es_CO',
       title: fullTitle,
       description,
-      images: [OG_IMAGE],
+      images: [ogImage],
       ...(publishedTime ? { publishedTime } : {}),
     },
-    twitter: { card: 'summary_large_image', title: fullTitle, description, images: [OG_IMAGE.url] },
+    twitter: { card: 'summary_large_image', title: fullTitle, description, images: [ogImage.url] },
   }
 }
 

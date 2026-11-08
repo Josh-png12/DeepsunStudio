@@ -4,11 +4,14 @@ import { useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { useSite, Rich } from '@/lib/site-i18n'
 import { HERO } from '@/lib/site-content'
+import SunShards from './SunShards'
+import { useSunIntro } from './useSunIntro'
 
 export default function Hero() {
   const { tr } = useSite()
   const heroRef = useRef<HTMLElement>(null)
   const artRef = useRef<HTMLDivElement>(null)
+  useSunIntro(artRef)
 
   // Discreet pointer parallax for the sun; disabled for touch and reduced motion.
   useEffect(() => {
@@ -30,7 +33,8 @@ export default function Hero() {
   return (
     <>
       <section className="hero" id="inicio" aria-labelledby="hero-heading" ref={heroRef}>
-        <div className="sun-art" ref={artRef} aria-hidden="true">
+        <div className="sun-art" ref={artRef} aria-hidden="true" data-intro="pending">
+          <SunShards />
           <div className="sun-ring three" />
           <div className="sun-ring two" />
           <div className="sun-ring" />

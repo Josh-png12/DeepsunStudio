@@ -10,11 +10,13 @@ interface Props {
   category: string
   readTime: string
   date: string
+  /** Same-site cover path (see resolveCover in lib/blog). */
+  cover: string
   /** Trusted: generated at build time from our own MDX files by lib/markdownToHtml. */
   html: string
 }
 
-export default function ArticleView({ title, description, category, readTime, date, html }: Props) {
+export default function ArticleView({ title, description, category, readTime, date, cover, html }: Props) {
   const { tr, lang } = useSite()
   const formatted = date
     ? new Date(date).toLocaleDateString(lang === 'es' ? 'es-CO' : 'en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' }) // fixed zone: server (UTC) and browser must render the same day
@@ -37,6 +39,10 @@ export default function ArticleView({ title, description, category, readTime, da
         </div>
       </header>
       <div className="prose-wrap">
+        <figure className="article-cover-wrap">
+          {/* eslint-disable-next-line @next/next/no-img-element -- pre-sized 1200×630 PNG generated at build time; next/image adds nothing here */}
+          <img className="article-cover" src={cover} alt={title} width={1200} height={630} decoding="async" />
+        </figure>
         <article className="ds-prose" lang="es" dangerouslySetInnerHTML={{ __html: html }} />
       </div>
       <section className="final-cta">

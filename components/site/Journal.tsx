@@ -17,6 +17,8 @@ export function ArticleCard({ post }: { post: PostMeta }) {
   const { tr, lang } = useSite()
   return (
     <article className="article">
+      {/* eslint-disable-next-line @next/next/no-img-element -- pre-sized 1200×630 cover generated at build time */}
+      <img className="article-thumb" src={post.cover} alt="" width={1200} height={630} loading="lazy" decoding="async" />
       <small><span lang="es">{post.category}</span> / {fmtDate(post.date, lang)}</small>
       <h3 lang="es">{post.title}</h3>
       <p lang="es">{post.description}</p>
