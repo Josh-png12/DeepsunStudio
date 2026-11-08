@@ -69,3 +69,17 @@ test('four finite horizon hairlines below the sun', () => {
     assert.ok(l.y > SUN.cy + SUN.r && l.x1 < l.x2)
   }
 })
+
+test('the <head> skip script is valid JS, uses the shared key and never throws without storage', async () => {
+  const { SUN_INTRO_KEY, SUN_INTRO_SCRIPT } = await import('../lib/sun-intro.ts')
+  assert.equal(SUN_INTRO_KEY, 'ds:sun-intro')
+  assert.ok(SUN_INTRO_SCRIPT.includes(`'${SUN_INTRO_KEY}'`))
+  const run = new Function('sessionStorage', 'document', SUN_INTRO_SCRIPT)
+  let attr: string | null = null
+  const doc = { documentElement: { setAttribute: (_: string, v: string) => (attr = v) } }
+  run({ getItem: () => null }, doc)
+  assert.equal(attr, null, 'first visit: the intro plays')
+  run({ getItem: () => '1' }, doc)
+  assert.equal(attr, 'skip', 'same session: skipped before paint')
+  assert.doesNotThrow(() => run({ getItem: () => { throw new Error('blocked') } }, doc))
+})

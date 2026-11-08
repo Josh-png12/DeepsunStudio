@@ -33,7 +33,7 @@ export default function Hero() {
   return (
     <>
       <section className="hero" id="inicio" aria-labelledby="hero-heading" ref={heroRef}>
-        <div className="sun-art" ref={artRef} aria-hidden="true" data-intro="pending">
+        <div className="sun-art" ref={artRef} aria-hidden="true">
           <SunShards />
           <div className="sun-ring three" />
           <div className="sun-ring two" />

@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { useSite } from '@/lib/site-i18n'
 import { JOURNAL as J, UI } from '@/lib/site-content'
 
@@ -40,8 +41,7 @@ export default function ArticleView({ title, description, category, readTime, da
       </header>
       <div className="prose-wrap">
         <figure className="article-cover-wrap">
-          {/* eslint-disable-next-line @next/next/no-img-element -- pre-sized 1200×630 PNG generated at build time; next/image adds nothing here */}
-          <img className="article-cover" src={cover} alt={title} width={1200} height={630} decoding="async" />
+          <Image className="article-cover" src={cover} alt={title} width={1200} height={630} sizes="(max-width: 1000px) calc(100vw - 44px), 960px" />
         </figure>
         <article className="ds-prose" lang="es" dangerouslySetInnerHTML={{ __html: html }} />
       </div>

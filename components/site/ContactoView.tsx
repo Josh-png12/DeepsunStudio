@@ -1,12 +1,15 @@
 'use client'
 
+import dynamic from 'next/dynamic'
 import { useSite } from '@/lib/site-i18n'
 import { BRIEF as B, CONTACT as C, CONTACT_WA } from '@/lib/site-content'
 import { FORMS_ENABLED } from '@/lib/launch'
 import { WhatsAppCard } from './ContactBlock'
 import { SITE, WHATSAPP_DISPLAY, mailtoHref, whatsappHref } from '@/lib/site'
 import PageHead from './PageHead'
-import BriefForm from './BriefForm'
+
+// Lazy: the brief form pulls in the Supabase client, which must not weigh on the public pages while forms are off (lib/launch.ts).
+const BriefForm = dynamic(() => import('./BriefForm'))
 
 export default function ContactoView() {
   const { tr } = useSite()

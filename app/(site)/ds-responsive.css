@@ -1,0 +1,30 @@
+/*
+ * Responsive fixes found by auditing 320–1440 px (ds-base.css stays a verbatim transcription; overrides live here).
+ * Loaded after ds-pages.css and ds-motion.css, same specificity, so these win.
+ */
+
+@media (max-width: 700px) {
+  /* Home "SOLUCIONES / sin vueltas": at 62–65 px the word is ~6.5em wide and was cut off on every phone width.
+     The size now follows the available width (viewport minus the 22 px gutters). */
+  .ds .services-head h2 { font-size: min(clamp(65px, 13vw, 105px), calc((100vw - 44px) / 6.7)); }
+
+  /* Inner page titles (e.g. /servicios "SOLUCIONES QUE funciona") overflowed by a pixel at 320 px. */
+  .ds .page-title { font-size: clamp(40px, 13vw, 88px); }
+
+  /* Touch targets: footer and breadcrumb links were 11–14 px tall. Padding enlarges the tap area and the equal
+     negative margin keeps the layout exactly where it was. */
+  .ds .footer-links a,
+  .ds .footer-bottom a {
+    padding: 10px 0;
+    margin: -10px 0;
+  }
+  .ds .article-head .eyebrow a {
+    display: inline-block;
+    padding: 12px 0;
+    margin: -12px 0;
+  }
+}
+
+@media (max-width: 390px) {
+  .ds .services-head h2 { font-size: calc((100vw - 44px) / 6.7); }
+}

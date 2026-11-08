@@ -4,25 +4,25 @@
  */
 
 /* ───────── Hero intro: "del caos a lo claro" ─────────
- * `.sun-art[data-intro]` goes pending (server HTML) → prep → run → done (see components/site/useSunIntro.ts).
- * Only transform, opacity and fill are animated. No filters, no loops. */
+ * Pure CSS: it starts with the first paint and never waits for JavaScript (no hidden sun while the page hydrates).
+ * Skipped by html[data-sun-intro='skip'] (reload in the same session, set in <head>) or .sun-art[data-intro='skip']
+ * (client-side return to the home, components/site/useSunIntro.ts). Only transform, opacity and fill animate.
+ * Without JS it simply plays once and ends on the real sun. */
 
 .ds .sun-art {
-  --intro-t: 1.5s; /* assembly of each piece */
-  --intro-fill: 1.2s; /* color settle */
-  --intro-stg: 70ms; /* stagger between pieces */
-  --intro-hl: .5s; /* horizon hairlines delay */
-  --intro-end: 1.5s; /* cross-fade to the real .sun-disk starts */
+  --intro-t: 1.2s; /* assembly of each piece */
+  --intro-stg: 60ms; /* stagger between pieces */
+  --intro-hl: .35s; /* horizon hairlines delay */
+  --intro-end: 1.25s; /* cross-fade to the real .sun-disk starts */
   --intro-fade: .35s;
 }
 @media (max-width: 639.98px) {
   .ds .sun-art {
-    --intro-t: .95s;
-    --intro-fill: .8s;
-    --intro-stg: 40ms;
-    --intro-hl: .3s;
-    --intro-end: .85s;
-    --intro-fade: .3s;
+    --intro-t: .8s;
+    --intro-stg: 35ms;
+    --intro-hl: .2s;
+    --intro-end: .8s;
+    --intro-fade: .25s;
   }
 }
 
@@ -35,7 +35,7 @@
   height: 84%;
   overflow: visible;
   pointer-events: none;
-  opacity: 0;
+  animation: ds-shards-out var(--intro-fade) ease var(--intro-end) both;
 }
 .ds .sun-shards .shard,
 .ds .sun-shards .hairline {
@@ -43,79 +43,42 @@
   transform-origin: center;
   fill: var(--sun);
 }
-.ds .sun-shards .hairline { opacity: 0; }
-
-/* pending: server markup, before JS. The real sun is hidden but comes back by itself after 3 s if JS never runs. */
-.ds .sun-art[data-intro='pending'] .sun-disk,
-.ds .sun-art[data-intro='pending'] .sun-ring {
-  opacity: 0;
-  animation: ds-sun-failsafe .01s linear 3s forwards;
-}
-@keyframes ds-sun-failsafe { to { opacity: 1; } }
-
-/* pending + prep: pieces scattered, no transition. */
-.ds .sun-art[data-intro='pending'] .shard,
-.ds .sun-art[data-intro='prep'] .shard {
-  transform: translate(var(--dx), var(--dy)) rotate(var(--rot)) scale(var(--s));
-  fill: var(--c);
-  transition: none;
-}
-.ds .sun-art[data-intro='pending'] .hairline,
-.ds .sun-art[data-intro='prep'] .hairline {
-  transform: scaleX(.2);
-  opacity: 0;
-  transition: none;
-}
-.ds .sun-art[data-intro='prep'] .sun-shards { opacity: 1; }
-.ds .sun-art[data-intro='prep'] .sun-disk { opacity: 0; }
-.ds .sun-art[data-intro='prep'] .sun-ring { opacity: 0; transform: scale(.94); }
-
-/* run: pieces assemble, take the sun color and the real disk's lower fade; then cross-fade to .sun-disk. */
-.ds .sun-art[data-intro='run'] .sun-shards {
-  opacity: 0;
-  transition: opacity var(--intro-fade) ease var(--intro-end);
-}
-.ds .sun-art[data-intro='run'] .shard {
-  transform: none;
-  fill: var(--sun);
+.ds .sun-shards .shard {
   opacity: var(--o, 1);
-  transition:
-    transform var(--intro-t) cubic-bezier(.2, .8, .2, 1) calc(var(--i) * var(--intro-stg)),
-    fill var(--intro-fill) ease calc(var(--i) * var(--intro-stg)),
-    opacity var(--intro-fill) ease calc(var(--i) * var(--intro-stg));
+  animation: ds-shard-in var(--intro-t) cubic-bezier(.2, .8, .2, 1) calc(var(--i) * var(--intro-stg)) both;
 }
-.ds .sun-art[data-intro='run'] .hairline {
-  transform: none;
+.ds .sun-shards .hairline {
   opacity: .55;
-  transition:
-    transform var(--intro-fill) cubic-bezier(.2, .8, .2, 1) calc(var(--intro-hl) + var(--i) * 80ms),
-    opacity var(--intro-fill) ease calc(var(--intro-hl) + var(--i) * 80ms);
+  animation: ds-hairline-in var(--intro-t) cubic-bezier(.2, .8, .2, 1) calc(var(--intro-hl) + var(--i) * 70ms) both;
 }
-.ds .sun-art[data-intro='run'] .sun-disk {
-  opacity: 1;
-  transition: opacity var(--intro-fade) ease var(--intro-end);
-}
-.ds .sun-art[data-intro='run'] .sun-ring {
-  opacity: 1;
-  transform: none;
-  transition:
-    opacity .9s ease var(--ring-d, 0ms),
-    transform 1.2s cubic-bezier(.2, .8, .2, 1) var(--ring-d, 0ms);
-}
-.ds .sun-art[data-intro='run'] .sun-ring.two { --ring-d: 120ms; }
-.ds .sun-art[data-intro='run'] .sun-ring.three { --ring-d: 240ms; }
+.ds .sun-art .sun-disk { animation: ds-sun-in var(--intro-fade) ease var(--intro-end) both; }
+.ds .sun-art .sun-ring { animation: ds-ring-in 1s cubic-bezier(.2, .8, .2, 1) var(--ring-d, 0ms) both; }
+.ds .sun-art .sun-ring.two { --ring-d: 100ms; }
+.ds .sun-art .sun-ring.three { --ring-d: 200ms; }
 
-/* done: the real CSS sun, exactly as before the intro existed. */
-.ds .sun-art[data-intro='done'] .sun-shards { display: none; }
+@keyframes ds-shard-in {
+  from {
+    transform: translate(var(--dx), var(--dy)) rotate(var(--rot)) scale(var(--s));
+    fill: var(--c);
+    opacity: 1;
+  }
+}
+@keyframes ds-hairline-in { from { transform: scaleX(.2); opacity: 0; } }
+@keyframes ds-shards-out { to { opacity: 0; visibility: hidden; } }
+@keyframes ds-sun-in { from { opacity: 0; } }
+@keyframes ds-ring-in { from { opacity: 0; transform: scale(.94); } }
+
+/* Skipped: the real CSS sun, exactly as before the intro existed. */
+html[data-sun-intro='skip'] .ds .sun-shards,
+.ds .sun-art[data-intro='skip'] .sun-shards { display: none; }
+html[data-sun-intro='skip'] .ds .sun-art .sun-disk,
+html[data-sun-intro='skip'] .ds .sun-art .sun-ring,
+.ds .sun-art[data-intro='skip'] .sun-disk,
+.ds .sun-art[data-intro='skip'] .sun-ring { animation: none; }
 
 @media (prefers-reduced-motion: reduce) {
-  .ds .sun-art[data-intro] .sun-disk,
-  .ds .sun-art[data-intro] .sun-ring {
-    opacity: 1 !important;
-    transform: none !important;
-    transition: none !important;
-    animation: none !important;
-  }
+  .ds .sun-art .sun-disk,
+  .ds .sun-art .sun-ring { animation: none !important; opacity: 1 !important; transform: none !important; }
   .ds .sun-shards { display: none !important; }
 }
 

@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { useSite, Rich } from '@/lib/site-i18n'
 import { JOURNAL, UI } from '@/lib/site-content'
 import type { PostMeta } from '@/lib/blog'
@@ -17,8 +18,8 @@ export function ArticleCard({ post }: { post: PostMeta }) {
   const { tr, lang } = useSite()
   return (
     <article className="article">
-      {/* eslint-disable-next-line @next/next/no-img-element -- pre-sized 1200×630 cover generated at build time */}
-      <img className="article-thumb" src={post.cover} alt="" width={1200} height={630} loading="lazy" decoding="async" />
+      {/* Optimized by next/image (WebP/AVIF at the card's width) instead of the 1200×630 PNG. */}
+      <Image className="article-thumb" src={post.cover} alt="" width={1200} height={630} sizes="(max-width: 700px) calc(100vw - 44px), (max-width: 1160px) 45vw, 460px" />
       <small><span lang="es">{post.category}</span> / {fmtDate(post.date, lang)}</small>
       <h3 lang="es">{post.title}</h3>
       <p lang="es">{post.description}</p>

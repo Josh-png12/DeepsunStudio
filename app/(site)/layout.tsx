@@ -8,11 +8,13 @@ import { JsonLd } from '@/components/JsonLd'
 import './ds-base.css'
 import './ds-pages.css'
 import './ds-motion.css'
+import './ds-responsive.css'
 
 const display = Archivo_Black({ weight: '400', subsets: ['latin'], variable: '--f-display', display: 'swap' })
 const sans = DM_Sans({ subsets: ['latin'], variable: '--f-sans', display: 'swap' })
 const mono = IBM_Plex_Mono({ weight: ['400', '500', '600'], subsets: ['latin'], variable: '--f-mono', display: 'swap' })
-const serif = Instrument_Serif({ weight: '400', style: ['normal', 'italic'], subsets: ['latin'], variable: '--f-serif', display: 'swap' })
+// Not preloaded: the serif never appears in the first viewport, so it must not compete with the hero's fonts.
+const serif = Instrument_Serif({ weight: '400', style: ['normal', 'italic'], subsets: ['latin'], variable: '--f-serif', display: 'swap', preload: false })
 
 // Everything public lives under `.ds` so the editorial theme never reaches /portal.
 export default function SiteLayout({ children }: { children: React.ReactNode }) {

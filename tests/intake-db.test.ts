@@ -330,7 +330,7 @@ test('upgrade: the migration closes a legacy dashboard-made setup (RLS off / ope
 test('contract: the exact column lists used by the public carousel and the admin screens are permitted by the grants', async () => {
   const fs = await import('node:fs')
   const read = (p: string) => fs.readFileSync(new URL(p, import.meta.url), 'utf8')
-  const publicCols = /\.select\('([a-z_,]+)'\)\s*\n\s*\.eq\('approved', true\)/.exec(read('../components/site/Reviews.tsx'))?.[1]
+  const publicCols = /\.select\('([a-z_,]+)'\)\s*\n\s*\.eq\('approved', true\)/.exec(read('../components/site/ReviewsSection.tsx'))?.[1]
   const leadCols = /LEAD_COLUMNS = '([a-z_,]+)'/.exec(read('../lib/portal/intake.ts'))?.[1]
   const testiCols = /TESTIMONIAL_COLUMNS = '([a-z_,]+)'/.exec(read('../lib/portal/intake.ts'))?.[1]
   assert.ok(publicCols && leadCols && testiCols, 'column lists must be found in the source')

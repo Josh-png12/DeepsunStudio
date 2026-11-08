@@ -5,6 +5,7 @@ import { DEFAULT_DESCRIPTION, DEFAULT_TITLE } from '@/lib/seo'
 import { Analytics } from '@vercel/analytics/next'
 import { isIndexable } from '@/lib/indexing'
 import { FORMS_ENABLED, PORTAL_ENABLED } from '@/lib/launch'
+import { SUN_INTRO_SCRIPT } from '@/lib/sun-intro'
 // Public fonts: next/font in app/(site)/layout.tsx. Portal fonts (Fontshare + JetBrains Mono): app/portal/layout.tsx.
 
 // ─── Viewport ─────────────────────────────────────────────────────────────────
@@ -99,8 +100,11 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="es" className="scroll-smooth">
+    // suppressHydrationWarning: the inline script may add data-sun-intro to <html> before React hydrates (own attributes only).
+    <html lang="es" className="scroll-smooth" suppressHydrationWarning>
       <head>
+        {/* Hero intro: skip it on reloads within the session, before first paint (lib/sun-intro.ts). */}
+        <script dangerouslySetInnerHTML={{ __html: SUN_INTRO_SCRIPT }} />
         {/* Launch 1.0: public pages use no database, so no hint to Supabase (lib/launch.ts). */}
         {(FORMS_ENABLED || PORTAL_ENABLED) && <link rel="dns-prefetch" href="https://svbvkgvtjksvjfvigiah.supabase.co" />}
       </head>
